@@ -64,6 +64,7 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.beendenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chkEnableImagePreview = new System.Windows.Forms.CheckBox();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pnlConfig.SuspendLayout();
             this.pnlToolbar.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -384,10 +385,11 @@
             this.searchForUpdatesToolStripMenuItem,
             this.enableNotificationsToolStripMenuItem,
             this.enableSoundToolStripMenuItem,
+            this.helpToolStripMenuItem,
             this.toolStripMenuItem1,
             this.beendenToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(168, 120);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(168, 164);
             // 
             // openMiniConfToolStripMenuItem
             // 
@@ -445,6 +447,13 @@
             this.chkEnableImagePreview.TabIndex = 10;
             this.chkEnableImagePreview.Text = "Preview images";
             this.chkEnableImagePreview.UseVisualStyleBackColor = true;
+            // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.helpToolStripMenuItem.Text = "Help";
+            this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -516,6 +525,7 @@
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.CheckedListBox lbChatrooms;
         private System.Windows.Forms.CheckBox chkEnableImagePreview;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
     }
 }
 

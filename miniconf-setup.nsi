@@ -22,6 +22,7 @@ Section "Program Files" SecProgFiles
   
   File "miniConf\bin\Release\miniConf.exe"
   File "miniConf\bin\Release\*.dll"
+  File "miniConf\bin\Release\*.txt"
   
   CreateShortcut "$DESKTOP\miniConf.lnk" "$INSTDIR\miniConf.exe"
   WriteUninstaller "$INSTDIR\Uninstall.exe"

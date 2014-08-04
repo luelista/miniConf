@@ -643,6 +643,11 @@ namespace miniConf
             txtSendmessage.SelectionStart = lvOnlineStatus.SelectedItems[0].Text.Length + 2;
         }
 
+        private void helpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://home.max-weller.de/programme/miniconf/hilfe/");
+        }
+
 
 
 
