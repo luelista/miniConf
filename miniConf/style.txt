@@ -1,0 +1,41 @@
+﻿
+/* styles for chat window */
+html,body {margin:0;padding: 0;}
+p{margin:0;padding:5px; border-bottom: 1px solid #ccc; font:9pt 'Segoe UI',sans-serif; color: #333; } 
+p strong { color: #373; } 
+p strong.me{color:#555;}
+
+/* system notices (e.g. topic change) */
+p.notice { color: #999; background-color: #eee; } 
+
+/* toolbar */
+p#tb {text-align:center;color:#777;}  
+
+/* clickable links in messages */
+a,a:visited {color:blue;text-decoration:none;} 
+a:hover{text-decoration:underline} 
+
+/* message timestamp */
+p i {float:right; color: #aaa;}
+
+/* image previews */
+img.imprev { max-width: 150px; max-height: 150px; border: 1px solid äbbb; padding: 2px; }
+
+/* BEGIN comment these lines for compact layout *  /
+p.msg strong{display:block;width: 105px;float:left;text-align:right;} 
+p span {margin-left: 110px;display:block;}
+/* END */
+
+
+/* BEGIN uncomment this line for second line indentation in compact layout */
+
+/* p.msg { padding-left: 1.5em;text-indent:-1em; }  p.msg i { text-indent:0; } 
+*/
+
+/* END */
+
+
+
+/* create lines like this for custom coloring of people :
+   .from_INSERT-NICKNAME-HERE strong { color: #dd0000; }
+*/
