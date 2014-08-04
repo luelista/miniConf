@@ -10,6 +10,7 @@ using System.Data.SQLite;
 using System.Threading;
 using System.Text.RegularExpressions;
 using System.Media;
+using System.IO;
 
 namespace miniConf
 {
@@ -20,6 +21,7 @@ namespace miniConf
             InitializeComponent();
         }
 
+        string dataDir;
 
         #region Jabber Connection
 
@@ -169,7 +171,7 @@ namespace miniConf
                         SoundPlayer dingdong = new SoundPlayer("C:\\Windows\\Media\\chimes.wav");
                         dingdong.Play();
                     }
-                    if (enableNotificationsToolStripMenuItem.Checked)
+                    if (enableNotificationsToolStripMenuItem.Checked && !String.IsNullOrEmpty(msg.GetTag("body")))
                     {
                         notifyIcon1.ShowBalloonTip(30000, msg.From.Resource + " in " + msg.From.User + ":", msg.GetTag("body"), ToolTipIcon.Info);
                     }
@@ -243,20 +245,18 @@ namespace miniConf
             //WinSparkle.win_sparkle_set_app_details("Company","App", "Version"); // THIS CALL NOT IMPLEMENTED YET
             WinSparkle.win_sparkle_init();
             
-            webBrowser1.Document.Write("<html><head><style> " +
-                "html,body {margin:0;padding: 0;} p{margin:0;padding:5px; border-bottom: 1px solid #ccc; font:9pt 'Segoe UI',sans-serif; color: #333; } "+
-                "p strong { color: #373; } p strong.me{color:#555;} p.notice { color: #999; background-color: #eee; } "+
-                "p#tb {text-align:center;color:#777;}  "+
-                "a,a:visited {color:blue;text-decoration:none;} a:hover{text-decoration:underline} "+
-                "p i {float:right; color: #999;}"+
-                "p.msg strong{display:block;width: 105px;float:left;text-align:right;} p span {margin-left: 110px;display:block;}"+
-                "</style></head><body>"+
-                "<p id='tb'>Eile mit Weile ...</p><div id='m'></div>"+
-                "</body></html>");
-
-            string dataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\miniConf\\";
+            dataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\miniConf\\";
             System.IO.Directory.CreateDirectory(dataDir);
 
+            if (!File.Exists(dataDir + "style.txt"))
+            {
+                File.Copy("style.txt", dataDir + "style.txt");
+            }
+            webBrowser1.Document.Write("<html><head><style id='st'></style></head>" +
+                 "<body><p id='tb'>Eile mit Weile ...</p><div id='m'></div></body></html>");
+            loadStylesheet();
+
+            
             glob = new cls_globPara(dataDir + "miniConf.ini");
             glob.readFormPos(this);
             glob.readTuttiFrutti(this);
@@ -280,6 +280,18 @@ namespace miniConf
         {
 
             this.Text = Application.ProductName + " " + Application.ProductVersion + ((conn!=null) ? (" (" + conn.XmppConnectionState.ToString() + ")") : "");
+        }
+
+        private void loadStylesheet()
+        {
+            string style = File.ReadAllText(dataDir + "style.txt");
+            mshtml.IHTMLDocument3 doc = (mshtml.IHTMLDocument3)webBrowser1.Document.DomDocument;
+            mshtml.IHTMLStyleElement styleEl = (mshtml.IHTMLStyleElement)doc.getElementById("st");
+            styleEl.styleSheet.cssText = style;
+
+            //.SetAttribute("cssText", style);
+            //webBrowser1.Document.GetElementById("st").
+             
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -323,18 +335,26 @@ namespace miniConf
         {
             var div = webBrowser1.Document.CreateElement("p");
             text = text.Replace("<", "&lt;");
+            text = text.Replace("\n", "\n<br>");
+            var imageLink = Regex.Match(text, "https?://[\\w.-]+/[\\w_.,/+?&%$!=)(\\[\\]{}-]*\\.(png|jpg|gif)");
             text = Regex.Replace(text, "(?i)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))",
                          "<a href=\"$0\">$0</a>");
             var me = Regex.Match(text, "^/me\\s+");
             var timeEl = "<i title="+time.ToShortDateString()+" "+time.ToLongTimeString()+">"+time.ToLongTimeString()+"</i>";
+            div.SetAttribute("className", "from_" + from);
             if (me.Success)
             {
                 div.InnerHtml = timeEl + "<span> ∗∗∗ <strong>" + from + "</strong> " + text.Substring(me.Length) + "</span>";
             }
             else
             {
-                div.SetAttribute("className", "msg");
+                div.SetAttribute("className", "msg from_" + from);
+                if (chkEnableImagePreview.Checked && imageLink.Success)
+                {
+                    text += "<br><img src=\"" + imageLink.Value + "\" class=\"imprev\" style='max-width:150px;'>";
+                }
                 div.InnerHtml = timeEl + "<strong>" + from + ":</strong> <span>" + text + "</span>";
+
             }
             //webBrowser1.Document.Body.AppendChild(div);
             webBrowser1.Document.GetElementById("m").InsertAdjacentElement(where, div);
@@ -435,8 +455,21 @@ namespace miniConf
         {
             if (e.KeyCode == Keys.Enter && !e.Control && !e.Shift && !e.Alt)
             {
+                
+                if (String.IsNullOrEmpty(txtSendmessage.Text.Trim())) return;
                 sendMessage(txtSendmessage.Text.TrimEnd());
                 txtSendmessage.Text = "";
+            }
+        }
+        private void txtSendmessage_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter && !e.Control && !e.Shift && !e.Alt)
+            {
+                e.SuppressKeyPress = true;
+            }
+            if (e.KeyCode == Keys.A && e.Control)
+            {
+                txtSendmessage.SelectAll();
             }
         }
 
@@ -517,28 +550,41 @@ namespace miniConf
         {
             
         }
-
-        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (e.Control && !e.Alt && e.KeyCode == Keys.Q)
+            switch (keyData)
             {
-                beendenToolStripMenuItem_Click(null, null);
+                case Keys.Control | Keys.Q:
+                    beendenToolStripMenuItem_Click(null, null);
+                    return true;
+                case Keys.Escape:
+                    this.Close();
+                    return true;
+                case Keys.F1:
+                    try { if (lbChatrooms.SelectedIndex > 0) lbChatrooms.SelectedIndex -= 1; lbChatrooms_Click(null, null); }
+                    catch (Exception ex) { }
+                    return true;
+                case Keys.F2:
+                    try { lbChatrooms.SelectedIndex += 1; lbChatrooms_Click(null, null); }
+                    catch (Exception ex) { }
+                    return true;
+                case Keys.Control | Keys.B:
+                case Keys.F4:
+                    chkToggleSidebar.Checked = !chkToggleSidebar.Checked;
+                    break;
+                case Keys.Control | Keys.Oemcomma:
+                    pnlConfig.Visible = !pnlConfig.Visible;
+                    break;
+                case Keys.Control | Keys.Shift | Keys.R:
+                    loadStylesheet();
+                    break;
+                case Keys.Control | Keys.Shift | Keys.E:
+                    System.Diagnostics.Process.Start(dataDir + "style.txt");
+                    break;
             }
-            if (e.KeyCode == Keys.Escape)
-            {
-                this.Close();
-            }
-            if (e.KeyCode == Keys.F1)
-            {
-                try { if (lbChatrooms.SelectedIndex >0) lbChatrooms.SelectedIndex -= 1; lbChatrooms_Click(null, null); }
-                catch (Exception ex) { }
-            }
-            if (e.KeyCode == Keys.F2)
-            {
-                try { lbChatrooms.SelectedIndex += 1; lbChatrooms_Click(null, null); }
-                catch (Exception ex) { }
-            }
+            return false;
         }
+
 
         private void openMiniConfToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -577,6 +623,27 @@ namespace miniConf
             openMiniConfToolStripMenuItem.Visible = false;
             contextMenuStrip1.Show((Control)sender, 0, ((Control)sender).Height);
         }
+
+        private void webBrowser1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+
+        }
+
+        private void lvOnlineStatus_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lvOnlineStatus_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (lvOnlineStatus.SelectedItems.Count == 0) return;
+            txtSendmessage.Text = lvOnlineStatus.SelectedItems[0].Text + ": " + txtSendmessage.Text;
+            txtSendmessage.Focus();
+            txtSendmessage.SelectionLength = 0;
+            txtSendmessage.SelectionStart = lvOnlineStatus.SelectedItems[0].Text.Length + 2;
+        }
+
+
 
 
     }

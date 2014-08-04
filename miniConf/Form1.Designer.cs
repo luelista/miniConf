@@ -52,6 +52,7 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.txtSendmessage = new System.Windows.Forms.TextBox();
+            this.lbChatrooms = new System.Windows.Forms.CheckedListBox();
             this.pnlErrMes = new System.Windows.Forms.Panel();
             this.labErrMes = new System.Windows.Forms.Label();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
@@ -62,7 +63,7 @@
             this.enableSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.beendenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.lbChatrooms = new System.Windows.Forms.CheckedListBox();
+            this.chkEnableImagePreview = new System.Windows.Forms.CheckBox();
             this.pnlConfig.SuspendLayout();
             this.pnlToolbar.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -100,6 +101,7 @@
             // 
             this.txtChatrooms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtChatrooms.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtChatrooms.Location = new System.Drawing.Point(7, 68);
             this.txtChatrooms.Multiline = true;
             this.txtChatrooms.Name = "txtChatrooms";
@@ -112,6 +114,7 @@
             // pnlConfig
             // 
             this.pnlConfig.BackColor = System.Drawing.Color.Gold;
+            this.pnlConfig.Controls.Add(this.chkEnableImagePreview);
             this.pnlConfig.Controls.Add(this.button3);
             this.pnlConfig.Controls.Add(this.label4);
             this.pnlConfig.Controls.Add(this.label3);
@@ -125,7 +128,7 @@
             this.pnlConfig.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlConfig.Location = new System.Drawing.Point(0, 65);
             this.pnlConfig.Name = "pnlConfig";
-            this.pnlConfig.Size = new System.Drawing.Size(382, 176);
+            this.pnlConfig.Size = new System.Drawing.Size(382, 208);
             this.pnlConfig.TabIndex = 5;
             this.pnlConfig.Visible = false;
             // 
@@ -194,11 +197,13 @@
             this.lvOnlineStatus.Location = new System.Drawing.Point(0, 0);
             this.lvOnlineStatus.Name = "lvOnlineStatus";
             this.lvOnlineStatus.ShowItemToolTips = true;
-            this.lvOnlineStatus.Size = new System.Drawing.Size(88, 199);
+            this.lvOnlineStatus.Size = new System.Drawing.Size(106, 167);
             this.lvOnlineStatus.SmallImageList = this.imageList1;
             this.lvOnlineStatus.TabIndex = 8;
             this.lvOnlineStatus.UseCompatibleStateImageBehavior = false;
             this.lvOnlineStatus.View = System.Windows.Forms.View.SmallIcon;
+            this.lvOnlineStatus.SelectedIndexChanged += new System.EventHandler(this.lvOnlineStatus_SelectedIndexChanged);
+            this.lvOnlineStatus.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvOnlineStatus_MouseDoubleClick);
             // 
             // imageList1
             // 
@@ -272,9 +277,9 @@
             // 
             this.panel3.Controls.Add(this.splitContainer1);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(0, 241);
+            this.panel3.Location = new System.Drawing.Point(0, 273);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(382, 385);
+            this.panel3.Size = new System.Drawing.Size(382, 353);
             this.panel3.TabIndex = 7;
             // 
             // splitContainer1
@@ -288,15 +293,15 @@
             // 
             this.splitContainer1.Panel1.Controls.Add(this.webBrowser1);
             this.splitContainer1.Panel1.Controls.Add(this.txtSendmessage);
-            this.splitContainer1.Panel1MinSize = 290;
+            this.splitContainer1.Panel1MinSize = 200;
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.lvOnlineStatus);
             this.splitContainer1.Panel2.Controls.Add(this.lbChatrooms);
             this.splitContainer1.Panel2MinSize = 50;
-            this.splitContainer1.Size = new System.Drawing.Size(382, 385);
-            this.splitContainer1.SplitterDistance = 290;
+            this.splitContainer1.Size = new System.Drawing.Size(382, 353);
+            this.splitContainer1.SplitterDistance = 272;
             this.splitContainer1.TabIndex = 9;
             // 
             // webBrowser1
@@ -310,24 +315,37 @@
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
             this.webBrowser1.ScriptErrorsSuppressed = true;
-            this.webBrowser1.Size = new System.Drawing.Size(288, 318);
+            this.webBrowser1.Size = new System.Drawing.Size(270, 286);
             this.webBrowser1.TabIndex = 5;
             this.webBrowser1.Url = new System.Uri("about:blank", System.UriKind.Absolute);
-            this.webBrowser1.WebBrowserShortcutsEnabled = false;
             this.webBrowser1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowser1_DocumentCompleted);
             this.webBrowser1.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowser1_Navigating);
+            this.webBrowser1.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.webBrowser1_PreviewKeyDown);
             // 
             // txtSendmessage
             // 
             this.txtSendmessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSendmessage.Location = new System.Drawing.Point(0, 324);
+            this.txtSendmessage.Location = new System.Drawing.Point(0, 292);
             this.txtSendmessage.Multiline = true;
             this.txtSendmessage.Name = "txtSendmessage";
             this.txtSendmessage.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtSendmessage.Size = new System.Drawing.Size(288, 61);
+            this.txtSendmessage.Size = new System.Drawing.Size(270, 61);
             this.txtSendmessage.TabIndex = 6;
+            this.txtSendmessage.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSendmessage_KeyDown);
             this.txtSendmessage.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtSendmessage_KeyUp);
+            // 
+            // lbChatrooms
+            // 
+            this.lbChatrooms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbChatrooms.FormattingEnabled = true;
+            this.lbChatrooms.Location = new System.Drawing.Point(0, 168);
+            this.lbChatrooms.Name = "lbChatrooms";
+            this.lbChatrooms.Size = new System.Drawing.Size(106, 184);
+            this.lbChatrooms.TabIndex = 9;
+            this.lbChatrooms.Click += new System.EventHandler(this.lbChatrooms_Click);
+            this.lbChatrooms.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
             // pnlErrMes
             // 
@@ -418,16 +436,15 @@
             this.beendenToolStripMenuItem.Text = "Quit";
             this.beendenToolStripMenuItem.Click += new System.EventHandler(this.beendenToolStripMenuItem_Click);
             // 
-            // lbChatrooms
+            // chkEnableImagePreview
             // 
-            this.lbChatrooms.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbChatrooms.FormattingEnabled = true;
-            this.lbChatrooms.Location = new System.Drawing.Point(0, 200);
-            this.lbChatrooms.Name = "lbChatrooms";
-            this.lbChatrooms.Size = new System.Drawing.Size(88, 184);
-            this.lbChatrooms.TabIndex = 9;
-            this.lbChatrooms.Click += new System.EventHandler(this.lbChatrooms_Click);
-            this.lbChatrooms.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            this.chkEnableImagePreview.AutoSize = true;
+            this.chkEnableImagePreview.Location = new System.Drawing.Point(8, 181);
+            this.chkEnableImagePreview.Name = "chkEnableImagePreview";
+            this.chkEnableImagePreview.Size = new System.Drawing.Size(100, 17);
+            this.chkEnableImagePreview.TabIndex = 10;
+            this.chkEnableImagePreview.Text = "Preview images";
+            this.chkEnableImagePreview.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -440,13 +457,12 @@
             this.Controls.Add(this.pnlToolbar);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MinimumSize = new System.Drawing.Size(390, 500);
+            this.MinimumSize = new System.Drawing.Size(360, 450);
             this.Name = "Form1";
             this.Text = "miniConf";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.Form1_PreviewKeyDown);
             this.pnlConfig.ResumeLayout(false);
@@ -499,6 +515,7 @@
         private System.Windows.Forms.ToolStripMenuItem searchForUpdatesToolStripMenuItem;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.CheckedListBox lbChatrooms;
+        private System.Windows.Forms.CheckBox chkEnableImagePreview;
     }
 }
 
