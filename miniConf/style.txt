@@ -21,7 +21,7 @@ p i {float:right; color: #aaa;}
 /* image previews */
 img.imprev { max-width: 150px; max-height: 150px; border: 1px solid äbbb; padding: 2px; }
 
-/* BEGIN comment these lines for compact layout *  /
+/* BEGIN comment these lines for compact layout */
 p.msg strong{display:block;width: 105px;float:left;text-align:right;} 
 p span {margin-left: 110px;display:block;}
 /* END */
