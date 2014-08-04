@@ -44,6 +44,7 @@
             this.lvOnlineStatus = new System.Windows.Forms.ListView();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.pnlToolbar = new System.Windows.Forms.Panel();
+            this.button4 = new System.Windows.Forms.Button();
             this.chkToggleSidebar = new System.Windows.Forms.CheckBox();
             this.txtSubject = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
@@ -51,7 +52,6 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.txtSendmessage = new System.Windows.Forms.TextBox();
-            this.lbChatrooms = new System.Windows.Forms.ListBox();
             this.pnlErrMes = new System.Windows.Forms.Panel();
             this.labErrMes = new System.Windows.Forms.Label();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
@@ -62,7 +62,7 @@
             this.enableSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.beendenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.button4 = new System.Windows.Forms.Button();
+            this.lbChatrooms = new System.Windows.Forms.CheckedListBox();
             this.pnlConfig.SuspendLayout();
             this.pnlToolbar.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -194,7 +194,7 @@
             this.lvOnlineStatus.Location = new System.Drawing.Point(0, 0);
             this.lvOnlineStatus.Name = "lvOnlineStatus";
             this.lvOnlineStatus.ShowItemToolTips = true;
-            this.lvOnlineStatus.Size = new System.Drawing.Size(88, 198);
+            this.lvOnlineStatus.Size = new System.Drawing.Size(88, 199);
             this.lvOnlineStatus.SmallImageList = this.imageList1;
             this.lvOnlineStatus.TabIndex = 8;
             this.lvOnlineStatus.UseCompatibleStateImageBehavior = false;
@@ -219,6 +219,18 @@
             this.pnlToolbar.Name = "pnlToolbar";
             this.pnlToolbar.Size = new System.Drawing.Size(382, 27);
             this.pnlToolbar.TabIndex = 6;
+            // 
+            // button4
+            // 
+            this.button4.BackColor = System.Drawing.SystemColors.Control;
+            this.button4.Image = ((System.Drawing.Image)(resources.GetObject("button4.Image")));
+            this.button4.Location = new System.Drawing.Point(7, 2);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(25, 23);
+            this.button4.TabIndex = 5;
+            this.button4.Text = "=";
+            this.button4.UseVisualStyleBackColor = false;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // chkToggleSidebar
             // 
@@ -317,18 +329,6 @@
             this.txtSendmessage.TabIndex = 6;
             this.txtSendmessage.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtSendmessage_KeyUp);
             // 
-            // lbChatrooms
-            // 
-            this.lbChatrooms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbChatrooms.FormattingEnabled = true;
-            this.lbChatrooms.Location = new System.Drawing.Point(0, 199);
-            this.lbChatrooms.Name = "lbChatrooms";
-            this.lbChatrooms.Size = new System.Drawing.Size(88, 186);
-            this.lbChatrooms.TabIndex = 4;
-            this.lbChatrooms.Click += new System.EventHandler(this.lbChatrooms_Click);
-            this.lbChatrooms.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
-            // 
             // pnlErrMes
             // 
             this.pnlErrMes.BackColor = System.Drawing.Color.Firebrick;
@@ -418,17 +418,16 @@
             this.beendenToolStripMenuItem.Text = "Quit";
             this.beendenToolStripMenuItem.Click += new System.EventHandler(this.beendenToolStripMenuItem_Click);
             // 
-            // button4
+            // lbChatrooms
             // 
-            this.button4.BackColor = System.Drawing.SystemColors.Control;
-            this.button4.Image = ((System.Drawing.Image)(resources.GetObject("button4.Image")));
-            this.button4.Location = new System.Drawing.Point(7, 2);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(25, 23);
-            this.button4.TabIndex = 5;
-            this.button4.Text = "=";
-            this.button4.UseVisualStyleBackColor = false;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.lbChatrooms.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbChatrooms.FormattingEnabled = true;
+            this.lbChatrooms.Location = new System.Drawing.Point(0, 200);
+            this.lbChatrooms.Name = "lbChatrooms";
+            this.lbChatrooms.Size = new System.Drawing.Size(88, 184);
+            this.lbChatrooms.TabIndex = 9;
+            this.lbChatrooms.Click += new System.EventHandler(this.lbChatrooms_Click);
+            this.lbChatrooms.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
             // Form1
             // 
@@ -477,7 +476,6 @@
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.TextBox txtSendmessage;
         private System.Windows.Forms.WebBrowser webBrowser1;
-        private System.Windows.Forms.ListBox lbChatrooms;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ListView lvOnlineStatus;
         private System.Windows.Forms.Label label3;
@@ -500,6 +498,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem searchForUpdatesToolStripMenuItem;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.CheckedListBox lbChatrooms;
     }
 }
 
