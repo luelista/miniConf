@@ -35,7 +35,9 @@
             this.txtPrefPassword = new System.Windows.Forms.TextBox();
             this.txtChatrooms = new System.Windows.Forms.TextBox();
             this.pnlConfig = new System.Windows.Forms.Panel();
-            this.button3 = new System.Windows.Forms.Button();
+            this.chkSternchen = new System.Windows.Forms.CheckBox();
+            this.chkEnableImagePreview = new System.Windows.Forms.CheckBox();
+            this.btnRegister = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
@@ -54,17 +56,21 @@
             this.txtSendmessage = new System.Windows.Forms.TextBox();
             this.lbChatrooms = new System.Windows.Forms.CheckedListBox();
             this.pnlErrMes = new System.Windows.Forms.Panel();
+            this.btnCancelReconnect = new System.Windows.Forms.Button();
             this.labErrMes = new System.Windows.Forms.Label();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openMiniConfToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.enableNotificationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.enablePopupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.enableSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.beendenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chkEnableImagePreview = new System.Windows.Forms.CheckBox();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tmrReconnect = new System.Windows.Forms.Timer(this.components);
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            this.tmrBlinky = new System.Windows.Forms.Timer(this.components);
             this.pnlConfig.SuspendLayout();
             this.pnlToolbar.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -115,8 +121,9 @@
             // pnlConfig
             // 
             this.pnlConfig.BackColor = System.Drawing.Color.Gold;
+            this.pnlConfig.Controls.Add(this.chkSternchen);
             this.pnlConfig.Controls.Add(this.chkEnableImagePreview);
-            this.pnlConfig.Controls.Add(this.button3);
+            this.pnlConfig.Controls.Add(this.btnRegister);
             this.pnlConfig.Controls.Add(this.label4);
             this.pnlConfig.Controls.Add(this.label3);
             this.pnlConfig.Controls.Add(this.button2);
@@ -133,15 +140,38 @@
             this.pnlConfig.TabIndex = 5;
             this.pnlConfig.Visible = false;
             // 
-            // button3
+            // chkSternchen
             // 
-            this.button3.BackColor = System.Drawing.SystemColors.Control;
-            this.button3.Location = new System.Drawing.Point(285, 149);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(89, 22);
-            this.button3.TabIndex = 9;
-            this.button3.Text = "Create Account";
-            this.button3.UseVisualStyleBackColor = false;
+            this.chkSternchen.AutoSize = true;
+            this.chkSternchen.Location = new System.Drawing.Point(117, 181);
+            this.chkSternchen.Name = "chkSternchen";
+            this.chkSternchen.Size = new System.Drawing.Size(30, 17);
+            this.chkSternchen.TabIndex = 11;
+            this.chkSternchen.Text = "*";
+            this.chkSternchen.UseVisualStyleBackColor = true;
+            this.chkSternchen.CheckedChanged += new System.EventHandler(this.chkSternchen_CheckedChanged);
+            // 
+            // chkEnableImagePreview
+            // 
+            this.chkEnableImagePreview.AutoSize = true;
+            this.chkEnableImagePreview.Location = new System.Drawing.Point(8, 181);
+            this.chkEnableImagePreview.Name = "chkEnableImagePreview";
+            this.chkEnableImagePreview.Size = new System.Drawing.Size(100, 17);
+            this.chkEnableImagePreview.TabIndex = 10;
+            this.chkEnableImagePreview.Text = "Preview images";
+            this.chkEnableImagePreview.UseVisualStyleBackColor = true;
+            // 
+            // btnRegister
+            // 
+            this.btnRegister.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRegister.BackColor = System.Drawing.SystemColors.Control;
+            this.btnRegister.Location = new System.Drawing.Point(285, 149);
+            this.btnRegister.Name = "btnRegister";
+            this.btnRegister.Size = new System.Drawing.Size(89, 22);
+            this.btnRegister.TabIndex = 9;
+            this.btnRegister.Text = "Create Account";
+            this.btnRegister.UseVisualStyleBackColor = false;
+            this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
             // 
             // label4
             // 
@@ -198,7 +228,7 @@
             this.lvOnlineStatus.Location = new System.Drawing.Point(0, 0);
             this.lvOnlineStatus.Name = "lvOnlineStatus";
             this.lvOnlineStatus.ShowItemToolTips = true;
-            this.lvOnlineStatus.Size = new System.Drawing.Size(106, 167);
+            this.lvOnlineStatus.Size = new System.Drawing.Size(106, 209);
             this.lvOnlineStatus.SmallImageList = this.imageList1;
             this.lvOnlineStatus.TabIndex = 8;
             this.lvOnlineStatus.UseCompatibleStateImageBehavior = false;
@@ -212,6 +242,7 @@
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             this.imageList1.Images.SetKeyName(0, "off");
             this.imageList1.Images.SetKeyName(1, "online");
+            this.imageList1.Images.SetKeyName(2, "red");
             // 
             // pnlToolbar
             // 
@@ -341,16 +372,17 @@
             this.lbChatrooms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lbChatrooms.FormattingEnabled = true;
-            this.lbChatrooms.Location = new System.Drawing.Point(0, 168);
+            this.lbChatrooms.Location = new System.Drawing.Point(0, 213);
             this.lbChatrooms.Name = "lbChatrooms";
-            this.lbChatrooms.Size = new System.Drawing.Size(106, 184);
+            this.lbChatrooms.Size = new System.Drawing.Size(106, 139);
             this.lbChatrooms.TabIndex = 9;
+            this.lbChatrooms.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lbChatrooms_ItemCheck);
             this.lbChatrooms.Click += new System.EventHandler(this.lbChatrooms_Click);
-            this.lbChatrooms.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
             // pnlErrMes
             // 
             this.pnlErrMes.BackColor = System.Drawing.Color.Firebrick;
+            this.pnlErrMes.Controls.Add(this.btnCancelReconnect);
             this.pnlErrMes.Controls.Add(this.labErrMes);
             this.pnlErrMes.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlErrMes.Location = new System.Drawing.Point(0, 27);
@@ -358,6 +390,17 @@
             this.pnlErrMes.Size = new System.Drawing.Size(382, 38);
             this.pnlErrMes.TabIndex = 8;
             this.pnlErrMes.Visible = false;
+            // 
+            // btnCancelReconnect
+            // 
+            this.btnCancelReconnect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancelReconnect.Location = new System.Drawing.Point(357, 6);
+            this.btnCancelReconnect.Name = "btnCancelReconnect";
+            this.btnCancelReconnect.Size = new System.Drawing.Size(22, 23);
+            this.btnCancelReconnect.TabIndex = 1;
+            this.btnCancelReconnect.Text = "X";
+            this.btnCancelReconnect.UseVisualStyleBackColor = true;
+            this.btnCancelReconnect.Click += new System.EventHandler(this.btnCancelReconnect_Click);
             // 
             // labErrMes
             // 
@@ -376,6 +419,7 @@
             this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
             this.notifyIcon1.Text = "miniConf";
             this.notifyIcon1.Visible = true;
+            this.notifyIcon1.BalloonTipClicked += new System.EventHandler(this.notifyIcon1_BalloonTipClicked);
             this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseClick);
             // 
             // contextMenuStrip1
@@ -383,26 +427,28 @@
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openMiniConfToolStripMenuItem,
             this.searchForUpdatesToolStripMenuItem,
-            this.enableNotificationsToolStripMenuItem,
-            this.enableSoundToolStripMenuItem,
             this.helpToolStripMenuItem,
+            this.toolStripMenuItem2,
+            this.enableNotificationsToolStripMenuItem,
+            this.enablePopupToolStripMenuItem,
+            this.enableSoundToolStripMenuItem,
             this.toolStripMenuItem1,
             this.beendenToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(168, 164);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(167, 170);
             // 
             // openMiniConfToolStripMenuItem
             // 
             this.openMiniConfToolStripMenuItem.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.openMiniConfToolStripMenuItem.Name = "openMiniConfToolStripMenuItem";
-            this.openMiniConfToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.openMiniConfToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.openMiniConfToolStripMenuItem.Text = "Open miniConf";
             this.openMiniConfToolStripMenuItem.Click += new System.EventHandler(this.openMiniConfToolStripMenuItem_Click);
             // 
             // searchForUpdatesToolStripMenuItem
             // 
             this.searchForUpdatesToolStripMenuItem.Name = "searchForUpdatesToolStripMenuItem";
-            this.searchForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.searchForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.searchForUpdatesToolStripMenuItem.Text = "Search for updates";
             this.searchForUpdatesToolStripMenuItem.Click += new System.EventHandler(this.searchForUpdatesToolStripMenuItem_Click);
             // 
@@ -412,9 +458,17 @@
             this.enableNotificationsToolStripMenuItem.CheckOnClick = true;
             this.enableNotificationsToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.enableNotificationsToolStripMenuItem.Name = "enableNotificationsToolStripMenuItem";
-            this.enableNotificationsToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
-            this.enableNotificationsToolStripMenuItem.Text = "Enable notifications";
+            this.enableNotificationsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.enableNotificationsToolStripMenuItem.Text = "Enable balloon tips";
             this.enableNotificationsToolStripMenuItem.Click += new System.EventHandler(this.enableNotificationsToolStripMenuItem_Click);
+            // 
+            // enablePopupToolStripMenuItem
+            // 
+            this.enablePopupToolStripMenuItem.CheckOnClick = true;
+            this.enablePopupToolStripMenuItem.Name = "enablePopupToolStripMenuItem";
+            this.enablePopupToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.enablePopupToolStripMenuItem.Text = "Enable popup";
+            this.enablePopupToolStripMenuItem.Click += new System.EventHandler(this.enablePopupToolStripMenuItem_Click);
             // 
             // enableSoundToolStripMenuItem
             // 
@@ -422,38 +476,43 @@
             this.enableSoundToolStripMenuItem.CheckOnClick = true;
             this.enableSoundToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.enableSoundToolStripMenuItem.Name = "enableSoundToolStripMenuItem";
-            this.enableSoundToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.enableSoundToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.enableSoundToolStripMenuItem.Text = "Enable sound";
             this.enableSoundToolStripMenuItem.Click += new System.EventHandler(this.enableSoundToolStripMenuItem_Click);
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(164, 6);
-            // 
-            // beendenToolStripMenuItem
-            // 
-            this.beendenToolStripMenuItem.Name = "beendenToolStripMenuItem";
-            this.beendenToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
-            this.beendenToolStripMenuItem.Text = "Quit";
-            this.beendenToolStripMenuItem.Click += new System.EventHandler(this.beendenToolStripMenuItem_Click);
-            // 
-            // chkEnableImagePreview
-            // 
-            this.chkEnableImagePreview.AutoSize = true;
-            this.chkEnableImagePreview.Location = new System.Drawing.Point(8, 181);
-            this.chkEnableImagePreview.Name = "chkEnableImagePreview";
-            this.chkEnableImagePreview.Size = new System.Drawing.Size(100, 17);
-            this.chkEnableImagePreview.TabIndex = 10;
-            this.chkEnableImagePreview.Text = "Preview images";
-            this.chkEnableImagePreview.UseVisualStyleBackColor = true;
             // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.helpToolStripMenuItem.Text = "Help";
             this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(163, 6);
+            // 
+            // beendenToolStripMenuItem
+            // 
+            this.beendenToolStripMenuItem.Name = "beendenToolStripMenuItem";
+            this.beendenToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.beendenToolStripMenuItem.Text = "Quit";
+            this.beendenToolStripMenuItem.Click += new System.EventHandler(this.beendenToolStripMenuItem_Click);
+            // 
+            // tmrReconnect
+            // 
+            this.tmrReconnect.Interval = 5000;
+            this.tmrReconnect.Tick += new System.EventHandler(this.tmrReconnect_Tick);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(163, 6);
+            // 
+            // tmrBlinky
+            // 
+            this.tmrBlinky.Interval = 1000;
+            this.tmrBlinky.Tick += new System.EventHandler(this.tmrBlinky_Tick);
             // 
             // Form1
             // 
@@ -468,7 +527,8 @@
             this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(360, 450);
             this.Name = "Form1";
-            this.Text = "miniConf";
+            this.Text = "*miniConf";
+            this.Activated += new System.EventHandler(this.Form1_Activated);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -510,7 +570,7 @@
         private System.Windows.Forms.TextBox txtSubject;
         private System.Windows.Forms.CheckBox chkToggleSidebar;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button btnRegister;
         private System.Windows.Forms.Panel pnlErrMes;
         private System.Windows.Forms.Label labErrMes;
         private System.Windows.Forms.ImageList imageList1;
@@ -526,6 +586,12 @@
         private System.Windows.Forms.CheckedListBox lbChatrooms;
         private System.Windows.Forms.CheckBox chkEnableImagePreview;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        private System.Windows.Forms.Timer tmrReconnect;
+        private System.Windows.Forms.Button btnCancelReconnect;
+        private System.Windows.Forms.CheckBox chkSternchen;
+        private System.Windows.Forms.ToolStripMenuItem enablePopupToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
+        private System.Windows.Forms.Timer tmrBlinky;
     }
 }
 

@@ -19,13 +19,23 @@ namespace miniConf
         public Form1()
         {
             InitializeComponent();
+
+            popupWindow.OnItemClick += popupWindow_OnItemClick;
+            icon1 = this.Icon;  icon2 = Icon.FromHandle(new Bitmap(imageList1.Images[2]).GetHicon());
         }
 
         string dataDir;
+        Boolean loginError = true;
+        string balloonRoom = null;
+        UnreadMessageForm popupWindow = new UnreadMessageForm();
+
+        Icon icon1;
+        Icon icon2;
+
 
         #region Jabber Connection
 
-        XmppClientConnection conn;
+        XmppClientConnection conn = null;
         agsXMPP.protocol.x.muc.MucManager muc;
         cls_globPara glob;
         Chatlogs logs;
@@ -37,29 +47,62 @@ namespace miniConf
 
         private void jabberConnect()
         {
-            conn = new XmppClientConnection(txtPrefServer.Text, 5222);
-            conn.OnAuthError += conn_OnAuthError;
-            conn.OnXmppConnectionStateChanged += conn_OnXmppConnectionStateChanged;
-            conn.OnSocketError += conn_OnSocketError;
-            conn.OnError += conn_OnError;
-            conn.OnLogin += conn_OnLogin;
+            if (conn == null)
+            {
+                conn = new XmppClientConnection();
+                conn.OnAuthError += conn_OnAuthError;
+                conn.OnXmppConnectionStateChanged += conn_OnXmppConnectionStateChanged;
+                conn.OnSocketError += conn_OnSocketError;
+                conn.OnError += conn_OnError;
+                conn.OnLogin += conn_OnLogin;
+                muc = new agsXMPP.protocol.x.muc.MucManager(conn);
+
+                conn.OnPresence += conn_OnPresence;
+                conn.OnMessage += conn_OnMessage;
+            }
+            else
+            {
+                conn.Close(); Application.DoEvents();
+                System.Threading.Thread.Sleep(400); Application.DoEvents();
+            }
+
+            conn.Server = txtPrefServer.Text;
+            conn.Port = 5222;
             conn.Open(txtPrefUsername.Text, txtPrefPassword.Text, "miniConf-" + Environment.MachineName, 0);
 
-            muc = new agsXMPP.protocol.x.muc.MucManager(conn);
-
-            conn.OnPresence += conn_OnPresence;
-            conn.OnMessage += conn_OnMessage;
         }
 
         void conn_OnSocketError(object sender, Exception ex)
         {
-            MessageBox.Show("SOCKET ERR: " + ex.Message);
+            //MessageBox.Show("SOCKET ERR: " + ex.Message);
+            this.Invoke(new ParameterizedThreadStart(showConfigPanel), 
+                "Network error:\n" + ex.Message);
+            this.Invoke(new ThreadStart(checkReconnect));
         }
 
         void conn_OnXmppConnectionStateChanged(object sender, XmppConnectionState state)
         {
             Console.WriteLine("Conn State Changed: " + state.ToString());
             this.Invoke(new ThreadStart(updateWinTitle));
+            if (state == XmppConnectionState.Disconnected)
+            {
+                this.Invoke(new ThreadStart(checkReconnect));
+            }
+        }
+
+        private void checkReconnect()
+        {
+            if (!String.IsNullOrEmpty(txtPrefUsername.Text) && !loginError)
+            {
+                pnlErrMes.Show(); labErrMes.Text += "\nConnection closed. Trying to reconnect in 5 sec...";
+                tmrReconnect.Stop(); tmrReconnect.Start();
+            }
+        }
+
+        private void tmrReconnect_Tick(object sender, EventArgs e)
+        {
+            tmrReconnect.Stop(); labErrMes.Text = "\nConnection closed. Trying to reconnect ...";
+            jabberConnect();
         }
 
         void conn_OnAuthError(object sender, agsXMPP.Xml.Dom.Element e)
@@ -72,6 +115,7 @@ namespace miniConf
 
             }
             this.Invoke(new ParameterizedThreadStart(showConfigPanel), errMes );
+            tmrReconnect.Stop();
         }
 
         void conn_OnMessage(object sender, agsXMPP.protocol.client.Message msg)
@@ -96,12 +140,14 @@ namespace miniConf
 
         void conn_OnLogin(object sender)
         {
+            tmrReconnect.Stop();
             var rooms = txtChatrooms.Text.Split('\n');
             foreach (var room in rooms)
             {
                 joinRoom(room.Trim());
             }
             this.Invoke(new ThreadStart(hideConfigPanel));
+            loginError = false;
         }
 
         private void OnMucPresence(agsXMPP.protocol.client.Presence pres)
@@ -164,17 +210,28 @@ namespace miniConf
                 {
                     addMessageToView(msg.From.Resource, msg.GetTag("body"), DateTime.Parse(dt));
                 }
-                if (!msg.HasTag("delay"))
+                if (!msg.HasTag("delay") && glob.para("notifications__" + msg.From.Bare) != "FALSE")
                 {
                     if (enableSoundToolStripMenuItem.Checked)
                     {
                         SoundPlayer dingdong = new SoundPlayer("C:\\Windows\\Media\\chimes.wav");
                         dingdong.Play();
                     }
-                    if (enableNotificationsToolStripMenuItem.Checked && !String.IsNullOrEmpty(msg.GetTag("body")))
+                    if (!WindowHelper.IsActive(this) || currentRoom == null || currentRoom.roomName() != msg.From.Bare)
                     {
-                        notifyIcon1.ShowBalloonTip(30000, msg.From.Resource + " in " + msg.From.User + ":", msg.GetTag("body"), ToolTipIcon.Info);
+                        if(rooms.ContainsKey(msg.From.Bare)) rooms[msg.From.Bare].unreadMsgCount++;
+                        if (enablePopupToolStripMenuItem.Checked)
+                        {
+                            popupWindow.Show(); popupWindow.Activate(); popupWindow.updateRooms(rooms);
+                        }
+                        if (enableNotificationsToolStripMenuItem.Checked && !String.IsNullOrEmpty(msg.GetTag("body")))
+                        {
+                            balloonRoom = msg.From.Bare;
+                            notifyIcon1.ShowBalloonTip(30000, msg.From.Resource + " in " + msg.From.User + ":", msg.GetTag("body"), ToolTipIcon.Info);
+                        }
+
                     }
+                    if (!WindowHelper.IsActive(this)) tmrBlinky.Start();
                 }
             }
         }
@@ -225,7 +282,8 @@ namespace miniConf
 
         void conn_OnError(object sender, Exception ex)
         {
-            MessageBox.Show("ERROR: " + ex.Message);
+            //MessageBox.Show("ERROR: " + ex.Message);
+            Console.WriteLine("conn_OnError:" + ex.Message);
         }
 
 
@@ -263,6 +321,7 @@ namespace miniConf
 
             enableNotificationsToolStripMenuItem.Checked = glob.para("enableNotifications") != "FALSE";
             enableSoundToolStripMenuItem.Checked = glob.para("enableSound") != "FALSE";
+            enablePopupToolStripMenuItem.Checked = glob.para("enablePopup") == "TRUE";
 
             logs = new Chatlogs(dataDir + "chatlogs.db");
 
@@ -279,7 +338,8 @@ namespace miniConf
         private void updateWinTitle()
         {
 
-            this.Text = Application.ProductName + " " + Application.ProductVersion + ((conn!=null) ? (" (" + conn.XmppConnectionState.ToString() + ")") : "");
+            this.Text = (chkSternchen.Checked ? "*" : "") + Application.ProductName + " " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(2) + 
+                (currentRoom != null ? " | "+currentRoom.roomName() : "") + " | " + (conn != null ? (conn.XmppConnectionState == XmppConnectionState.SessionStarted ? conn.MyJID.ToString() : conn.XmppConnectionState.ToString()) : "NoConnection");
         }
 
         private void loadStylesheet()
@@ -301,6 +361,7 @@ namespace miniConf
 
         private void button2_Click(object sender, EventArgs e)
         {
+            loginError = true; 
             jabberConnect();
 
             pnlConfig.Visible = false;
@@ -380,6 +441,7 @@ namespace miniConf
             foreach (var r in rooms)
             {
                 lbChatrooms.Items.Add(r.Key);
+                if (glob.para("notifications__" + r.Key, "TRUE") == "TRUE") lbChatrooms.SetItemChecked(lbChatrooms.Items.Count - 1, true);
             }
             try {
                 lbChatrooms.SelectedItem = glob.para("currentRoom"); 
@@ -387,8 +449,9 @@ namespace miniConf
             catch (Exception ex) { }
         }
 
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void lbChatrooms_ItemCheck(object sender, ItemCheckEventArgs e)
         {
+            glob.setPara("notifications__" + lbChatrooms.Items[e.Index], (e.NewValue == CheckState.Checked) ? "TRUE" : "FALSE");
         }
 
         private void lbChatrooms_Click(object sender, EventArgs e)
@@ -410,8 +473,11 @@ namespace miniConf
             {
                 txtSubject.Text = logs.GetSubject(currentRoom.roomName());
                 glob.setPara("currentRoom", currentRoom.roomName());
+                currentRoom.unreadMsgCount = 0;
+                popupWindow.updateRooms(rooms);
+                addNoticeToView("Subject is: " + logs.GetSubject(currentRoom.roomName()));
+                updateWinTitle();
             }
-            addNoticeToView("Subject is: " + logs.GetSubject(currentRoom.roomName()));
             scrollDown();
         }
 
@@ -484,7 +550,7 @@ namespace miniConf
             //chkToggleSidebar.Text = splitContainer1.Panel2Collapsed ? "<" : ">";
         }
 
-        #endregion
+
 
         private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
@@ -543,12 +609,12 @@ namespace miniConf
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
-            
+
         }
 
         private void Form1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            
+
         }
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
@@ -603,13 +669,16 @@ namespace miniConf
         private void enableNotificationsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             glob.setPara("enableNotifications", ((ToolStripMenuItem)sender).Checked ? "TRUE" : "FALSE");
-
         }
 
         private void enableSoundToolStripMenuItem_Click(object sender, EventArgs e)
         {
             glob.setPara("enableSound", ((ToolStripMenuItem)sender).Checked ? "TRUE" : "FALSE");
+        }
 
+        private void enablePopupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            glob.setPara("enablePopup", ((ToolStripMenuItem)sender).Checked ? "TRUE" : "FALSE");
         }
 
         private void searchForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -647,6 +716,80 @@ namespace miniConf
         {
             System.Diagnostics.Process.Start("http://home.max-weller.de/programme/miniconf/hilfe/");
         }
+
+        private void btnCancelReconnect_Click(object sender, EventArgs e)
+        {
+            tmrReconnect.Stop(); pnlErrMes.Hide();
+        }
+
+        private void btnRegister_Click(object sender, EventArgs e)
+        {
+            var cn = new agsXMPP.XmppClientConnection(txtPrefServer.Text);
+            cn.RegisterAccount = true;
+
+            cn.OnLogin += (object sender2) =>
+            {
+                MessageBox.Show("Your account is registered now.", "Create Jabber account", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                cn.Close();
+            };
+            cn.OnAuthError += (object sender2, agsXMPP.Xml.Dom.Element e2) =>
+            {
+                MessageBox.Show("Error while registering acocunt: " + e2.ToString(), "Create Jabber account", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            };
+            cn.OnError += (object sender2, Exception e2) =>
+            {
+                MessageBox.Show("Error while registering acocunt: " + e2.ToString(), "Create Jabber account", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            };
+            cn.OnSocketError += (object sender2, Exception e2) =>
+            {
+                MessageBox.Show("Error while registering acocunt: " + e2.ToString(), "Create Jabber account", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            };
+
+            cn.Open(txtPrefUsername.Text, txtPrefPassword.Text);
+
+        }
+
+        private void chkSternchen_CheckedChanged(object sender, EventArgs e)
+        {
+            updateWinTitle();
+        }
+
+        #region Notifications
+        private void notifyIcon1_BalloonTipClicked(object sender, EventArgs e)
+        {
+            this.Show(); this.Activate(); lbChatrooms.SelectedItem = balloonRoom; lbChatrooms_Click(null, null);
+        }
+
+        private void Form1_Activated(object sender, EventArgs e)
+        {
+            if (currentRoom != null) currentRoom.unreadMsgCount = 0;
+            stopBlinky();
+        }
+
+        void popupWindow_OnItemClick(object sender, MouseEventArgs e, string chatroom)
+        {
+            this.Show(); this.Activate(); lbChatrooms.SelectedItem = chatroom; lbChatrooms_Click(null, null);
+        }
+
+        private void tmrBlinky_Tick(object sender, EventArgs e)
+        {
+            notifyIcon1.Icon = (DateTime.Now.Second % 2 == 0) ? icon1 : icon2;
+            this.Icon = notifyIcon1.Icon;
+        }
+        private void stopBlinky()
+        {
+            tmrBlinky.Stop(); notifyIcon1.Icon = icon1; this.Icon = icon1;
+        }
+        #endregion
+
+
+
+        #endregion
+
+
+
+
+
 
 
 
