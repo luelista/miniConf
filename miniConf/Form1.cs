@@ -314,7 +314,7 @@ namespace miniConf {
             try {
                 style = File.ReadAllText(appDir + "style-global.txt");
                 style2 = File.ReadAllText(appDir + "style.txt");
-                if (File.Exists(dataDir + "style.txt")) File.ReadAllText(dataDir + "style.txt");
+                if (File.Exists(dataDir + "style.txt")) style2 = File.ReadAllText(dataDir + "style.txt");
 
             } catch (Exception e) {
                 Console.WriteLine("Error loading stylesheet: " + e.Message);
