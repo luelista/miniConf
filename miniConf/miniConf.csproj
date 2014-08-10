@@ -100,6 +100,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="1407193497_18735.ico" />
+    <Content Include="style-global.txt" />
     <Content Include="style.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

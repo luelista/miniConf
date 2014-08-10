@@ -62,15 +62,16 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openMiniConfToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.enableNotificationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.enablePopupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.enableSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.beendenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tmrReconnect = new System.Windows.Forms.Timer(this.components);
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.tmrBlinky = new System.Windows.Forms.Timer(this.components);
+            this.comboMessageTheme = new System.Windows.Forms.ComboBox();
             this.pnlConfig.SuspendLayout();
             this.pnlToolbar.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -113,14 +114,15 @@
             this.txtChatrooms.Multiline = true;
             this.txtChatrooms.Name = "txtChatrooms";
             this.txtChatrooms.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtChatrooms.Size = new System.Drawing.Size(367, 78);
+            this.txtChatrooms.Size = new System.Drawing.Size(367, 80);
             this.txtChatrooms.TabIndex = 4;
-            this.txtChatrooms.Text = "teamtreff@chat.teamwiki.de/your_nickname_here";
+            this.txtChatrooms.Text = "feedback@chat.teamwiki.de/\r\nlounge@chat.teamwiki.de/";
             this.txtChatrooms.WordWrap = false;
             // 
             // pnlConfig
             // 
             this.pnlConfig.BackColor = System.Drawing.Color.Gold;
+            this.pnlConfig.Controls.Add(this.comboMessageTheme);
             this.pnlConfig.Controls.Add(this.chkSternchen);
             this.pnlConfig.Controls.Add(this.chkEnableImagePreview);
             this.pnlConfig.Controls.Add(this.btnRegister);
@@ -165,7 +167,7 @@
             // 
             this.btnRegister.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRegister.BackColor = System.Drawing.SystemColors.Control;
-            this.btnRegister.Location = new System.Drawing.Point(285, 149);
+            this.btnRegister.Location = new System.Drawing.Point(285, 152);
             this.btnRegister.Name = "btnRegister";
             this.btnRegister.Size = new System.Drawing.Size(89, 22);
             this.btnRegister.TabIndex = 9;
@@ -194,7 +196,7 @@
             // button2
             // 
             this.button2.BackColor = System.Drawing.SystemColors.Control;
-            this.button2.Location = new System.Drawing.Point(7, 149);
+            this.button2.Location = new System.Drawing.Point(7, 152);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(105, 22);
             this.button2.TabIndex = 1;
@@ -435,22 +437,34 @@
             this.toolStripMenuItem1,
             this.beendenToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(167, 170);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(175, 170);
             // 
             // openMiniConfToolStripMenuItem
             // 
             this.openMiniConfToolStripMenuItem.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.openMiniConfToolStripMenuItem.Name = "openMiniConfToolStripMenuItem";
-            this.openMiniConfToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.openMiniConfToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.openMiniConfToolStripMenuItem.Text = "Open miniConf";
             this.openMiniConfToolStripMenuItem.Click += new System.EventHandler(this.openMiniConfToolStripMenuItem_Click);
             // 
             // searchForUpdatesToolStripMenuItem
             // 
             this.searchForUpdatesToolStripMenuItem.Name = "searchForUpdatesToolStripMenuItem";
-            this.searchForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.searchForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.searchForUpdatesToolStripMenuItem.Text = "Search for updates";
             this.searchForUpdatesToolStripMenuItem.Click += new System.EventHandler(this.searchForUpdatesToolStripMenuItem_Click);
+            // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.helpToolStripMenuItem.Text = "Help";
+            this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(171, 6);
             // 
             // enableNotificationsToolStripMenuItem
             // 
@@ -458,7 +472,7 @@
             this.enableNotificationsToolStripMenuItem.CheckOnClick = true;
             this.enableNotificationsToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.enableNotificationsToolStripMenuItem.Name = "enableNotificationsToolStripMenuItem";
-            this.enableNotificationsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.enableNotificationsToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.enableNotificationsToolStripMenuItem.Text = "Enable balloon tips";
             this.enableNotificationsToolStripMenuItem.Click += new System.EventHandler(this.enableNotificationsToolStripMenuItem_Click);
             // 
@@ -466,7 +480,7 @@
             // 
             this.enablePopupToolStripMenuItem.CheckOnClick = true;
             this.enablePopupToolStripMenuItem.Name = "enablePopupToolStripMenuItem";
-            this.enablePopupToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.enablePopupToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.enablePopupToolStripMenuItem.Text = "Enable popup";
             this.enablePopupToolStripMenuItem.Click += new System.EventHandler(this.enablePopupToolStripMenuItem_Click);
             // 
@@ -476,26 +490,19 @@
             this.enableSoundToolStripMenuItem.CheckOnClick = true;
             this.enableSoundToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.enableSoundToolStripMenuItem.Name = "enableSoundToolStripMenuItem";
-            this.enableSoundToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.enableSoundToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.enableSoundToolStripMenuItem.Text = "Enable sound";
             this.enableSoundToolStripMenuItem.Click += new System.EventHandler(this.enableSoundToolStripMenuItem_Click);
-            // 
-            // helpToolStripMenuItem
-            // 
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
-            this.helpToolStripMenuItem.Text = "Help";
-            this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(163, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(171, 6);
             // 
             // beendenToolStripMenuItem
             // 
             this.beendenToolStripMenuItem.Name = "beendenToolStripMenuItem";
-            this.beendenToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.beendenToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.beendenToolStripMenuItem.Text = "Quit";
             this.beendenToolStripMenuItem.Click += new System.EventHandler(this.beendenToolStripMenuItem_Click);
             // 
@@ -504,15 +511,25 @@
             this.tmrReconnect.Interval = 5000;
             this.tmrReconnect.Tick += new System.EventHandler(this.tmrReconnect_Tick);
             // 
-            // toolStripMenuItem2
-            // 
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(163, 6);
-            // 
             // tmrBlinky
             // 
             this.tmrBlinky.Interval = 1000;
             this.tmrBlinky.Tick += new System.EventHandler(this.tmrBlinky_Tick);
+            // 
+            // comboMessageTheme
+            // 
+            this.comboMessageTheme.FormattingEnabled = true;
+            this.comboMessageTheme.Items.AddRange(new object[] {
+            "Default",
+            "Compact",
+            "Hanging_Indent",
+            "Conversations",
+            "Custom"});
+            this.comboMessageTheme.Location = new System.Drawing.Point(170, 179);
+            this.comboMessageTheme.Name = "comboMessageTheme";
+            this.comboMessageTheme.Size = new System.Drawing.Size(138, 21);
+            this.comboMessageTheme.TabIndex = 12;
+            this.comboMessageTheme.Visible = false;
             // 
             // Form1
             // 
@@ -592,6 +609,7 @@
         private System.Windows.Forms.ToolStripMenuItem enablePopupToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
         private System.Windows.Forms.Timer tmrBlinky;
+        private System.Windows.Forms.ComboBox comboMessageTheme;
     }
 }
 
