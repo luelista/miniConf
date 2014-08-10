@@ -57,6 +57,7 @@ Section "Program Files" SecProgFiles
   
   WriteRegStr HKEY_CURRENT_USER "Software\Microsoft\Windows\CurrentVersion\Run" "miniConf" "$INSTDIR\miniConf.exe /autostart"
 
+  DetailPrint "Starting miniConf ..."
   ShellExecAsUser::ShellExecAsUser "open" '$INSTDIR\miniConf.exe' 
 SectionEnd
 

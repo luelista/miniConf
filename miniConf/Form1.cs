@@ -22,6 +22,7 @@ namespace miniConf {
         }
 
         string dataDir;
+        string appDir;
         Boolean loginError = true;
         string balloonRoom = null;
         UnreadMessageForm popupWindow = new UnreadMessageForm();
@@ -277,6 +278,7 @@ namespace miniConf {
             //WinSparkle.win_sparkle_set_app_details("Company","App", "Version"); // THIS CALL NOT IMPLEMENTED YET
             WinSparkle.win_sparkle_init();
 
+            appDir = Path.GetDirectoryName(Application.ExecutablePath) + "\\";
             dataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\miniConf\\";
             System.IO.Directory.CreateDirectory(dataDir);
 
@@ -310,8 +312,8 @@ namespace miniConf {
         private void loadStylesheet() {
             string style = "", style2 = "";
             try {
-                style = File.ReadAllText("style-global.txt");
-                style2 = File.ReadAllText("style.txt");
+                style = File.ReadAllText(appDir + "style-global.txt");
+                style2 = File.ReadAllText(appDir + "style.txt");
                 if (File.Exists(dataDir + "style.txt")) File.ReadAllText(dataDir + "style.txt");
 
             } catch (Exception e) {
@@ -591,7 +593,7 @@ namespace miniConf {
                     break;
                 case Keys.Control | Keys.Shift | Keys.E:
                     if (!File.Exists(dataDir + "style.txt")) {
-                        File.Copy("style.txt", dataDir + "style.txt");
+                        File.Copy(appDir + "style.txt", dataDir + "style.txt");
                     }
                     System.Diagnostics.Process.Start(dataDir + "style.txt");
                     break;
