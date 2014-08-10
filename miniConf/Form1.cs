@@ -259,6 +259,7 @@ namespace miniConf
         private void joinRoom(string roomName, bool loadAllHistory = false)
         {
             Jid roomJid = new Jid(roomName);
+            if (String.IsNullOrEmpty(roomJid.Resource)) roomJid.Resource = txtPrefUsername.Text;
 
             logs.SetOnlineStatus(roomJid.Bare, "off");
 
@@ -331,10 +332,6 @@ namespace miniConf
             dataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\miniConf\\";
             System.IO.Directory.CreateDirectory(dataDir);
 
-            if (!File.Exists(dataDir + "style.txt"))
-            {
-                File.Copy("style.txt", dataDir + "style.txt");
-            }
             webBrowser1.Document.Write("<html><head><style id='st'></style></head>" +
                  "<body><p id='tb'>Eile mit Weile ...</p><div id='m'></div></body></html>");
             loadStylesheet();
@@ -368,14 +365,28 @@ namespace miniConf
 
         private void loadStylesheet()
         {
-            string style = File.ReadAllText(dataDir + "style.txt");
-            mshtml.IHTMLDocument3 doc = (mshtml.IHTMLDocument3)webBrowser1.Document.DomDocument;
-            mshtml.IHTMLStyleElement styleEl = (mshtml.IHTMLStyleElement)doc.getElementById("st");
-            styleEl.styleSheet.cssText = style;
+            string style = "", style2 = "";
+            try
+            {
+                style = File.ReadAllText("style-global.txt");
+                style2 = File.ReadAllText("style.txt");
+                if (File.Exists(dataDir + "style.txt")) File.ReadAllText(dataDir + "style.txt");
 
-            //.SetAttribute("cssText", style);
-            //webBrowser1.Document.GetElementById("st").
-             
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error loading stylesheet: " + e.Message);
+            }
+            try
+            {
+                mshtml.IHTMLDocument3 doc = (mshtml.IHTMLDocument3)webBrowser1.Document.DomDocument;
+                mshtml.IHTMLStyleElement styleEl = (mshtml.IHTMLStyleElement)doc.getElementById("st");
+                styleEl.styleSheet.cssText = style + "\n" + style2;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error applying stylesheet: " + e.Message);
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -670,6 +681,7 @@ namespace miniConf
         }
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
+            Console.WriteLine("ProcessCmdKey: " + msg.Msg);
             switch (keyData)
             {
                 case Keys.Control | Keys.Q:
@@ -697,6 +709,10 @@ namespace miniConf
                     loadStylesheet();
                     break;
                 case Keys.Control | Keys.Shift | Keys.E:
+                    if (!File.Exists(dataDir + "style.txt"))
+                    {
+                        File.Copy("style.txt", dataDir + "style.txt");
+                    }
                     System.Diagnostics.Process.Start(dataDir + "style.txt");
                     break;
             }

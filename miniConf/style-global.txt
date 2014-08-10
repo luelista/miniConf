@@ -1,0 +1,15 @@
+﻿
+/* styles for chat window */
+html,body {margin:0;padding: 0;}
+p{margin:0;padding:5px; border-bottom: 1px solid #ccc; font:9pt 'Segoe UI',sans-serif; color: #333; word-wrap: break-word;} 
+
+/* toolbar */
+p#tb {text-align:center;color:#777;}  
+
+/* clickable links in messages */
+a,a:visited {color:blue;text-decoration:none;} 
+a:hover{text-decoration:underline} 
+
+/* image previews */
+img.imprev { width: 90px; height: 90px; border: 1px solid #000; }
+
