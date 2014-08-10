@@ -1,4 +1,5 @@
 !include MUI2.nsh
+!addplugindir .\setups
 
 Name "miniConf"
 OutFile "setups\miniconf-1.0.exe"
@@ -17,9 +18,12 @@ ShowInstDetails show
   
   !insertmacro MUI_LANGUAGE "English"
 
-Section "Program Files" SecProgFiles
+Section "Program Files" SecProgFiles 
+  SectionIn RO
+
   SetOutPath "$INSTDIR"
-  
+  ExecWait "taskkill.exe /im miniConf.exe /f"
+
   File "miniConf\bin\Release\miniConf.exe"
   File "miniConf\bin\Release\*.dll"
   File "miniConf\bin\Release\*.txt"
@@ -28,7 +32,9 @@ Section "Program Files" SecProgFiles
   CreateShortcut "$SMPROGRAMS\miniConf.lnk" "$INSTDIR\miniConf.exe"
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   
-  WriteRegStr HKEY_CURRENT_USER "Software\Microsoft\Windows\CurrentVersion\Run" "miniConf" "$INSTDIR\miniConf.exe"
+  WriteRegStr HKEY_CURRENT_USER "Software\Microsoft\Windows\CurrentVersion\Run" "miniConf" "$INSTDIR\miniConf.exe /autostart"
+
+  ShellExecAsUser::ShellExecAsUser "open" '$INSTDIR\miniConf.exe' 
 SectionEnd
 
 Section "Uninstall"

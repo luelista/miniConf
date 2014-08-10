@@ -55,6 +55,7 @@ namespace miniConf
                 conn.OnSocketError += conn_OnSocketError;
                 conn.OnError += conn_OnError;
                 conn.OnLogin += conn_OnLogin;
+                conn.OnIq += conn_OnIq;
                 muc = new agsXMPP.protocol.x.muc.MucManager(conn);
 
                 conn.OnPresence += conn_OnPresence;
@@ -70,6 +71,21 @@ namespace miniConf
             conn.Port = 5222;
             conn.Open(txtPrefUsername.Text, txtPrefPassword.Text, "miniConf-" + Environment.MachineName, 0);
 
+        }
+
+        void conn_OnIq(object sender, agsXMPP.protocol.client.IQ iq)
+        {
+            Console.WriteLine("IQ: " + iq.ToString());
+            if (iq.Type == agsXMPP.protocol.client.IqType.get)
+            {
+                var ping = iq.SelectSingleElement("ping", "urn:xmpp:ping");
+                if (ping != null)
+                {
+                    var pong = new agsXMPP.protocol.client.IQ(agsXMPP.protocol.client.IqType.result, iq.To, iq.From);
+                    pong.Id = iq.Id;
+                    conn.Send(pong);
+                }
+            }
         }
 
         void conn_OnSocketError(object sender, Exception ex)
@@ -133,7 +149,7 @@ namespace miniConf
 
             if (pres.HasTag(typeof(agsXMPP.protocol.x.muc.User), true))
             {
-                Console.WriteLine("Is MUC Presence: " + pres.From + " ," + pres.To);
+                Console.WriteLine(" ... Is MUC Presence: " + pres.From + " ," + pres.To);
                 this.Invoke(new XmppPresenceDelegate(OnMucPresence), pres);
             }
         }
@@ -144,6 +160,7 @@ namespace miniConf
             var rooms = txtChatrooms.Text.Split('\n');
             foreach (var room in rooms)
             {
+                if (String.IsNullOrEmpty(room) || room.Trim() == "" || room.StartsWith("//") || room.StartsWith("-- ")) continue;
                 joinRoom(room.Trim());
             }
             this.Invoke(new ThreadStart(hideConfigPanel));
@@ -162,6 +179,15 @@ namespace miniConf
                 }
             }
 
+            // this is especially relevant for self presence stanzas... but irc.hackint.org
+            // doesn't mark self presences as such, so i moved it here
+            var roomname = pres.From.Bare;
+            if (!rooms.ContainsKey(roomname))
+            {
+                rooms.Add(roomname, new Roomdata(pres.From));
+                this.Invoke(new ThreadStart(updateRoomList));
+            }
+
             string online = "online";
             if (pres.Type == agsXMPP.protocol.client.PresenceType.unavailable) online = "off";
 
@@ -173,12 +199,6 @@ namespace miniConf
         }
         private void OnMucSelfPresence(agsXMPP.protocol.client.Presence pres, agsXMPP.Xml.Dom.Element xChild)
         {
-            var roomname = pres.From.Bare;
-            if (!rooms.ContainsKey(roomname))
-            {
-                rooms.Add(roomname, new Roomdata(pres.From));
-            }
-            this.Invoke(new ThreadStart(updateRoomList));
         }
 
         private void OnMucMessage(agsXMPP.protocol.client.Message msg)
@@ -244,8 +264,9 @@ namespace miniConf
 
             /// Setup Room
             agsXMPP.protocol.client.Presence MUCpresence = new agsXMPP.protocol.client.Presence();
-            MUCpresence.From = conn.MyJID;
+            //MUCpresence.From = conn.MyJID;
             MUCpresence.To = roomJid;
+
             var xMuc = new agsXMPP.protocol.x.muc.Muc();
             MUCpresence.AddChild(xMuc);
 
@@ -268,6 +289,10 @@ namespace miniConf
                 historyChild = new agsXMPP.protocol.x.muc.History(10000);
 
             xMuc.AddChild(historyChild);
+
+            //MUCpresence.SetAttribute("type", "groupchat");
+
+            Console.WriteLine("-> " + MUCpresence.ToString());
             conn.Send(MUCpresence);
 
         }
@@ -313,7 +338,6 @@ namespace miniConf
             webBrowser1.Document.Write("<html><head><style id='st'></style></head>" +
                  "<body><p id='tb'>Eile mit Weile ...</p><div id='m'></div></body></html>");
             loadStylesheet();
-
             
             glob = new cls_globPara(dataDir + "miniConf.ini");
             glob.readFormPos(this);
@@ -381,6 +405,17 @@ namespace miniConf
             }
         }
 
+
+        #region Form Events
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == WindowHelper.WM_SHOWME)
+            {
+                ShowMe();
+            }
+            base.WndProc(ref m);
+        }
+
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             glob.saveFormPos(this);
@@ -390,6 +425,23 @@ namespace miniConf
                 e.Cancel = true;
                 this.Hide();
             }
+        }
+        #endregion
+
+
+        public void ShowMe()
+        {
+            this.Show(); this.Activate();
+            if (WindowState == FormWindowState.Minimized)
+            {
+                WindowState = FormWindowState.Normal;
+            }
+            // get our current "TopMost" value (ours will always be false though)
+            bool top = TopMost;
+            // make our form jump to the top of everything
+            TopMost = true;
+            // set it back to whatever it was
+            TopMost = top;
         }
 
         private void addMessageToView(string from, string text, DateTime time, HtmlElementInsertionOrientation where = HtmlElementInsertionOrientation.BeforeEnd)
@@ -654,7 +706,7 @@ namespace miniConf
 
         private void openMiniConfToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.Show(); this.Activate();
+            ShowMe();
         }
 
         private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
@@ -757,7 +809,7 @@ namespace miniConf
         #region Notifications
         private void notifyIcon1_BalloonTipClicked(object sender, EventArgs e)
         {
-            this.Show(); this.Activate(); lbChatrooms.SelectedItem = balloonRoom; lbChatrooms_Click(null, null);
+            ShowMe(); lbChatrooms.SelectedItem = balloonRoom; lbChatrooms_Click(null, null);
         }
 
         private void Form1_Activated(object sender, EventArgs e)
@@ -768,7 +820,7 @@ namespace miniConf
 
         void popupWindow_OnItemClick(object sender, MouseEventArgs e, string chatroom)
         {
-            this.Show(); this.Activate(); lbChatrooms.SelectedItem = chatroom; lbChatrooms_Click(null, null);
+            ShowMe(); lbChatrooms.SelectedItem = chatroom; lbChatrooms_Click(null, null);
         }
 
         private void tmrBlinky_Tick(object sender, EventArgs e)
