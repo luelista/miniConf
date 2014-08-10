@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die mit einer Assembly verknüpft sind.
 [assembly: AssemblyTitle("miniConf")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Jabber Client for Easy Multi-User Conferencing")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("TeamWiki")]
 [assembly: AssemblyProduct("miniConf")]
 [assembly: AssemblyCopyright("Copyright © Max Weller 2014")]
 [assembly: AssemblyTrademark("max-weller.de")]
