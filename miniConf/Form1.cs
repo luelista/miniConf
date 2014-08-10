@@ -61,6 +61,8 @@ namespace miniConf {
                 System.Threading.Thread.Sleep(400); Application.DoEvents();
             }
 
+            if (String.IsNullOrEmpty(txtNickname.Text)) txtNickname.Text = txtPrefUsername.Text;
+
             conn.Server = txtPrefServer.Text;
             conn.Port = 5222;
             conn.Open(txtPrefUsername.Text, txtPrefPassword.Text, "miniConf-" + Environment.MachineName, 0);
@@ -215,7 +217,7 @@ namespace miniConf {
 
         private void joinRoom(string roomName, bool loadAllHistory = false) {
             Jid roomJid = new Jid(roomName);
-            if (String.IsNullOrEmpty(roomJid.Resource)) roomJid.Resource = txtPrefUsername.Text;
+            if (String.IsNullOrEmpty(roomJid.Resource)) roomJid.Resource = txtNickname.Text;
 
             logs.SetOnlineStatus(roomJid.Bare, "off");
 
@@ -707,6 +709,12 @@ namespace miniConf {
             tmrBlinky.Stop(); notifyIcon1.Icon = icon1; this.Icon = icon1;
         }
         #endregion
+
+        private void txtNickname_KeyUp(object sender, KeyEventArgs e) {
+            if (e.KeyCode == Keys.Enter) {
+                jabberConnect();
+            }
+        }
 
 
 

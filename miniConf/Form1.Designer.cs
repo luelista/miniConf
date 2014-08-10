@@ -72,6 +72,8 @@
             this.tmrReconnect = new System.Windows.Forms.Timer(this.components);
             this.tmrBlinky = new System.Windows.Forms.Timer(this.components);
             this.comboMessageTheme = new System.Windows.Forms.ComboBox();
+            this.txtNickname = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.pnlConfig.SuspendLayout();
             this.pnlToolbar.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -116,7 +118,7 @@
             this.txtChatrooms.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txtChatrooms.Size = new System.Drawing.Size(367, 80);
             this.txtChatrooms.TabIndex = 4;
-            this.txtChatrooms.Text = "feedback@chat.teamwiki.de/\r\nlounge@chat.teamwiki.de/";
+            this.txtChatrooms.Text = "feedback@chat.teamwiki.de\r\nlounge@chat.teamwiki.de";
             this.txtChatrooms.WordWrap = false;
             // 
             // pnlConfig
@@ -230,7 +232,7 @@
             this.lvOnlineStatus.Location = new System.Drawing.Point(0, 0);
             this.lvOnlineStatus.Name = "lvOnlineStatus";
             this.lvOnlineStatus.ShowItemToolTips = true;
-            this.lvOnlineStatus.Size = new System.Drawing.Size(106, 209);
+            this.lvOnlineStatus.Size = new System.Drawing.Size(106, 190);
             this.lvOnlineStatus.SmallImageList = this.imageList1;
             this.lvOnlineStatus.TabIndex = 8;
             this.lvOnlineStatus.UseCompatibleStateImageBehavior = false;
@@ -290,9 +292,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSubject.BackColor = System.Drawing.Color.DimGray;
             this.txtSubject.ForeColor = System.Drawing.Color.White;
-            this.txtSubject.Location = new System.Drawing.Point(38, 3);
+            this.txtSubject.Location = new System.Drawing.Point(36, 3);
             this.txtSubject.Name = "txtSubject";
-            this.txtSubject.Size = new System.Drawing.Size(270, 20);
+            this.txtSubject.Size = new System.Drawing.Size(272, 20);
             this.txtSubject.TabIndex = 3;
             // 
             // button1
@@ -331,6 +333,8 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.txtNickname);
+            this.splitContainer1.Panel2.Controls.Add(this.label5);
             this.splitContainer1.Panel2.Controls.Add(this.lvOnlineStatus);
             this.splitContainer1.Panel2.Controls.Add(this.lbChatrooms);
             this.splitContainer1.Panel2MinSize = 50;
@@ -531,6 +535,28 @@
             this.comboMessageTheme.TabIndex = 12;
             this.comboMessageTheme.Visible = false;
             // 
+            // txtNickname
+            // 
+            this.txtNickname.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtNickname.BackColor = System.Drawing.SystemColors.Window;
+            this.txtNickname.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.txtNickname.Location = new System.Drawing.Point(30, 191);
+            this.txtNickname.Name = "txtNickname";
+            this.txtNickname.Size = new System.Drawing.Size(75, 20);
+            this.txtNickname.TabIndex = 6;
+            this.txtNickname.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtNickname_KeyUp);
+            // 
+            // label5
+            // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(-1, 196);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(32, 13);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "Nick:";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -559,6 +585,7 @@
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
             this.splitContainer1.ResumeLayout(false);
             this.pnlErrMes.ResumeLayout(false);
             this.contextMenuStrip1.ResumeLayout(false);
@@ -610,6 +637,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
         private System.Windows.Forms.Timer tmrBlinky;
         private System.Windows.Forms.ComboBox comboMessageTheme;
+        private System.Windows.Forms.TextBox txtNickname;
+        private System.Windows.Forms.Label label5;
     }
 }
 
