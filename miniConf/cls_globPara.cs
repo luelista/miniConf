@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace miniConf
-{
+namespace miniConf {
 
     using Microsoft.VisualBasic;
     using System;
@@ -14,8 +13,7 @@ namespace miniConf
     using System.Diagnostics;
     using System.IO;
     using System.Windows.Forms;
-    public class cls_globPara
-    {
+    public class cls_globPara {
 
         //: ========== Globale Variablen ==========================================
 
@@ -27,12 +25,10 @@ namespace miniConf
 
         //: ========== Konstruktor + Destruktor ==================================
 
-        public cls_globPara(string fileSpec = "")
-        {
+        public cls_globPara(string fileSpec = "") {
             m_paraFileSpec = fileSpec;
-            
-            if (string.IsNullOrEmpty(m_paraFileSpec))
-            {
+
+            if (string.IsNullOrEmpty(m_paraFileSpec)) {
                 m_paraFileSpec = Path.ChangeExtension(Application.ExecutablePath, "para.txt");
             }
             string folder = Path.GetDirectoryName(m_paraFileSpec);
@@ -40,8 +36,7 @@ namespace miniConf
 
             readFile();
         }
-        ~cls_globPara()
-        {
+        ~cls_globPara() {
             saveParaFile();
             //base.Finalize();
         }
@@ -50,57 +45,44 @@ namespace miniConf
 
         //: ========== Haupteigenschaft ========================
 
-        public string para(string key)
-        {
+        public string para(string key) {
             return para(key, "");
         }
-        public string para(string key, string defaultValue)
-        {
+        public string para(string key, string defaultValue) {
             string functionReturnValue = null;
-            if (m_content.ContainsKey(key))
-            {
+            if (m_content.ContainsKey(key)) {
                 functionReturnValue = m_content[key];
-            }
-            else
-            {
+            } else {
                 functionReturnValue = defaultValue;
             }
             return functionReturnValue;
         }
-            
-        public void setPara(string key, string value)
-        {
-            if (m_content.ContainsKey(key))
-            {
+
+        public void setPara(string key, string value) {
+            if (m_content.ContainsKey(key)) {
                 m_content[key] = value;
-            }
-            else
-            {
+            } else {
                 m_content.Add(key, value);
             }
         }
-        
+
 
 
         //: ========== Hilfsfunktionen ========================
 
-        public string appPath()
-        {
+        public string appPath() {
             return fp(Path.GetDirectoryName(Application.ExecutablePath));
         }
-        public string fp(string path, string fileName = "")
-        {
+        public string fp(string path, string fileName = "") {
             return path + (path.EndsWith("\\") ? "" : "\\") + (fileName.StartsWith("\\") ? fileName.Substring(1) : fileName);
         }
 
-        public string fpUNIX(string path, string fileName = "")
-        {
+        public string fpUNIX(string path, string fileName = "") {
             return path + (path.EndsWith("/") ? "" : "/") + (fileName.StartsWith("/") ? fileName.Substring(1) : fileName);
         }
 
 
-        public bool Contains(string key)
-        {
+        public bool Contains(string key) {
             return m_content.ContainsKey(key);
 
         }
@@ -109,29 +91,23 @@ namespace miniConf
 
         //: ========== Form-Tools ========================
 
-        public void readFormPos(Form frm, bool readSize = true, string suffix = "")
-        {
-            try
-            {
+        public void readFormPos(Form frm, bool readSize = true, string suffix = "") {
+            try {
                 string paraName = frm.Name.ToLower() + "__" + "Rect" + suffix;
                 string[] formPos = Strings.Split(this.para(paraName), ";");
                 frm.Left = Convert.ToInt32(formPos[0]);
                 frm.Top = Convert.ToInt32(formPos[1]);
-                if (readSize)
-                {
+                if (readSize) {
                     frm.Width = Convert.ToInt32(formPos[2]);
                     frm.Height = Convert.ToInt32(formPos[3]);
                 }
 
 
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
             }
         }
 
-        public void saveFormPos(Form frm, string suffix = "")
-        {
+        public void saveFormPos(Form frm, string suffix = "") {
             string formPos = null;
 
             var _with1 = frm;
@@ -142,23 +118,19 @@ namespace miniConf
             this.setPara(paraName, formPos);
         }
 
-        public void readTuttiFrutti(ContainerControl frm)
-        {
+        public void readTuttiFrutti(ContainerControl frm) {
             recursive_readTuttiFrutti(frm, frm);
         }
-        public void saveTuttiFrutti(ContainerControl frm)
-        {
+        public void saveTuttiFrutti(ContainerControl frm) {
             recursive_saveTuttiFrutti(frm, frm);
         }
 
-        public void recursive_readTuttiFrutti(ContainerControl frm, Control ctrl)
-        {
+        public void recursive_readTuttiFrutti(ContainerControl frm, Control ctrl) {
             // ERROR: Not supported in C#: OnErrorStatement
 
             string typ = null;
             string prefix = frm.Name + "__";
-            foreach (Control subctrl in ctrl.Controls)
-            {
+            foreach (Control subctrl in ctrl.Controls) {
                 if (subctrl.Controls.Count > 0)
                     recursive_readTuttiFrutti(frm, subctrl);
                 typ = subctrl.GetType().ToString();
@@ -167,15 +139,11 @@ namespace miniConf
                 if (subctrl.Name.StartsWith("qq_"))
                     continue;
 
-                if (typ == "System.Windows.Forms.RadioButton")
-                {
+                if (typ == "System.Windows.Forms.RadioButton") {
                     string[] paras = Strings.Split(subctrl.Name, "__");
-                    if (this.para(prefix + paras[0]) == paras[1])
-                    {
+                    if (this.para(prefix + paras[0]) == paras[1]) {
                         ((RadioButton)subctrl).Checked = true;
-                    }
-                    else
-                    {
+                    } else {
                         ((RadioButton)subctrl).Checked = false;
                     }
                 }
@@ -184,20 +152,16 @@ namespace miniConf
                     continue;
                 Debug.Print("ja" + Constants.vbTab + subctrl.Name + Constants.vbTab + typ);
 
-                if (typ == "System.Windows.Forms.TextBox")
-                {
+                if (typ == "System.Windows.Forms.TextBox") {
                     subctrl.Text = this.para(prefix + subctrl.Name);
                 }
-                if (typ == "System.Windows.Forms.ComboBox")
-                {
+                if (typ == "System.Windows.Forms.ComboBox") {
                     subctrl.Text = this.para(prefix + subctrl.Name);
                 }
-                if (typ == "System.Windows.Forms.CheckBox")
-                {
+                if (typ == "System.Windows.Forms.CheckBox") {
                     ((CheckBox)subctrl).Checked = (this.para(prefix + subctrl.Name) == "TRUE");
                 }
-                if (typ == "System.Windows.Forms.SplitContainer")
-                {
+                if (typ == "System.Windows.Forms.SplitContainer") {
                     ((SplitContainer)subctrl).SplitterDistance = Convert.ToInt32(this.para(prefix + subctrl.Name));
                     ((SplitContainer)subctrl).Orientation = (Orientation)Convert.ToInt32(this.para(prefix + subctrl.Name + ".Or"));
                 }
@@ -207,40 +171,32 @@ namespace miniConf
                 }*/
             }
         }
-        public void recursive_saveTuttiFrutti(ContainerControl frm, Control ctrl)
-        {
+        public void recursive_saveTuttiFrutti(ContainerControl frm, Control ctrl) {
             // ERROR: Not supported in C#: OnErrorStatement
 
             string typ = null;
             string prefix = frm.Name + "__";
-            foreach (Control subctrl in ctrl.Controls)
-            {
+            foreach (Control subctrl in ctrl.Controls) {
                 if (subctrl.Name.StartsWith("qq_"))
                     continue;
                 typ = subctrl.GetType().ToString();
 
-                if (typ == "System.Windows.Forms.TextBox")
-                {
+                if (typ == "System.Windows.Forms.TextBox") {
                     this.setPara(prefix + subctrl.Name, ((TextBox)subctrl).Text);
                 }
-                if (typ == "System.Windows.Forms.ComboBox")
-                {
+                if (typ == "System.Windows.Forms.ComboBox") {
                     this.setPara(prefix + subctrl.Name, ((ComboBox)subctrl).Text);
                 }
-                if (typ == "System.Windows.Forms.CheckBox")
-                {
+                if (typ == "System.Windows.Forms.CheckBox") {
                     this.setPara(prefix + subctrl.Name, (((CheckBox)subctrl).Checked ? "TRUE" : "FALSE"));
                 }
-                if (typ == "System.Windows.Forms.SplitContainer")
-                {
+                if (typ == "System.Windows.Forms.SplitContainer") {
                     this.setPara(prefix + subctrl.Name, ((SplitContainer)subctrl).SplitterDistance.ToString());
                     this.setPara(prefix + subctrl.Name + ".Or", Convert.ToInt32(((SplitContainer)subctrl).Orientation).ToString());
                 }
-                if (typ == "System.Windows.Forms.RadioButton")
-                {
+                if (typ == "System.Windows.Forms.RadioButton") {
                     RadioButton radioBox = (RadioButton)subctrl;
-                    if (radioBox.Checked)
-                    {
+                    if (radioBox.Checked) {
                         string[] paras = Strings.Split(subctrl.Name, "__");
                         this.setPara(prefix + paras[0], paras[1]);
                     }
@@ -258,18 +214,15 @@ namespace miniConf
 
         //: ========== Private Funktionen ====================
 
-        private void readFile()
-        {
+        private void readFile() {
             if (!File.Exists(m_paraFileSpec))
                 return;
 
-            try
-            {
+            try {
                 string[] cont = Strings.Split(File.ReadAllText(m_paraFileSpec), Constants.vbNewLine);
 
                 string[] line = null;
-                foreach (string lineString in cont)
-                {
+                foreach (string lineString in cont) {
                     line = Strings.Split(lineString, tabDelimiter);
                     if (line.Length < 2)
                         continue;
@@ -280,27 +233,23 @@ namespace miniConf
                     //Stop
                 }
 
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Interaction.MsgBox("beim Laden der Einstellungen ist ein Fehler aufgetreten:" + Constants.vbNewLine + e.Message + Constants.vbNewLine + "(cls_globPara)");
             }
 
         }
 
-        public void saveParaFile()
-        {
+        public void saveParaFile() {
             string cont = "";
             string item = null;
 
-            foreach (string key in m_content.Keys)
-            {
+            foreach (string key in m_content.Keys) {
                 item = m_content[key];
                 item = Strings.Replace(item, Constants.vbNewLine, "|-ZS-|");
                 cont += key + tabDelimiter + item + tabDelimiter + Constants.vbNewLine;
             }
             //MsgBox(cont)
-            
+
             File.WriteAllText(m_paraFileSpec, cont);
         }
 
