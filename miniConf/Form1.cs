@@ -164,9 +164,13 @@ namespace miniConf {
             }
 
             string online = "online";
+            if (pres.HasTag("show")) online = pres.GetTag("show");
             if (pres.Type == agsXMPP.protocol.client.PresenceType.unavailable) online = "off";
 
-            logs.SetOnlineStatus(pres.From.Bare, pres.From.Resource, online, pres.MucUser.Item.Affiliation.ToString(), pres.MucUser.Item.Role.ToString());
+            string statusStr = "";
+            if (pres.HasTag("status")) statusStr = pres.GetTag("status");
+
+            logs.SetOnlineStatus(pres.From.Bare, pres.From.Resource, online, pres.MucUser.Item.Affiliation.ToString(), pres.MucUser.Item.Role.ToString(), statusStr);
             if (currentRoom != null && pres.From.Bare == currentRoom.jid.Bare) {
                 updateMemberList();
             }
@@ -466,7 +470,10 @@ namespace miniConf {
             foreach (System.Data.Common.DbDataRecord k in onlines) {
                 string nick = k.GetString(0);
                 var item = lvOnlineStatus.Items.Add(nick, k.GetString(2));
-                item.ToolTipText = k.GetString(2) + " - last seen: " + DateTime.FromBinary(k.GetInt64(1)).ToString() + " - affiliation: " + k.GetString(3) + " - role: " + k.GetString(4);
+                string statusStr = (k.IsDBNull(5)) ? "" : k.GetString(5);
+                item.ToolTipText = k.GetString(2) + " - last seen: " + DateTime.FromBinary(k.GetInt64(1)).ToString() + " - affiliation: " + k.GetString(3) + " - role: " + k.GetString(4) + " - status: " + statusStr;
+                item.SubItems.Add(statusStr);
+                item.Group = lvOnlineStatus.Groups[k.GetString(2) == "off" ? 1 : 0];
             }
         }
         private void clearMessageView() {
@@ -641,16 +648,23 @@ namespace miniConf {
 
         }
 
-        private void lvOnlineStatus_SelectedIndexChanged(object sender, EventArgs e) {
-
-        }
-
-        private void lvOnlineStatus_MouseDoubleClick(object sender, MouseEventArgs e) {
-            if (lvOnlineStatus.SelectedItems.Count == 0) return;
-            txtSendmessage.Text = lvOnlineStatus.SelectedItems[0].Text + ": " + txtSendmessage.Text;
+        private void prefixSendmessageBox(string prefix) {
+            txtSendmessage.Text = prefix + txtSendmessage.Text;
             txtSendmessage.Focus();
             txtSendmessage.SelectionLength = 0;
-            txtSendmessage.SelectionStart = lvOnlineStatus.SelectedItems[0].Text.Length + 2;
+            txtSendmessage.SelectionStart = prefix.Length;
+        }
+        private void lvOnlineStatus_MouseClick(object sender, MouseEventArgs e) {
+            if (e.Button == System.Windows.Forms.MouseButtons.Right) {
+                if (lvOnlineStatus.SelectedItems.Count == 0) return;
+                string prefix = "/msg \""+lvOnlineStatus.SelectedItems[0].Text + "\" ";
+                prefixSendmessageBox(prefix);
+            }
+        }
+        private void lvOnlineStatus_MouseDoubleClick(object sender, MouseEventArgs e) {
+            if (lvOnlineStatus.SelectedItems.Count == 0) return;
+            string prefix = lvOnlineStatus.SelectedItems[0].Text + ": ";
+            prefixSendmessageBox(prefix);
         }
 
         private void helpToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -687,6 +701,11 @@ namespace miniConf {
             updateWinTitle();
         }
 
+        private void chkDisplayOccupantStatus_CheckedChanged(object sender, EventArgs e) {
+            lvOnlineStatus.View = (chkDisplayOccupantStatus.Checked ?
+                View.Tile : View.SmallIcon);
+        }
+
         #region Notifications
         private void notifyIcon1_BalloonTipClicked(object sender, EventArgs e) {
             ShowMe(); lbChatrooms.SelectedItem = balloonRoom; lbChatrooms_Click(null, null);
@@ -719,6 +738,7 @@ namespace miniConf {
 
 
         #endregion
+
 
 
 
