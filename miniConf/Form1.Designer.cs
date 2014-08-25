@@ -29,12 +29,16 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Online", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Not available", System.Windows.Forms.HorizontalAlignment.Left);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.txtPrefServer = new System.Windows.Forms.TextBox();
             this.txtPrefUsername = new System.Windows.Forms.TextBox();
             this.txtPrefPassword = new System.Windows.Forms.TextBox();
             this.txtChatrooms = new System.Windows.Forms.TextBox();
             this.pnlConfig = new System.Windows.Forms.Panel();
+            this.chkDisplayOccupantStatus = new System.Windows.Forms.CheckBox();
+            this.comboMessageTheme = new System.Windows.Forms.ComboBox();
             this.chkSternchen = new System.Windows.Forms.CheckBox();
             this.chkEnableImagePreview = new System.Windows.Forms.CheckBox();
             this.btnRegister = new System.Windows.Forms.Button();
@@ -44,6 +48,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.lvOnlineStatus = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.pnlToolbar = new System.Windows.Forms.Panel();
             this.button4 = new System.Windows.Forms.Button();
@@ -54,6 +60,8 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.txtSendmessage = new System.Windows.Forms.TextBox();
+            this.txtNickname = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.lbChatrooms = new System.Windows.Forms.CheckedListBox();
             this.pnlErrMes = new System.Windows.Forms.Panel();
             this.btnCancelReconnect = new System.Windows.Forms.Button();
@@ -71,9 +79,6 @@
             this.beendenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tmrReconnect = new System.Windows.Forms.Timer(this.components);
             this.tmrBlinky = new System.Windows.Forms.Timer(this.components);
-            this.comboMessageTheme = new System.Windows.Forms.ComboBox();
-            this.txtNickname = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
             this.pnlConfig.SuspendLayout();
             this.pnlToolbar.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -124,6 +129,7 @@
             // pnlConfig
             // 
             this.pnlConfig.BackColor = System.Drawing.Color.Gold;
+            this.pnlConfig.Controls.Add(this.chkDisplayOccupantStatus);
             this.pnlConfig.Controls.Add(this.comboMessageTheme);
             this.pnlConfig.Controls.Add(this.chkSternchen);
             this.pnlConfig.Controls.Add(this.chkEnableImagePreview);
@@ -143,6 +149,32 @@
             this.pnlConfig.Size = new System.Drawing.Size(382, 208);
             this.pnlConfig.TabIndex = 5;
             this.pnlConfig.Visible = false;
+            // 
+            // chkDisplayOccupantStatus
+            // 
+            this.chkDisplayOccupantStatus.AutoSize = true;
+            this.chkDisplayOccupantStatus.Location = new System.Drawing.Point(153, 181);
+            this.chkDisplayOccupantStatus.Name = "chkDisplayOccupantStatus";
+            this.chkDisplayOccupantStatus.Size = new System.Drawing.Size(116, 17);
+            this.chkDisplayOccupantStatus.TabIndex = 13;
+            this.chkDisplayOccupantStatus.Text = "Display status texts";
+            this.chkDisplayOccupantStatus.UseVisualStyleBackColor = true;
+            this.chkDisplayOccupantStatus.CheckedChanged += new System.EventHandler(this.chkDisplayOccupantStatus_CheckedChanged);
+            // 
+            // comboMessageTheme
+            // 
+            this.comboMessageTheme.FormattingEnabled = true;
+            this.comboMessageTheme.Items.AddRange(new object[] {
+            "Default",
+            "Compact",
+            "Hanging_Indent",
+            "Conversations",
+            "Custom"});
+            this.comboMessageTheme.Location = new System.Drawing.Point(276, 179);
+            this.comboMessageTheme.Name = "comboMessageTheme";
+            this.comboMessageTheme.Size = new System.Drawing.Size(138, 21);
+            this.comboMessageTheme.TabIndex = 12;
+            this.comboMessageTheme.Visible = false;
             // 
             // chkSternchen
             // 
@@ -229,6 +261,18 @@
             this.lvOnlineStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.lvOnlineStatus.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2});
+            this.lvOnlineStatus.FullRowSelect = true;
+            listViewGroup1.Header = "Online";
+            listViewGroup1.Name = "online";
+            listViewGroup2.Header = "Not available";
+            listViewGroup2.Name = "off";
+            this.lvOnlineStatus.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
+            listViewGroup1,
+            listViewGroup2});
+            this.lvOnlineStatus.LargeImageList = this.imageList1;
             this.lvOnlineStatus.Location = new System.Drawing.Point(0, 0);
             this.lvOnlineStatus.Name = "lvOnlineStatus";
             this.lvOnlineStatus.ShowItemToolTips = true;
@@ -237,8 +281,18 @@
             this.lvOnlineStatus.TabIndex = 8;
             this.lvOnlineStatus.UseCompatibleStateImageBehavior = false;
             this.lvOnlineStatus.View = System.Windows.Forms.View.SmallIcon;
-            this.lvOnlineStatus.SelectedIndexChanged += new System.EventHandler(this.lvOnlineStatus_SelectedIndexChanged);
+            this.lvOnlineStatus.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lvOnlineStatus_MouseClick);
             this.lvOnlineStatus.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvOnlineStatus_MouseDoubleClick);
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Members";
+            this.columnHeader1.Width = 100;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Status Message";
+            this.columnHeader2.Width = 150;
             // 
             // imageList1
             // 
@@ -247,6 +301,10 @@
             this.imageList1.Images.SetKeyName(0, "off");
             this.imageList1.Images.SetKeyName(1, "online");
             this.imageList1.Images.SetKeyName(2, "red");
+            this.imageList1.Images.SetKeyName(3, "dnd");
+            this.imageList1.Images.SetKeyName(4, "away");
+            this.imageList1.Images.SetKeyName(5, "chat");
+            this.imageList1.Images.SetKeyName(6, "xa");
             // 
             // pnlToolbar
             // 
@@ -372,6 +430,28 @@
             this.txtSendmessage.TabIndex = 6;
             this.txtSendmessage.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSendmessage_KeyDown);
             this.txtSendmessage.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtSendmessage_KeyUp);
+            // 
+            // txtNickname
+            // 
+            this.txtNickname.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtNickname.BackColor = System.Drawing.SystemColors.Window;
+            this.txtNickname.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.txtNickname.Location = new System.Drawing.Point(30, 191);
+            this.txtNickname.Name = "txtNickname";
+            this.txtNickname.Size = new System.Drawing.Size(75, 20);
+            this.txtNickname.TabIndex = 6;
+            this.txtNickname.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtNickname_KeyUp);
+            // 
+            // label5
+            // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(-1, 196);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(32, 13);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "Nick:";
             // 
             // lbChatrooms
             // 
@@ -520,43 +600,6 @@
             this.tmrBlinky.Interval = 1000;
             this.tmrBlinky.Tick += new System.EventHandler(this.tmrBlinky_Tick);
             // 
-            // comboMessageTheme
-            // 
-            this.comboMessageTheme.FormattingEnabled = true;
-            this.comboMessageTheme.Items.AddRange(new object[] {
-            "Default",
-            "Compact",
-            "Hanging_Indent",
-            "Conversations",
-            "Custom"});
-            this.comboMessageTheme.Location = new System.Drawing.Point(170, 179);
-            this.comboMessageTheme.Name = "comboMessageTheme";
-            this.comboMessageTheme.Size = new System.Drawing.Size(138, 21);
-            this.comboMessageTheme.TabIndex = 12;
-            this.comboMessageTheme.Visible = false;
-            // 
-            // txtNickname
-            // 
-            this.txtNickname.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtNickname.BackColor = System.Drawing.SystemColors.Window;
-            this.txtNickname.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.txtNickname.Location = new System.Drawing.Point(30, 191);
-            this.txtNickname.Name = "txtNickname";
-            this.txtNickname.Size = new System.Drawing.Size(75, 20);
-            this.txtNickname.TabIndex = 6;
-            this.txtNickname.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtNickname_KeyUp);
-            // 
-            // label5
-            // 
-            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(-1, 196);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(32, 13);
-            this.label5.TabIndex = 10;
-            this.label5.Text = "Nick:";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -639,6 +682,9 @@
         private System.Windows.Forms.ComboBox comboMessageTheme;
         private System.Windows.Forms.TextBox txtNickname;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.CheckBox chkDisplayOccupantStatus;
     }
 }
 
