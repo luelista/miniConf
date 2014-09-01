@@ -13,3 +13,6 @@ a:hover{text-decoration:underline}
 /* image previews */
 img.imprev { width: 90px; height: 90px; border: 1px solid #000; }
 
+/* search result hightlight */
+em { background-color: #ffffaa; }
+

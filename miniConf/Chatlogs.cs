@@ -66,8 +66,12 @@ namespace miniConf {
                     this.ExecSQL("ALTER TABLE roommates ADD COLUMN status_str TEXT; ");
 
                 }
+                if (version < 4) {
+                    this.ExecSQL("ALTER TABLE roommates ADD COLUMN user_jid TEXT; ");
 
-                this.ExecSQL("PRAGMA user_version = 3; ");
+                }
+
+                this.ExecSQL("PRAGMA user_version = 4; ");
             } catch (Exception ex) {
                 MessageBox.Show("Datenbankfehler\n" + ex.Message);
             }
@@ -105,8 +109,8 @@ namespace miniConf {
             cmd.Parameters.AddWithValue("@name", room);
             return (string)cmd.ExecuteScalar();
         }
-        public void SetOnlineStatus(string room, string nickname, string onlinestate, string affil, string role, string statusStr) {
-            this.ExecSQL("INSERT OR REPLACE INTO roommates VALUES (?, ?, ?, ?, ?, ?, ?)", room, nickname, DateTime.Now.ToBinary(), onlinestate, affil, role, statusStr);
+        public void SetOnlineStatus(string room, string nickname, string onlinestate, string affil, string role, string statusStr, string jid) {
+            this.ExecSQL("INSERT OR REPLACE INTO roommates VALUES (?, ?, ?, ?, ?, ?, ?, ?)", room, nickname, DateTime.Now.ToBinary(), onlinestate, affil, role, statusStr, jid);
         }
         public void SetOnlineStatus(string room, string onlinestate) {
             this.ExecSQL("UPDATE roommates SET onlinestate = ? WHERE room = ? ", onlinestate, room);
@@ -114,7 +118,7 @@ namespace miniConf {
 
         public SQLiteDataReader GetMembers(string room) {
             var cmd = dataBase.CreateCommand();
-            cmd.CommandText = "SELECT nickname,lastseendt,onlinestate,affiliation,role,status_str FROM roommates WHERE room = @name;";
+            cmd.CommandText = "SELECT nickname,lastseendt,onlinestate,affiliation,role,status_str,user_jid FROM roommates WHERE room = @name;";
             cmd.Parameters.AddWithValue("@name", room);
             return cmd.ExecuteReader();
         }
@@ -130,6 +134,15 @@ namespace miniConf {
             var cmd = dataBase.CreateCommand();
             cmd.CommandText = "SELECT sender,messagebody,datedt FROM messages WHERE room = @name ORDER BY datedt DESC LIMIT @from, @count;";
             cmd.Parameters.AddWithValue("@name", room);
+            cmd.Parameters.AddWithValue("@count", maxcount);
+            cmd.Parameters.AddWithValue("@from", startingfrom);
+            return cmd.ExecuteReader();
+        }
+        public SQLiteDataReader GetFilteredLogs(string room, string filterStr, int startingfrom, int maxcount) {
+            var cmd = dataBase.CreateCommand();
+            cmd.CommandText = "SELECT sender,messagebody,datedt FROM messages WHERE room = @name AND messagebody LIKE @filterStr ORDER BY datedt DESC LIMIT @from, @count;";
+            cmd.Parameters.AddWithValue("@name", room);
+            cmd.Parameters.AddWithValue("@filterStr", "%"+filterStr+"%");
             cmd.Parameters.AddWithValue("@count", maxcount);
             cmd.Parameters.AddWithValue("@from", startingfrom);
             return cmd.ExecuteReader();
