@@ -58,7 +58,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
+            this.webBrowser1 = new miniConf.MessageView();
             this.txtSendmessage = new System.Windows.Forms.TextBox();
             this.txtNickname = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -79,6 +79,9 @@
             this.beendenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tmrReconnect = new System.Windows.Forms.Timer(this.components);
             this.tmrBlinky = new System.Windows.Forms.Timer(this.components);
+            this.filterBarPanel = new System.Windows.Forms.Panel();
+            this.filterBarCloseBtn = new System.Windows.Forms.Button();
+            this.filterTextbox = new System.Windows.Forms.TextBox();
             this.pnlConfig.SuspendLayout();
             this.pnlToolbar.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -87,6 +90,7 @@
             this.splitContainer1.SuspendLayout();
             this.pnlErrMes.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
+            this.filterBarPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtPrefServer
@@ -94,7 +98,7 @@
             this.txtPrefServer.Location = new System.Drawing.Point(8, 25);
             this.txtPrefServer.Name = "txtPrefServer";
             this.txtPrefServer.Size = new System.Drawing.Size(104, 20);
-            this.txtPrefServer.TabIndex = 0;
+            this.txtPrefServer.TabIndex = 1;
             this.txtPrefServer.Text = "teamwiki.de";
             // 
             // txtPrefUsername
@@ -102,7 +106,7 @@
             this.txtPrefUsername.Location = new System.Drawing.Point(117, 25);
             this.txtPrefUsername.Name = "txtPrefUsername";
             this.txtPrefUsername.Size = new System.Drawing.Size(125, 20);
-            this.txtPrefUsername.TabIndex = 1;
+            this.txtPrefUsername.TabIndex = 3;
             // 
             // txtPrefPassword
             // 
@@ -110,7 +114,7 @@
             this.txtPrefPassword.Name = "txtPrefPassword";
             this.txtPrefPassword.PasswordChar = '*';
             this.txtPrefPassword.Size = new System.Drawing.Size(125, 20);
-            this.txtPrefPassword.TabIndex = 2;
+            this.txtPrefPassword.TabIndex = 5;
             // 
             // txtChatrooms
             // 
@@ -122,7 +126,7 @@
             this.txtChatrooms.Name = "txtChatrooms";
             this.txtChatrooms.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txtChatrooms.Size = new System.Drawing.Size(367, 80);
-            this.txtChatrooms.TabIndex = 4;
+            this.txtChatrooms.TabIndex = 7;
             this.txtChatrooms.Text = "feedback@chat.teamwiki.de\r\nlounge@chat.teamwiki.de";
             this.txtChatrooms.WordWrap = false;
             // 
@@ -156,7 +160,7 @@
             this.chkDisplayOccupantStatus.Location = new System.Drawing.Point(153, 181);
             this.chkDisplayOccupantStatus.Name = "chkDisplayOccupantStatus";
             this.chkDisplayOccupantStatus.Size = new System.Drawing.Size(116, 17);
-            this.chkDisplayOccupantStatus.TabIndex = 13;
+            this.chkDisplayOccupantStatus.TabIndex = 12;
             this.chkDisplayOccupantStatus.Text = "Display status texts";
             this.chkDisplayOccupantStatus.UseVisualStyleBackColor = true;
             this.chkDisplayOccupantStatus.CheckedChanged += new System.EventHandler(this.chkDisplayOccupantStatus_CheckedChanged);
@@ -173,7 +177,7 @@
             this.comboMessageTheme.Location = new System.Drawing.Point(276, 179);
             this.comboMessageTheme.Name = "comboMessageTheme";
             this.comboMessageTheme.Size = new System.Drawing.Size(138, 21);
-            this.comboMessageTheme.TabIndex = 12;
+            this.comboMessageTheme.TabIndex = 13;
             this.comboMessageTheme.Visible = false;
             // 
             // chkSternchen
@@ -196,6 +200,7 @@
             this.chkEnableImagePreview.TabIndex = 10;
             this.chkEnableImagePreview.Text = "Preview images";
             this.chkEnableImagePreview.UseVisualStyleBackColor = true;
+            this.chkEnableImagePreview.CheckedChanged += new System.EventHandler(this.chkEnableImagePreview_CheckedChanged);
             // 
             // btnRegister
             // 
@@ -206,7 +211,7 @@
             this.btnRegister.Size = new System.Drawing.Size(89, 22);
             this.btnRegister.TabIndex = 9;
             this.btnRegister.Text = "Create Account";
-            this.btnRegister.UseVisualStyleBackColor = false;
+            this.btnRegister.UseVisualStyleBackColor = true;
             this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
             // 
             // label4
@@ -215,7 +220,7 @@
             this.label4.Location = new System.Drawing.Point(5, 52);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(60, 13);
-            this.label4.TabIndex = 8;
+            this.label4.TabIndex = 6;
             this.label4.Text = "Chatrooms:";
             // 
             // label3
@@ -224,7 +229,7 @@
             this.label3.Location = new System.Drawing.Point(247, 9);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(56, 13);
-            this.label3.TabIndex = 7;
+            this.label3.TabIndex = 4;
             this.label3.Text = "Password:";
             // 
             // button2
@@ -233,9 +238,9 @@
             this.button2.Location = new System.Drawing.Point(7, 152);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(105, 22);
-            this.button2.TabIndex = 1;
+            this.button2.TabIndex = 8;
             this.button2.Text = "OK";
-            this.button2.UseVisualStyleBackColor = false;
+            this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // label2
@@ -244,7 +249,7 @@
             this.label2.Location = new System.Drawing.Point(114, 9);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(58, 13);
-            this.label2.TabIndex = 6;
+            this.label2.TabIndex = 2;
             this.label2.Text = "Username:";
             // 
             // label1
@@ -253,7 +258,7 @@
             this.label1.Location = new System.Drawing.Point(5, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(41, 13);
-            this.label1.TabIndex = 5;
+            this.label1.TabIndex = 0;
             this.label1.Text = "Server:";
             // 
             // lvOnlineStatus
@@ -276,9 +281,9 @@
             this.lvOnlineStatus.Location = new System.Drawing.Point(0, 0);
             this.lvOnlineStatus.Name = "lvOnlineStatus";
             this.lvOnlineStatus.ShowItemToolTips = true;
-            this.lvOnlineStatus.Size = new System.Drawing.Size(106, 190);
+            this.lvOnlineStatus.Size = new System.Drawing.Size(106, 164);
             this.lvOnlineStatus.SmallImageList = this.imageList1;
-            this.lvOnlineStatus.TabIndex = 8;
+            this.lvOnlineStatus.TabIndex = 0;
             this.lvOnlineStatus.UseCompatibleStateImageBehavior = false;
             this.lvOnlineStatus.View = System.Windows.Forms.View.SmallIcon;
             this.lvOnlineStatus.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lvOnlineStatus_MouseClick);
@@ -325,10 +330,10 @@
             this.button4.Image = ((System.Drawing.Image)(resources.GetObject("button4.Image")));
             this.button4.Location = new System.Drawing.Point(7, 2);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(25, 23);
-            this.button4.TabIndex = 5;
+            this.button4.Size = new System.Drawing.Size(25, 25);
+            this.button4.TabIndex = 0;
             this.button4.Text = "=";
-            this.button4.UseVisualStyleBackColor = false;
+            this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // chkToggleSidebar
@@ -339,9 +344,9 @@
             this.chkToggleSidebar.Location = new System.Drawing.Point(362, 2);
             this.chkToggleSidebar.Name = "chkToggleSidebar";
             this.chkToggleSidebar.Size = new System.Drawing.Size(19, 23);
-            this.chkToggleSidebar.TabIndex = 4;
+            this.chkToggleSidebar.TabIndex = 3;
             this.chkToggleSidebar.Text = "<";
-            this.chkToggleSidebar.UseVisualStyleBackColor = false;
+            this.chkToggleSidebar.UseVisualStyleBackColor = true;
             this.chkToggleSidebar.CheckedChanged += new System.EventHandler(this.chkToggleSidebar_CheckedChanged);
             // 
             // txtSubject
@@ -353,7 +358,7 @@
             this.txtSubject.Location = new System.Drawing.Point(36, 3);
             this.txtSubject.Name = "txtSubject";
             this.txtSubject.Size = new System.Drawing.Size(272, 20);
-            this.txtSubject.TabIndex = 3;
+            this.txtSubject.TabIndex = 1;
             // 
             // button1
             // 
@@ -362,9 +367,9 @@
             this.button1.Location = new System.Drawing.Point(314, 2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(47, 23);
-            this.button1.TabIndex = 0;
+            this.button1.TabIndex = 2;
             this.button1.Text = "config";
-            this.button1.UseVisualStyleBackColor = false;
+            this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // panel3
@@ -373,7 +378,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(0, 273);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(382, 353);
+            this.panel3.Size = new System.Drawing.Size(382, 327);
             this.panel3.TabIndex = 7;
             // 
             // splitContainer1
@@ -396,13 +401,12 @@
             this.splitContainer1.Panel2.Controls.Add(this.lvOnlineStatus);
             this.splitContainer1.Panel2.Controls.Add(this.lbChatrooms);
             this.splitContainer1.Panel2MinSize = 50;
-            this.splitContainer1.Size = new System.Drawing.Size(382, 353);
+            this.splitContainer1.Size = new System.Drawing.Size(382, 327);
             this.splitContainer1.SplitterDistance = 272;
             this.splitContainer1.TabIndex = 9;
             // 
             // webBrowser1
             // 
-            this.webBrowser1.AllowNavigation = false;
             this.webBrowser1.AllowWebBrowserDrop = false;
             this.webBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
@@ -411,23 +415,23 @@
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
             this.webBrowser1.ScriptErrorsSuppressed = true;
-            this.webBrowser1.Size = new System.Drawing.Size(270, 286);
-            this.webBrowser1.TabIndex = 5;
+            this.webBrowser1.Size = new System.Drawing.Size(270, 260);
+            this.webBrowser1.TabIndex = 0;
             this.webBrowser1.Url = new System.Uri("about:blank", System.UriKind.Absolute);
-            this.webBrowser1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowser1_DocumentCompleted);
-            this.webBrowser1.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowser1_Navigating);
-            this.webBrowser1.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.webBrowser1_PreviewKeyDown);
+            this.webBrowser1.OnRealKeyDown += new System.Windows.Forms.HtmlElementEventHandler(this.webBrowser1_OnRealKeyDown);
+            this.webBrowser1.OnSpecialUrl += new miniConf.MessageView.SpecialUrlEvent(this.webBrowser1_OnSpecialUrl);
             // 
             // txtSendmessage
             // 
             this.txtSendmessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSendmessage.Location = new System.Drawing.Point(0, 292);
+            this.txtSendmessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
+            this.txtSendmessage.Location = new System.Drawing.Point(0, 266);
             this.txtSendmessage.Multiline = true;
             this.txtSendmessage.Name = "txtSendmessage";
             this.txtSendmessage.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtSendmessage.Size = new System.Drawing.Size(270, 61);
-            this.txtSendmessage.TabIndex = 6;
+            this.txtSendmessage.TabIndex = 1;
             this.txtSendmessage.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSendmessage_KeyDown);
             this.txtSendmessage.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtSendmessage_KeyUp);
             // 
@@ -437,20 +441,20 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtNickname.BackColor = System.Drawing.SystemColors.Window;
             this.txtNickname.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.txtNickname.Location = new System.Drawing.Point(30, 191);
+            this.txtNickname.Location = new System.Drawing.Point(30, 165);
             this.txtNickname.Name = "txtNickname";
             this.txtNickname.Size = new System.Drawing.Size(75, 20);
-            this.txtNickname.TabIndex = 6;
+            this.txtNickname.TabIndex = 2;
             this.txtNickname.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtNickname_KeyUp);
             // 
             // label5
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(-1, 196);
+            this.label5.Location = new System.Drawing.Point(-1, 170);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(32, 13);
-            this.label5.TabIndex = 10;
+            this.label5.TabIndex = 1;
             this.label5.Text = "Nick:";
             // 
             // lbChatrooms
@@ -458,10 +462,10 @@
             this.lbChatrooms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lbChatrooms.FormattingEnabled = true;
-            this.lbChatrooms.Location = new System.Drawing.Point(0, 213);
+            this.lbChatrooms.Location = new System.Drawing.Point(0, 187);
             this.lbChatrooms.Name = "lbChatrooms";
             this.lbChatrooms.Size = new System.Drawing.Size(106, 139);
-            this.lbChatrooms.TabIndex = 9;
+            this.lbChatrooms.TabIndex = 3;
             this.lbChatrooms.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lbChatrooms_ItemCheck);
             this.lbChatrooms.Click += new System.EventHandler(this.lbChatrooms_Click);
             // 
@@ -480,6 +484,8 @@
             // btnCancelReconnect
             // 
             this.btnCancelReconnect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancelReconnect.FlatAppearance.BorderSize = 0;
+            this.btnCancelReconnect.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancelReconnect.Location = new System.Drawing.Point(357, 6);
             this.btnCancelReconnect.Name = "btnCancelReconnect";
             this.btnCancelReconnect.Size = new System.Drawing.Size(22, 23);
@@ -600,6 +606,38 @@
             this.tmrBlinky.Interval = 1000;
             this.tmrBlinky.Tick += new System.EventHandler(this.tmrBlinky_Tick);
             // 
+            // filterBarPanel
+            // 
+            this.filterBarPanel.BackColor = System.Drawing.Color.DodgerBlue;
+            this.filterBarPanel.Controls.Add(this.filterBarCloseBtn);
+            this.filterBarPanel.Controls.Add(this.filterTextbox);
+            this.filterBarPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.filterBarPanel.Location = new System.Drawing.Point(0, 600);
+            this.filterBarPanel.Name = "filterBarPanel";
+            this.filterBarPanel.Size = new System.Drawing.Size(382, 26);
+            this.filterBarPanel.TabIndex = 9;
+            this.filterBarPanel.Visible = false;
+            // 
+            // filterBarCloseBtn
+            // 
+            this.filterBarCloseBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.filterBarCloseBtn.Location = new System.Drawing.Point(353, 1);
+            this.filterBarCloseBtn.Name = "filterBarCloseBtn";
+            this.filterBarCloseBtn.Size = new System.Drawing.Size(22, 23);
+            this.filterBarCloseBtn.TabIndex = 1;
+            this.filterBarCloseBtn.Text = "X";
+            this.filterBarCloseBtn.UseVisualStyleBackColor = true;
+            this.filterBarCloseBtn.Click += new System.EventHandler(this.filterBarCloseBtn_Click);
+            // 
+            // filterTextbox
+            // 
+            this.filterTextbox.Location = new System.Drawing.Point(10, 2);
+            this.filterTextbox.Name = "filterTextbox";
+            this.filterTextbox.Size = new System.Drawing.Size(207, 20);
+            this.filterTextbox.TabIndex = 0;
+            this.filterTextbox.TextChanged += new System.EventHandler(this.filterTextbox_TextChanged);
+            this.filterTextbox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.filterTextbox_KeyDown);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -609,6 +647,7 @@
             this.Controls.Add(this.pnlConfig);
             this.Controls.Add(this.pnlErrMes);
             this.Controls.Add(this.pnlToolbar);
+            this.Controls.Add(this.filterBarPanel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(360, 450);
@@ -618,8 +657,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
-            this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.Form1_PreviewKeyDown);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.pnlConfig.ResumeLayout(false);
             this.pnlConfig.PerformLayout();
             this.pnlToolbar.ResumeLayout(false);
@@ -632,6 +670,8 @@
             this.splitContainer1.ResumeLayout(false);
             this.pnlErrMes.ResumeLayout(false);
             this.contextMenuStrip1.ResumeLayout(false);
+            this.filterBarPanel.ResumeLayout(false);
+            this.filterBarPanel.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -647,7 +687,7 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.TextBox txtSendmessage;
-        private System.Windows.Forms.WebBrowser webBrowser1;
+        private MessageView webBrowser1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ListView lvOnlineStatus;
         private System.Windows.Forms.Label label3;
@@ -685,6 +725,9 @@
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.CheckBox chkDisplayOccupantStatus;
+        private System.Windows.Forms.Panel filterBarPanel;
+        private System.Windows.Forms.Button filterBarCloseBtn;
+        private System.Windows.Forms.TextBox filterTextbox;
     }
 }
 
