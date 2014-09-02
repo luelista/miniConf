@@ -17,11 +17,19 @@ namespace miniConf {
 
         public DirectMessageForm() {
             InitializeComponent();
+            messageView1.Navigate("about:blank");
         }
 
         private void DirectMessageForm_Load(object sender, EventArgs e) {
             messageView1.loadStylesheet(Program.appDir, Program.dataDir);
             
+        }
+
+        public void onNotice(string text) {
+            try {
+                messageView1.addNoticeToView(text);
+
+            } catch (NullReferenceException nu) { }
         }
 
         public void onMessage(agsXMPP.protocol.client.Message msg) {

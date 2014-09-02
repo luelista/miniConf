@@ -13,6 +13,8 @@ namespace miniConf {
         public static string dataDir;
         public static string appDir;
 
+        public static cls_globPara glob;
+
         /// <summary>
         /// Der Haupteinstiegspunkt für die Anwendung.
         /// </summary>

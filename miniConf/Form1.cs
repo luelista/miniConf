@@ -21,11 +21,13 @@ namespace miniConf {
             icon1 = this.Icon; icon2 = Icon.FromHandle(new Bitmap(imageList1.Images[2]).GetHicon());
         }
 
+        
         Boolean loginError = true;
         string balloonRoom = null;
         UnreadMessageForm popupWindow = new UnreadMessageForm();
         Dictionary<string, DirectMessageForm> dmSessions = new Dictionary<string, DirectMessageForm>();
         HashSet<string> onlineContacts = new HashSet<string>();
+        XmppDebugForm debugForm;
 
         Icon icon1;
         Icon icon2;
@@ -34,6 +36,7 @@ namespace miniConf {
         #region Jabber Connection
 
         agsXMPP.protocol.x.muc.MucManager muc;
+        Jingle jingle;
         cls_globPara glob;
         Chatlogs logs;
         Dictionary<string, Roomdata> rooms = new Dictionary<string, Roomdata>();
@@ -52,9 +55,17 @@ namespace miniConf {
                 Program.conn.OnLogin += conn_OnLogin;
                 Program.conn.OnIq += conn_OnIq;
                 muc = new agsXMPP.protocol.x.muc.MucManager(Program.conn);
+                jingle = new Jingle(Program.conn);
 
                 Program.conn.OnPresence += conn_OnPresence;
                 Program.conn.OnMessage += conn_OnMessage;
+
+                jingle.OnFileReceived += delegate(Jid fromJid, string filename, string status) {
+                    this.Invoke(new Jingle.OnFileReceivedEvent(jingle_OnFileReceived), fromJid, filename, status);
+                };
+
+                if (glob.para("showXmppDebugOnStartup", "FALSE") == "TRUE") ShowXmppDebugForm();
+
             } else {
                 Program.conn.Close(); Application.DoEvents();
                 System.Threading.Thread.Sleep(400); Application.DoEvents();
@@ -66,6 +77,11 @@ namespace miniConf {
             Program.conn.Port = 5222;
             Program.conn.Open(txtPrefUsername.Text, txtPrefPassword.Text, "miniConf-" + Environment.MachineName, 0);
 
+        }
+
+        void jingle_OnFileReceived(Jid fromJid, string filename, string status) {
+            var frm = MakeDmForm(fromJid);
+            frm.onNotice("Jingle file-transfer: " + fromJid.ToString() + ", " + filename + ", " + status);
         }
 
         void conn_OnIq(object sender, agsXMPP.protocol.client.IQ iq) {
@@ -247,6 +263,13 @@ namespace miniConf {
             }
         }
 
+        private void ShowXmppDebugForm() {
+            if (debugForm == null || !debugForm.IsDisposed) debugForm = new XmppDebugForm();
+            debugForm.Show();
+            debugForm.Activate();
+            glob.setPara("showXmppDebugOnStartup", "TRUE");
+        }
+
         void dmfrm_FormClosed(object sender, FormClosedEventArgs e) {
             dmSessions.Remove(((DirectMessageForm)sender).otherEnd.Bare);
         }
@@ -323,7 +346,7 @@ namespace miniConf {
             //WinSparkle.win_sparkle_set_app_details("Company","App", "Version"); // THIS CALL NOT IMPLEMENTED YET
             WinSparkle.win_sparkle_init();
 
-            glob = new cls_globPara(Program.dataDir + "miniConf.ini");
+            glob = new cls_globPara(Program.dataDir + "miniConf.ini"); Program.glob = glob;
             glob.readFormPos(this);
             glob.readTuttiFrutti(this);
 
@@ -491,7 +514,7 @@ namespace miniConf {
             if (e.KeyCode == Keys.A && e.Control) {
                 txtSendmessage.SelectAll();
             }
-            if (e.Control && (e.KeyCode != Keys.C && e.KeyCode != Keys.X && e.KeyCode != Keys.Z && e.KeyCode != Keys.V))
+            if (e.Control && (e.KeyCode != Keys.Back && e.KeyCode != Keys.C && e.KeyCode != Keys.X && e.KeyCode != Keys.Z && e.KeyCode != Keys.V))
                 e.SuppressKeyPress = true;
         }
 
@@ -557,6 +580,9 @@ namespace miniConf {
                     return true;
                 case Keys.F2:
                     try { lbChatrooms.SelectedIndex += 1; lbChatrooms_Click(null, null); } catch (Exception ex) { }
+                    return true;
+                case Keys.F9:
+                    ShowXmppDebugForm();
                     return true;
                 case Keys.Control | Keys.F:
                     filterBarPanel.Show();
