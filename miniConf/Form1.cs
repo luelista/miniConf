@@ -528,9 +528,10 @@ namespace miniConf {
             }
             if (e.KeyCode == Keys.A && e.Control) {
                 txtSendmessage.SelectAll();
-            }
-            if (e.Control && (e.KeyCode != Keys.Back && e.KeyCode != Keys.C && e.KeyCode != Keys.X && e.KeyCode != Keys.Z && e.KeyCode != Keys.V))
                 e.SuppressKeyPress = true;
+            }
+            //if (e.Control && (e.KeyCode == Keys.A))
+            //    e.SuppressKeyPress = true;
         }
 
 
