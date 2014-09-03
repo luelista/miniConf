@@ -24,6 +24,7 @@ namespace miniConf {
             appDir = Path.GetDirectoryName(Application.ExecutablePath) + "\\";
             dataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\miniConf\\";
             System.IO.Directory.CreateDirectory(dataDir);
+            System.IO.Directory.CreateDirectory(dataDir+"Received Files");
 
             singleInstanceMutex = new Mutex(true, "singleInstanceMutex@miniConf.max-weller.de");
             if (singleInstanceMutex.WaitOne(TimeSpan.Zero, true)) {

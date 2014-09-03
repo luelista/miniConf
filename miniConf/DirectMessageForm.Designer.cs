@@ -34,9 +34,9 @@
             // 
             this.panel1.Controls.Add(this.textBox1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 260);
+            this.panel1.Location = new System.Drawing.Point(0, 284);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(469, 75);
+            this.panel1.Size = new System.Drawing.Size(497, 75);
             this.panel1.TabIndex = 1;
             // 
             // textBox1
@@ -47,7 +47,7 @@
             this.textBox1.Location = new System.Drawing.Point(5, 6);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(442, 63);
+            this.textBox1.Size = new System.Drawing.Size(470, 63);
             this.textBox1.TabIndex = 0;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
@@ -58,7 +58,7 @@
             this.messageView1.Location = new System.Drawing.Point(0, 0);
             this.messageView1.MinimumSize = new System.Drawing.Size(20, 20);
             this.messageView1.Name = "messageView1";
-            this.messageView1.Size = new System.Drawing.Size(469, 260);
+            this.messageView1.Size = new System.Drawing.Size(497, 284);
             this.messageView1.TabIndex = 0;
             this.messageView1.Url = new System.Uri("about:blank", System.UriKind.Absolute);
             this.messageView1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.messageView1_DocumentCompleted);
@@ -67,7 +67,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(469, 335);
+            this.ClientSize = new System.Drawing.Size(497, 359);
             this.Controls.Add(this.messageView1);
             this.Controls.Add(this.panel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));

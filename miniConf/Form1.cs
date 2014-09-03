@@ -82,6 +82,21 @@ namespace miniConf {
         void jingle_OnFileReceived(Jid fromJid, string filename, string status) {
             var frm = MakeDmForm(fromJid);
             frm.onNotice("Jingle file-transfer: " + fromJid.ToString() + ", " + filename + ", " + status);
+            if (status == "done" && filename.EndsWith(".webp")) {
+                var dec = new Imazen.WebP.SimpleDecoder();
+                byte[] bytes = System.IO.File.ReadAllBytes(filename);
+                var img = dec.DecodeFromBytes(bytes, bytes.Length);
+                var jpgpath = System.IO.Path.ChangeExtension(filename, "jpg");
+                img.Save(jpgpath, System.Drawing.Imaging.ImageFormat.Jpeg);
+                /*var thumb = img.GetThumbnailImage(150, 150, null, IntPtr.Zero);
+                ImageConverter ic = new ImageConverter();
+                byte[] buffer = (byte[])ic.ConvertTo(thumb, typeof(byte[]));
+                var base64="data: Convert.ToBase64String(
+                    buffer,
+                    Base64FormattingOptions.InsertLineBreaks);*/
+
+                frm.onNotice("<img src=\"" + jpgpath + "\" style='width: 240px'>");
+            }
         }
 
         void conn_OnIq(object sender, agsXMPP.protocol.client.IQ iq) {
