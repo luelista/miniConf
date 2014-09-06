@@ -6,7 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace miniConf {
-    class Chatlogs {
+    public class Chatlogs {
         SQLiteConnection dataBase;
 
         public Chatlogs(string dbfile) {
@@ -21,30 +21,28 @@ namespace miniConf {
         }
 
         public void ExecSQL(string sql) {
-            var cmd = dataBase.CreateCommand();
-            cmd.CommandText = sql;
+            var cmd = this.BuildCommand(sql, new object[0]);
             cmd.ExecuteNonQuery();
-
         }
 
         public void ExecSQL(string sql, params object[] args) {
-            var cmd = dataBase.CreateCommand();
-            cmd.CommandText = sql;
-            foreach (var o in args) {
-                cmd.Parameters.Add(new SQLiteParameter(System.Data.DbType.Object, o));
-            }
+            var cmd = this.BuildCommand(sql, args);
             cmd.ExecuteNonQuery();
-
         }
 
         public object GetScalarSQL(string sql, params object[] args) {
+            var cmd = this.BuildCommand(sql, args);
+            return cmd.ExecuteScalar();
+        }
+        public SQLiteCommand BuildCommand(string sql, object[] args) {
             var cmd = dataBase.CreateCommand();
             cmd.CommandText = sql;
             foreach (var o in args) {
                 cmd.Parameters.Add(new SQLiteParameter(System.Data.DbType.Object, o));
             }
-            return cmd.ExecuteScalar();
+            return cmd;
         }
+
 
         public void CreateSchema() {
             long version = (long)this.GetScalarSQL("PRAGMA user_version;  ");
@@ -69,11 +67,12 @@ namespace miniConf {
                 if (version < 4) {
                     this.ExecSQL("ALTER TABLE roommates ADD COLUMN user_jid TEXT; ");
 
+                    // update db version number
+                    this.ExecSQL("PRAGMA user_version = 4; ");
                 }
 
-                this.ExecSQL("PRAGMA user_version = 4; ");
             } catch (Exception ex) {
-                MessageBox.Show("Datenbankfehler\n" + ex.Message);
+                MessageBox.Show("Database error\n" + ex.Message, "Updater", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 

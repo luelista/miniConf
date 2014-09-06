@@ -26,14 +26,15 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(XmppDebugForm));
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.textEditorControl1 = new ICSharpCode.TextEditor.TextEditorControl();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
             this.deleteSelectedTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -44,7 +45,8 @@
             // 
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
-            this.columnHeader2});
+            this.columnHeader2,
+            this.columnHeader3});
             this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView1.FullRowSelect = true;
             this.listView1.Location = new System.Drawing.Point(0, 0);
@@ -59,6 +61,10 @@
             // 
             this.columnHeader1.Text = "StanzaXML";
             this.columnHeader1.Width = 446;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Timestamp";
             // 
             // splitContainer1
             // 
@@ -78,10 +84,6 @@
             this.splitContainer1.Size = new System.Drawing.Size(618, 466);
             this.splitContainer1.SplitterDistance = 196;
             this.splitContainer1.TabIndex = 1;
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "Timestamp";
             // 
             // textEditorControl1
             // 
@@ -142,6 +144,11 @@
             this.deleteSelectedTemplateToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.deleteSelectedTemplateToolStripMenuItem.Text = "Delete selected template";
             // 
+            // columnHeader3
+            // 
+            this.columnHeader3.DisplayIndex = 0;
+            this.columnHeader3.Text = "StanzaType";
+            // 
             // XmppDebugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -175,5 +182,6 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton1;
         private System.Windows.Forms.ToolStripMenuItem deleteSelectedTemplateToolStripMenuItem;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
     }
 }

@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Online", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Not available", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Online", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Not available", System.Windows.Forms.HorizontalAlignment.Left);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.txtPrefServer = new System.Windows.Forms.TextBox();
             this.txtPrefUsername = new System.Windows.Forms.TextBox();
@@ -58,7 +58,6 @@
             this.button1 = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.webBrowser1 = new miniConf.MessageView();
             this.txtSendmessage = new System.Windows.Forms.TextBox();
             this.txtNickname = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -82,6 +81,8 @@
             this.filterBarPanel = new System.Windows.Forms.Panel();
             this.filterBarCloseBtn = new System.Windows.Forms.Button();
             this.filterTextbox = new System.Windows.Forms.TextBox();
+            this.webBrowser1 = new miniConf.MessageView();
+            this.chkFiletransferAutoAccept = new System.Windows.Forms.CheckBox();
             this.pnlConfig.SuspendLayout();
             this.pnlToolbar.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -133,6 +134,7 @@
             // pnlConfig
             // 
             this.pnlConfig.BackColor = System.Drawing.Color.Gold;
+            this.pnlConfig.Controls.Add(this.chkFiletransferAutoAccept);
             this.pnlConfig.Controls.Add(this.chkDisplayOccupantStatus);
             this.pnlConfig.Controls.Add(this.comboMessageTheme);
             this.pnlConfig.Controls.Add(this.chkSternchen);
@@ -270,13 +272,13 @@
             this.columnHeader1,
             this.columnHeader2});
             this.lvOnlineStatus.FullRowSelect = true;
-            listViewGroup1.Header = "Online";
-            listViewGroup1.Name = "online";
-            listViewGroup2.Header = "Not available";
-            listViewGroup2.Name = "off";
+            listViewGroup3.Header = "Online";
+            listViewGroup3.Name = "online";
+            listViewGroup4.Header = "Not available";
+            listViewGroup4.Name = "off";
             this.lvOnlineStatus.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1,
-            listViewGroup2});
+            listViewGroup3,
+            listViewGroup4});
             this.lvOnlineStatus.LargeImageList = this.imageList1;
             this.lvOnlineStatus.Location = new System.Drawing.Point(0, 0);
             this.lvOnlineStatus.Name = "lvOnlineStatus";
@@ -404,22 +406,6 @@
             this.splitContainer1.Size = new System.Drawing.Size(382, 327);
             this.splitContainer1.SplitterDistance = 272;
             this.splitContainer1.TabIndex = 9;
-            // 
-            // webBrowser1
-            // 
-            this.webBrowser1.AllowWebBrowserDrop = false;
-            this.webBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.webBrowser1.Location = new System.Drawing.Point(1, 3);
-            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.ScriptErrorsSuppressed = true;
-            this.webBrowser1.Size = new System.Drawing.Size(270, 260);
-            this.webBrowser1.TabIndex = 0;
-            this.webBrowser1.Url = new System.Uri("about:blank", System.UriKind.Absolute);
-            this.webBrowser1.OnRealKeyDown += new System.Windows.Forms.HtmlElementEventHandler(this.webBrowser1_OnRealKeyDown);
-            this.webBrowser1.OnSpecialUrl += new miniConf.MessageView.SpecialUrlEvent(this.webBrowser1_OnSpecialUrl);
             // 
             // txtSendmessage
             // 
@@ -638,6 +624,35 @@
             this.filterTextbox.TextChanged += new System.EventHandler(this.filterTextbox_TextChanged);
             this.filterTextbox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.filterTextbox_KeyDown);
             // 
+            // webBrowser1
+            // 
+            this.webBrowser1.AllowWebBrowserDrop = false;
+            this.webBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.webBrowser1.Location = new System.Drawing.Point(1, 3);
+            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser1.Name = "webBrowser1";
+            this.webBrowser1.ScriptErrorsSuppressed = true;
+            this.webBrowser1.Size = new System.Drawing.Size(270, 260);
+            this.webBrowser1.TabIndex = 0;
+            this.webBrowser1.Url = new System.Uri("about:blank", System.UriKind.Absolute);
+            this.webBrowser1.OnRealKeyDown += new System.Windows.Forms.HtmlElementEventHandler(this.webBrowser1_OnRealKeyDown);
+            this.webBrowser1.OnSpecialUrl += new miniConf.MessageView.SpecialUrlEvent(this.webBrowser1_OnSpecialUrl);
+            // 
+            // chkFiletransferAutoAccept
+            // 
+            this.chkFiletransferAutoAccept.AutoSize = true;
+            this.chkFiletransferAutoAccept.Checked = true;
+            this.chkFiletransferAutoAccept.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkFiletransferAutoAccept.Location = new System.Drawing.Point(275, 181);
+            this.chkFiletransferAutoAccept.Name = "chkFiletransferAutoAccept";
+            this.chkFiletransferAutoAccept.Size = new System.Drawing.Size(81, 17);
+            this.chkFiletransferAutoAccept.TabIndex = 14;
+            this.chkFiletransferAutoAccept.Text = "Accept files";
+            this.chkFiletransferAutoAccept.UseVisualStyleBackColor = true;
+            this.chkFiletransferAutoAccept.CheckedChanged += new System.EventHandler(this.chkFiletransferAutoAccept_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -728,6 +743,7 @@
         private System.Windows.Forms.Panel filterBarPanel;
         private System.Windows.Forms.Button filterBarCloseBtn;
         private System.Windows.Forms.TextBox filterTextbox;
+        private System.Windows.Forms.CheckBox chkFiletransferAutoAccept;
     }
 }
 
