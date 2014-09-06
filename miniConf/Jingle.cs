@@ -6,12 +6,16 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace miniConf {
     class Jingle {
 
         public delegate void OnFileReceivedEvent(Jid fromJid, string filename, string status);
         public event OnFileReceivedEvent OnFileReceived;
+
+
+        public bool AutoAccept = true;
 
         Dictionary<string, JingleSession> ongoingTransports = new Dictionary<string, JingleSession>();
 
@@ -29,9 +33,18 @@ namespace miniConf {
 
             switch (jingle.GetAttribute("action")) {
                 case "session-initiate":
+                    var ses = new JingleSession(iq, conn);
+
+                    var fileName = "";
+                    try { fileName = jingle.SelectSingleElement("file", true).GetTag("name"); } catch (Exception exx) { }
+                    if (!AutoAccept) { // && MessageBox.Show("Incoming File Transfer from " + iq.From.ToString() + "\n\n" +fileName, "Jingle file-transfer", MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.Cancel) {
+                        SendIqResult(iq);
+                        var sesTerm = ses.BuildSessionTerminate("decline");
+                        conn.Send(sesTerm);
+                        return;
+                    }
                     SendIqResult(iq);
 
-                    var ses = new JingleSession(iq, conn);
                     ongoingTransports[ses.transportSid] = ses;
                     ses.OnFileReceived += ses_OnFileReceived;
                     var ack = ses.BuildSessionAccept();
@@ -170,7 +183,7 @@ namespace miniConf {
                 return ack;
             }
 
-            public agsXMPP.protocol.client.IQ BuildSessionTerminate() {
+            public agsXMPP.protocol.client.IQ BuildSessionTerminate(string reason) {
                 var ack = new agsXMPP.protocol.client.IQ(agsXMPP.protocol.client.IqType.set, initiateIq.To, initiateIq.From);
                 ack.GenerateId();
                 var jingle = new Element("jingle", null, "urn:xmpp:jingle:1");
@@ -180,7 +193,7 @@ namespace miniConf {
                 jingle.Attributes["sid"] = initiateJingle.Attributes["sid"];
 
                 var content = new Element("reason");
-                content.AddTag("success");
+                content.AddTag(reason);
                 jingle.AddChild(content);
 
                 return ack;
@@ -252,7 +265,7 @@ namespace miniConf {
                 stream.Close();
                 client.Client.Close();
 
-                var sesTerm = BuildSessionTerminate();
+                var sesTerm = BuildSessionTerminate("success");
                 conn.Send(sesTerm);
 
                 if (OnFileReceived != null) OnFileReceived(initiateIq.From, filespec, "done");

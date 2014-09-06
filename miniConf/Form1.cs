@@ -81,8 +81,10 @@ namespace miniConf {
 
         void jingle_OnFileReceived(Jid fromJid, string filename, string status) {
             var frm = MakeDmForm(fromJid);
-            frm.onNotice("Jingle file-transfer: " + fromJid.ToString() + ", " + filename + ", " + status);
-            if (status == "done" && filename.EndsWith(".webp")) {
+            if (status == "loading") {
+                frm.onNotice("Receiving file, please wait ...<br>(" + fromJid.ToString() + ", " + filename + ", " + status + ")");
+            
+            } else if (status == "done" && filename.EndsWith(".webp")) {
                 var dec = new Imazen.WebP.SimpleDecoder();
                 byte[] bytes = System.IO.File.ReadAllBytes(filename);
                 var img = dec.DecodeFromBytes(bytes, bytes.Length);
@@ -94,8 +96,11 @@ namespace miniConf {
                 var base64="data: Convert.ToBase64String(
                     buffer,
                     Base64FormattingOptions.InsertLineBreaks);*/
-
-                frm.onNotice("<img src=\"" + jpgpath + "\" style='width: 240px'>");
+                
+                frm.onNotice("<a href=\"" + jpgpath + "\"><img src=\"" + jpgpath + "\" style='width: 240px'></a><br>"+filename+" (<a href=\"special:open_recv_files_dir\">Open download folder</a>)");
+            } else {
+                frm.onNotice("Jingle file-transfer: " + fromJid.ToString() + ", " + filename + ", " + status);
+            
             }
         }
 
@@ -217,8 +222,11 @@ namespace miniConf {
 
         private void OnMucMessage(agsXMPP.protocol.client.Message msg) {
             string dt;
+            agsXMPP.Xml.Dom.Element el;
             if (msg.HasTag("delay")) {
                 dt = msg.SelectSingleElement("delay").GetAttribute("stamp");
+            } else if (null != (el = msg.SelectSingleElement("x", "jabber:x:tstamp"))) {
+                dt = el.GetAttribute("tstamp");
             } else {
                 dt = Chatlogs.GetNowString();
             }
@@ -577,7 +585,10 @@ namespace miniConf {
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e) {
-            OnFormKeydown(e.KeyCode | (e.Control ? Keys.Control : 0) | (e.Shift ? Keys.Shift : 0));
+            OnFormKeydown(e.KeyCode
+                | (e.Control ? Keys.Control : 0)
+                | (e.Shift ? Keys.Shift : 0)
+                | (e.Alt ? Keys.Alt : 0));
         }
 
         private bool OnFormKeydown(Keys keyData) {
@@ -599,6 +610,9 @@ namespace miniConf {
                     return true;
                 case Keys.F9:
                     ShowXmppDebugForm();
+                    return true;
+                case Keys.Shift | Keys.F9:
+                    var dbg = new DatabaseDebugForm(); dbg.database=logs; dbg.Show();
                     return true;
                 case Keys.Control | Keys.F:
                     filterBarPanel.Show();
@@ -797,6 +811,10 @@ namespace miniConf {
         }
 
         #endregion
+
+        private void chkFiletransferAutoAccept_CheckedChanged(object sender, EventArgs e) {
+            jingle.AutoAccept = chkFiletransferAutoAccept.Checked;
+        }
 
 
 

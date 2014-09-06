@@ -45,6 +45,8 @@ namespace miniConf {
         delegate void OnStanzaDelegate(agsXMPP.protocol.Base.Stanza stanza);
         private void OnStanza(agsXMPP.protocol.Base.Stanza stanza) {
             var item = listView1.Items.Add(stanza.ToString());
+            item.SubItems.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            item.SubItems.Add(stanza.TagName.ToUpper());
             item.EnsureVisible();
             item.Tag = stanza;
         }
@@ -90,6 +92,10 @@ namespace miniConf {
 
         private void XmppDebugForm_FormClosing(object sender, FormClosingEventArgs e) {
             Program.glob.setPara("showXmppDebugOnStartup", "TRUE");
+        }
+
+        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e) {
+
         }
 
     }

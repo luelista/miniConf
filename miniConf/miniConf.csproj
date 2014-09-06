@@ -61,6 +61,12 @@
   <ItemGroup>
     <Compile Include="Chatlogs.cs" />
     <Compile Include="cls_globPara.cs" />
+    <Compile Include="DatabaseDebugForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DatabaseDebugForm.Designer.cs">
+      <DependentUpon>DatabaseDebugForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="DirectMessageForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -95,6 +101,9 @@
     <Compile Include="XmppDebugForm.Designer.cs">
       <DependentUpon>XmppDebugForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="DatabaseDebugForm.resx">
+      <DependentUpon>DatabaseDebugForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DirectMessageForm.resx">
       <DependentUpon>DirectMessageForm.cs</DependentUpon>
     </EmbeddedResource>
