@@ -6,10 +6,10 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace miniConf {
-    public class Chatlogs {
+    public class ChatDatabase {
         SQLiteConnection dataBase;
 
-        public Chatlogs(string dbfile) {
+        public ChatDatabase(string dbfile) {
             var connString = new SQLiteConnectionStringBuilder();
             connString.DataSource = dbfile;
 
@@ -67,8 +67,13 @@ namespace miniConf {
                 if (version < 4) {
                     this.ExecSQL("ALTER TABLE roommates ADD COLUMN user_jid TEXT; ");
 
+                }
+
+                if (version < 5) {
+                    this.ExecSQL("CREATE TABLE IF NOT EXISTS params (item TEXT, value TEXT); ");
+
                     // update db version number
-                    this.ExecSQL("PRAGMA user_version = 4; ");
+                    this.ExecSQL("PRAGMA user_version = 5; ");
                 }
 
             } catch (Exception ex) {

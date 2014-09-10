@@ -14,6 +14,7 @@ namespace miniConf {
         public static string appDir;
 
         public static cls_globPara glob;
+        public static ChatDatabase db;
 
         /// <summary>
         /// Der Haupteinstiegspunkt für die Anwendung.
@@ -24,7 +25,8 @@ namespace miniConf {
             appDir = Path.GetDirectoryName(Application.ExecutablePath) + "\\";
             dataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\miniConf\\";
             System.IO.Directory.CreateDirectory(dataDir);
-            System.IO.Directory.CreateDirectory(dataDir+"Received Files");
+            System.IO.Directory.CreateDirectory(dataDir + "Received Files");
+            System.IO.Directory.CreateDirectory(dataDir + "Temporary Data");
 
             singleInstanceMutex = new Mutex(true, "singleInstanceMutex@miniConf.max-weller.de");
             if (singleInstanceMutex.WaitOne(TimeSpan.Zero, true)) {

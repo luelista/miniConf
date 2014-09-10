@@ -229,47 +229,53 @@ namespace miniConf {
 
 
             private void SocksThread(object infoEl) {
-                var filename = contentIn.SelectSingleElement("file", true).GetTag("name");
-                var filespec = Program.dataDir + "received files\\" + filename;
+                try {
 
-                if (OnFileReceived != null) OnFileReceived(initiateIq.From, filespec, "loading");
+                    var filename = contentIn.SelectSingleElement("file", true).GetTag("name");
+                    var filespec = Program.dataDir + "received files\\" + filename;
 
-                Element info = (Element)infoEl;
-                var client = new System.Net.Sockets.TcpClient(info.GetAttribute("host"), info.GetAttributeInt("port"));
+                    if (OnFileReceived != null) OnFileReceived(initiateIq.From, filespec, "loading");
 
-                var stream = client.GetStream();
+                    Element info = (Element)infoEl;
+                    var client = new System.Net.Sockets.TcpClient(info.GetAttribute("host"), info.GetAttributeInt("port"));
 
-                //TODO swap to/from for socks initiated by remote end (neccessary when sending files to other client)
-                var socksid = Socks5.GetSHA1Hash(initiateJingle.Attributes["sid"] + initiateIq.From.ToString() + initiateIq.To.ToString());
-                Console.WriteLine("Socks shaid=" + socksid + ";");
-                Socks5.WriteSocksHeader(stream, socksid);
-                stream.Flush();
-                Thread.Sleep(100);
-                /*
-                var proxyActivate = this.BuildActivateBytestream(info.GetAttributeJid("jid"));
-                conn.Send(proxyActivate);
+                    var stream = client.GetStream();
 
-                var cActivated = this.BuildCandidateUsed(info.GetAttribute("cid"), "activated");
-                conn.Send(cActivated);
-                */
-                Socks5.ReadSocksHeaderAnswer(stream);
+                    //TODO swap to/from for socks initiated by remote end (neccessary when sending files to other client)
+                    var socksid = Socks5.GetSHA1Hash(initiateJingle.Attributes["sid"] + initiateIq.From.ToString() + initiateIq.To.ToString());
+                    Console.WriteLine("Socks shaid=" + socksid + ";");
+                    Socks5.WriteSocksHeader(stream, socksid);
+                    stream.Flush();
+                    Thread.Sleep(100);
+                    /*
+                    var proxyActivate = this.BuildActivateBytestream(info.GetAttributeJid("jid"));
+                    conn.Send(proxyActivate);
 
-                int fileSize = this.contentIn.SelectSingleElement("file", true).GetTagInt("size");
+                    var cActivated = this.BuildCandidateUsed(info.GetAttribute("cid"), "activated");
+                    conn.Send(cActivated);
+                    */
+                    Socks5.ReadSocksHeaderAnswer(stream);
 
-                using (var fileStream = File.Create(filespec)) {
+                    int fileSize = this.contentIn.SelectSingleElement("file", true).GetTagInt("size");
 
-                    CopyStream(stream, fileStream, fileSize);
+                    using (var fileStream = File.Create(filespec)) {
+
+                        CopyStream(stream, fileStream, fileSize);
+
+                    }
+
+                    stream.Close();
+                    client.Client.Close();
+
+                    var sesTerm = BuildSessionTerminate("success");
+                    conn.Send(sesTerm);
+
+                    if (OnFileReceived != null) OnFileReceived(initiateIq.From, filespec, "done");
+
+                } catch (Exception ex) {
+                    if (OnFileReceived != null) OnFileReceived(initiateIq.From, ex.ToString(), "failed");
 
                 }
-
-                stream.Close();
-                client.Client.Close();
-
-                var sesTerm = BuildSessionTerminate("success");
-                conn.Send(sesTerm);
-
-                if (OnFileReceived != null) OnFileReceived(initiateIq.From, filespec, "done");
-
             }
 
             /// <summary>

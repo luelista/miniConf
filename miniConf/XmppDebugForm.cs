@@ -25,15 +25,18 @@ namespace miniConf {
 
 
         void conn_OnIq(object sender, agsXMPP.protocol.client.IQ iq) {
-            this.Invoke(new OnStanzaDelegate(OnStanza), iq);
+            if (this.IsHandleCreated)
+                this.Invoke(new OnStanzaDelegate(OnStanza), iq);
         }
 
         void conn_OnMessage(object sender, agsXMPP.protocol.client.Message msg) {
-            this.Invoke(new OnStanzaDelegate(OnStanza), msg);
+            if (this.IsHandleCreated)
+                this.Invoke(new OnStanzaDelegate(OnStanza), msg);
         }
 
         void conn_OnPresence(object sender, agsXMPP.protocol.client.Presence pres) {
-            this.Invoke(new OnStanzaDelegate(OnStanza), pres);
+            if (this.IsHandleCreated)
+                this.Invoke(new OnStanzaDelegate(OnStanza), pres);
         }
 
         void conn_OnReadXml(object sender, string xml) {
@@ -91,7 +94,8 @@ namespace miniConf {
         }
 
         private void XmppDebugForm_FormClosing(object sender, FormClosingEventArgs e) {
-            Program.glob.setPara("showXmppDebugOnStartup", "TRUE");
+            if (e.CloseReason == CloseReason.UserClosing)
+                Program.glob.setPara("showXmppDebugOnStartup", "FALSE");
         }
 
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e) {
