@@ -22,7 +22,7 @@ namespace miniConf {
                  "<body><p id='tb'>Eile mit Weile ...</p><div id='m'></div></body></html>");
             this.Document.Body.KeyDown += Body_KeyDown;
 
-            this.loadStylesheet(Program.appDir, Program.dataDir);
+            this.loadStylesheet();
 
             base.OnDocumentCompleted(e);
         }
@@ -32,12 +32,14 @@ namespace miniConf {
         }
 
 
-        public void loadStylesheet(string appDir, string dataDir) {
+        public void loadStylesheet() {
+            string appDir = Program.appDir, dataDir = Program.dataDir,
+                themeName = Program.glob.para("messageView__theme", "Default");
             string style = "", style2 = "";
             try {
                 style = File.ReadAllText(appDir + "style-global.txt");
-                style2 = File.ReadAllText(appDir + "style.txt");
-                if (File.Exists(dataDir + "style.txt")) style2 = File.ReadAllText(dataDir + "style.txt");
+                if (File.Exists(appDir + "themes/" + themeName + ".txt")) style2 = File.ReadAllText(appDir + "themes/" + themeName + ".txt");
+                else if (File.Exists(dataDir + "style.txt") && themeName=="Custom") style2 = File.ReadAllText(dataDir + "style.txt");
 
             } catch (Exception e) {
                 Console.WriteLine("Error loading stylesheet: " + e.Message);

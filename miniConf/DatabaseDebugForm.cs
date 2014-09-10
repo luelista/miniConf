@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
 namespace miniConf {
     public partial class DatabaseDebugForm : Form {
-        public Chatlogs database;
+        public ChatDatabase database;
 
         public DatabaseDebugForm() {
             InitializeComponent();
@@ -17,13 +18,37 @@ namespace miniConf {
             textEditorControl1.SetHighlighting("SQL");
         }
 
-        
+        private string getLineOfText(int linum) {
+            var lineObj = textEditorControl1.Document.GetLineSegment(linum);
+            return textEditorControl1.Document.GetText(lineObj);
+        }
 
         private void textEditorControl1_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.Enter && e.Control) {
+                File.WriteAllText(Program.dataDir+"Temporary Data\\lastQuery.sql", textEditorControl1.Text);
+                var selMan = textEditorControl1.ActiveTextAreaControl.SelectionManager;
+                if (!selMan.HasSomethingSelected) {
+                    int lineCount=textEditorControl1.Document.TotalNumberOfLines;
+                    int line = textEditorControl1.ActiveTextAreaControl.Caret.Line, endline=line,startline=line;
+                    while (line-- > 0) {
+                        string t = getLineOfText(line).Trim();
+                        if (t == "") continue;
+                        if (t.EndsWith(";")) break; else startline = line;
+                    }
+                    line = endline-1;
+                    while (++line < lineCount) {
+                        string t = getLineOfText(line).Trim();
+                        if (t == "") continue;
+                        if (t.EndsWith(";")) { endline = line; break; }
+                    }
+                    selMan.SetSelection(textEditorControl1.Document.GetLineSegment(startline).CreateAnchor(0).Location,
+                        textEditorControl1.Document.GetLineSegment(endline).CreateAnchor(textEditorControl1.Document.GetLineSegment(endline).Length).Location);
+
+                    return;
+                }
                 try {
                     toolStripStatusLabel1.ForeColor = Color.Black;
-                    var sql = textEditorControl1.Text;
+                    var sql = selMan.SelectedText;
                     var sqlCommand = database.BuildCommand(sql, new object[0]);
                     var reader = sqlCommand.ExecuteReader();
                     listView1.BeginUpdate();
@@ -50,7 +75,17 @@ namespace miniConf {
         }
 
         private void DatabaseDebugForm_Load(object sender, EventArgs e) {
+            textEditorControl1.Text = Program.glob.para("DatabaseDebugForm__sql","SELECT * FROM sqlite_master;\n\n");
+            
 
+        }
+
+        private void textEditorControl1_Load(object sender, EventArgs e) {
+
+        }
+
+        private void DatabaseDebugForm_FormClosing(object sender, FormClosingEventArgs e) {
+            Program.glob.setPara("DatabaseDebugForm__sql", textEditorControl1.Text);
         }
     }
 }

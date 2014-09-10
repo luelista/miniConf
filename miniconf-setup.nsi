@@ -1,7 +1,7 @@
 !include MUI2.nsh
 !addplugindir .\setups
 
-!define VERSION "1.5.1"
+!define VERSION "1.6"
 
 Function LicensePageShow
 
@@ -46,11 +46,15 @@ Section "Program Files" SecProgFiles
 
   SetOutPath "$INSTDIR"
   ExecWait "taskkill.exe /im miniConf.exe /f"
+  Sleep 500
 
   File "miniConf\bin\Release\miniConf.exe"
   File "miniConf\bin\Release\*.dll"
   File "miniConf\bin\Release\*.txt"
-  
+
+  SetOutPath "$INSTDIR\themes"
+  File "miniConf\themes\*.txt"
+
   CreateShortcut "$DESKTOP\miniConf.lnk" "$INSTDIR\miniConf.exe"
   CreateShortcut "$SMPROGRAMS\miniConf.lnk" "$INSTDIR\miniConf.exe"
   WriteUninstaller "$INSTDIR\Uninstall.exe"

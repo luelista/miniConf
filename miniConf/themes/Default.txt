@@ -1,0 +1,18 @@
+﻿
+/* styles for chat window */
+p strong { color: #373; } 
+p strong.me{color:#555;}
+
+/* system notices (e.g. topic change) */
+p.notice { color: #999; background-color: #eee; } 
+
+/* message timestamp */
+p i {float:right; color: #aaa;}
+
+p.msg strong {
+	display:block;width: 105px;float:left;text-align:right;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+} 
+p span {margin-left: 110px;display:block;}

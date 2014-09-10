@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -21,7 +22,7 @@ namespace miniConf {
         }
 
         private void DirectMessageForm_Load(object sender, EventArgs e) {
-            messageView1.loadStylesheet(Program.appDir, Program.dataDir);
+            messageView1.loadStylesheet();
             
         }
 
@@ -62,6 +63,17 @@ namespace miniConf {
 
         private void textBox1_TextChanged(object sender, EventArgs e) {
 
+        }
+
+        private void messageView1_OnSpecialUrl(string url) {
+            if (url.StartsWith("special:openjpg:") && url.EndsWith(".jpg")) {
+                Process.Start(url.Substring(16));
+            }
+            switch (url) {
+                case "special:open_recv_files_dir":
+                    Process.Start("explorer.exe", "/e,\"" + Program.dataDir + "Received Files\"");
+                    break;
+            }
         }
 
 

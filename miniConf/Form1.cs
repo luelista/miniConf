@@ -21,7 +21,7 @@ namespace miniConf {
             icon1 = this.Icon; icon2 = Icon.FromHandle(new Bitmap(imageList1.Images[2]).GetHicon());
         }
 
-        
+
         Boolean loginError = true;
         string balloonRoom = null;
         UnreadMessageForm popupWindow = new UnreadMessageForm();
@@ -38,7 +38,7 @@ namespace miniConf {
         agsXMPP.protocol.x.muc.MucManager muc;
         Jingle jingle;
         cls_globPara glob;
-        Chatlogs logs;
+        ChatDatabase logs;
         Dictionary<string, Roomdata> rooms = new Dictionary<string, Roomdata>();
         Roomdata currentRoom = null;
 
@@ -71,19 +71,36 @@ namespace miniConf {
                 System.Threading.Thread.Sleep(400); Application.DoEvents();
             }
 
-            if (String.IsNullOrEmpty(txtNickname.Text)) txtNickname.Text = txtPrefUsername.Text;
+            string[] username = txtPrefUsername.Text.Split('@');
+            if (username.Length == 1 && txtPrefServer.Text != "") txtPrefUsername.Text += "@" + txtPrefServer.Text;
+            if (username.Length != 2) {
+                showConfigPanel("Please enter your full jabber ID in the form of username@example.com");
+                return;
+            }
+            if (String.IsNullOrEmpty(txtNickname.Text)) txtNickname.Text = username[0];
 
-            Program.conn.Server = txtPrefServer.Text;
-            Program.conn.Port = 5222;
-            Program.conn.Open(txtPrefUsername.Text, txtPrefPassword.Text, "miniConf-" + Environment.MachineName, 0);
+            Program.conn.Server = string.IsNullOrEmpty( txtPrefServer.Text) ? username[1] : txtPrefServer.Text;
+            int port;
+            if (!Int32.TryParse(txtPrefServerPort.Text,out port)) {
+                port = 5222; txtPrefServerPort.Text = "5222";
+            }
+            Program.conn.Port = port;
+            
+            Program.conn.UseSSL = false;
+            Program.conn.UseStartTLS = (glob.para("useSSL", "TRUE") != "FALSE");
+            //Program.conn.UseSSL = (glob.para("useSSL", "TRUE") != "FALSE");
+            Program.conn.Open(username[0], txtPrefPassword.Text, "miniConf-" + Environment.MachineName, 0);
 
         }
 
         void jingle_OnFileReceived(Jid fromJid, string filename, string status) {
             var frm = MakeDmForm(fromJid);
-            if (status == "loading") {
+            if (status == "failed") {
+                frm.onNotice("ERROR: " + filename);
+
+            } else if (status == "loading") {
                 frm.onNotice("Receiving file, please wait ...<br>(" + fromJid.ToString() + ", " + filename + ", " + status + ")");
-            
+
             } else if (status == "done" && filename.EndsWith(".webp")) {
                 var dec = new Imazen.WebP.SimpleDecoder();
                 byte[] bytes = System.IO.File.ReadAllBytes(filename);
@@ -96,11 +113,11 @@ namespace miniConf {
                 var base64="data: Convert.ToBase64String(
                     buffer,
                     Base64FormattingOptions.InsertLineBreaks);*/
-                
-                frm.onNotice("<a href=\"" + jpgpath + "\"><img src=\"" + jpgpath + "\" style='width: 240px'></a><br>"+filename+" (<a href=\"special:open_recv_files_dir\">Open download folder</a>)");
+
+                frm.onNotice("<a href=\"special:openjpg:" + jpgpath + "\"><img src=\"" + jpgpath + "\" style='width: 240px'></a><br>" + filename + " (<a href=\"special:open_recv_files_dir\">Open download folder</a>)");
             } else {
                 frm.onNotice("Jingle file-transfer: " + fromJid.ToString() + ", " + filename + ", " + status);
-            
+
             }
         }
 
@@ -133,13 +150,13 @@ namespace miniConf {
 
         private void checkReconnect() {
             if (!String.IsNullOrEmpty(txtPrefUsername.Text) && !loginError) {
-                pnlErrMes.Show(); labErrMes.Text += "\nConnection closed. Trying to reconnect in 5 sec...";
+                pnlErrMes.Show(); labErrMes.Text += "\nConnection was closed. Trying to reconnect in 10 sec...";
                 tmrReconnect.Stop(); tmrReconnect.Start();
             }
         }
 
         private void tmrReconnect_Tick(object sender, EventArgs e) {
-            tmrReconnect.Stop(); labErrMes.Text = "\nConnection closed. Trying to reconnect ...";
+            tmrReconnect.Stop(); labErrMes.Text = "Connection closed. Trying to reconnect now ...";
             jabberConnect();
         }
 
@@ -164,12 +181,14 @@ namespace miniConf {
         }
 
         void conn_OnPresence(object sender, agsXMPP.protocol.client.Presence pres) {
-            //Console.WriteLine(pres);
-
-            if (pres.HasTag(typeof(agsXMPP.protocol.x.muc.User), true)) {
+            if (pres.HasTag(typeof(agsXMPP.protocol.x.muc.User), true) ||
+                (pres.Type == agsXMPP.protocol.client.PresenceType.error && pres.HasTag(typeof(agsXMPP.protocol.x.muc.Muc), true))) {
                 //Console.WriteLine(" ... Is MUC Presence: " + pres.From + " ," + pres.To);
                 this.Invoke(new XmppPresenceDelegate(OnMucPresence), pres);
+            } else if (pres.Type == agsXMPP.protocol.client.PresenceType.error) {
+
             }
+            
         }
 
         void conn_OnLogin(object sender) {
@@ -179,25 +198,43 @@ namespace miniConf {
                 if (String.IsNullOrEmpty(room) || room.Trim() == "" || room.StartsWith("//") || room.StartsWith("-- ")) continue;
                 joinRoom(room.Trim());
             }
+            this.Invoke(new ThreadStart(updateRoomList));
             this.Invoke(new ThreadStart(hideConfigPanel));
             loginError = false;
         }
 
+        private void OnMucSelfPresence(agsXMPP.protocol.client.Presence pres, agsXMPP.Xml.Dom.Element xChild) { 
+        
+        }
+        
         private void OnMucPresence(agsXMPP.protocol.client.Presence pres) {
+            // a presence was received regarding a room we didn't join
+            var roomname = pres.From.Bare;
+            if (!rooms.ContainsKey(roomname)) {
+                //rooms.Add(roomname, new Roomdata(pres.From));
+                //this.Invoke(new ThreadStart(updateRoomList));
+                //TODO send the right error stanza back
+                return;
+            }
+
+            var room = rooms[roomname];
+            room.errorCondition = (agsXMPP.protocol.client.ErrorCondition)(999);
+            if (pres.Type == agsXMPP.protocol.client.PresenceType.error) {
+                room.errorCondition = pres.Error.Condition;
+                if (currentRoom == room) lbChatrooms_Click(null, null);
+                return;
+            }
+            
             var xChild = pres.SelectSingleElement("x", "http://jabber.org/protocol/muc#user");
             foreach (agsXMPP.Xml.Dom.Element el in xChild.SelectElements("status")) {
                 if (el.GetAttribute("code") == "110") {
                     OnMucSelfPresence(pres, xChild);
                     break;
+                } else if (el.GetAttribute("code") == "210") {
+                    // rename by server
+                    room.jid.Resource = pres.From.Resource;
+                    break;
                 }
-            }
-
-            // this is especially relevant for self presence stanzas... but irc.hackint.org
-            // doesn't mark self presences as such, so i moved it here
-            var roomname = pres.From.Bare;
-            if (!rooms.ContainsKey(roomname)) {
-                rooms.Add(roomname, new Roomdata(pres.From));
-                this.Invoke(new ThreadStart(updateRoomList));
             }
 
             string online = "online";
@@ -210,14 +247,12 @@ namespace miniConf {
             string jid = "";
             if (xChild.HasTag("item")) jid = xChild.SelectSingleElement("item").GetAttribute("jid");
 
-            logs.SetOnlineStatus(pres.From.Bare, pres.From.Resource, online, 
-                pres.MucUser.Item.Affiliation.ToString(), pres.MucUser.Item.Role.ToString(), 
+            logs.SetOnlineStatus(pres.From.Bare, pres.From.Resource, online,
+                pres.MucUser.Item.Affiliation.ToString(), pres.MucUser.Item.Role.ToString(),
                 statusStr, jid);
-            if (currentRoom != null && pres.From.Bare == currentRoom.jid.Bare) {
+            if (currentRoom == room) {
                 updateMemberList();
             }
-        }
-        private void OnMucSelfPresence(agsXMPP.protocol.client.Presence pres, agsXMPP.Xml.Dom.Element xChild) {
         }
 
         private void OnMucMessage(agsXMPP.protocol.client.Message msg) {
@@ -228,7 +263,7 @@ namespace miniConf {
             } else if (null != (el = msg.SelectSingleElement("x", "jabber:x:tstamp"))) {
                 dt = el.GetAttribute("tstamp");
             } else {
-                dt = Chatlogs.GetNowString();
+                dt = ChatDatabase.GetNowString();
             }
             if (msg.HasTag("subject")) {
                 string subject = msg.GetTag("subject");
@@ -278,7 +313,7 @@ namespace miniConf {
             }
             return dmfrm;
         }
-        
+
         private void OnPrivateMessage(agsXMPP.protocol.client.Message msg) {
             if (msg.HasTag("body")) {
                 DirectMessageForm dmfrm = MakeDmForm(msg.From);
@@ -299,12 +334,16 @@ namespace miniConf {
 
         private bool IsMention(string text) {
             text = text.ToLower(); string nick = txtNickname.Text.ToLower();
-            return text.Contains("@" + nick) || text.Contains(nick+":");
+            return text.Contains("@" + nick) || text.Contains(nick + ":");
         }
 
         private void joinRoom(string roomName, bool loadAllHistory = false) {
             Jid roomJid = new Jid(roomName);
             if (String.IsNullOrEmpty(roomJid.Resource)) roomJid.Resource = txtNickname.Text;
+
+            if (!rooms.ContainsKey(roomJid.Bare)) {
+                rooms.Add(roomJid.Bare, new Roomdata(roomJid.ToString()));
+            }
 
             logs.SetOnlineStatus(roomJid.Bare, "off");
 
@@ -373,11 +412,12 @@ namespace miniConf {
             glob.readFormPos(this);
             glob.readTuttiFrutti(this);
 
-            enableNotificationsToolStripMenuItem.Checked = glob.para("enableNotifications") != "FALSE";
+            enableNotificationsToolStripMenuItem.Checked = glob.para("enableNotifications") == "TRUE";
             enableSoundToolStripMenuItem.Checked = glob.para("enableSound") != "FALSE";
-            enablePopupToolStripMenuItem.Checked = glob.para("enablePopup") == "TRUE";
+            enablePopupToolStripMenuItem.Checked = glob.para("enablePopup") != "FALSE";
 
-            logs = new Chatlogs(Program.dataDir + "chatlogs.db");
+            logs = new ChatDatabase(Program.dataDir + "chatlogs.db");
+            Program.db = logs;
 
             if (txtPrefUsername.Text != "") {
                 jabberConnect();
@@ -389,7 +429,7 @@ namespace miniConf {
 
         private void updateWinTitle() {
 
-            this.Text = (chkSternchen.Checked ? "*" : "") + Application.ProductName + " " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(2) +
+            this.Text = (chkSternchen.Checked ? "*" : "") + Application.ProductName + " " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3) +
                 (currentRoom != null ? " | " + currentRoom.roomName() : "") + " | " + (Program.conn != null ? (Program.conn.XmppConnectionState == XmppConnectionState.SessionStarted ? Program.conn.MyJID.ToString() : Program.conn.XmppConnectionState.ToString()) : "NoConnection");
         }
 
@@ -401,17 +441,26 @@ namespace miniConf {
             loginError = true;
             jabberConnect();
 
+            //pnlConfig.Visible = false;
+        }
+
+        private void btnConnect2_Click(object sender, EventArgs e) {
+            loginError = true;
+            jabberConnect();
+
             pnlConfig.Visible = false;
         }
         private void hideConfigPanel() {
-            pnlConfig.Visible = false;
+            //pnlConfig.Visible = false;
             pnlErrMes.Visible = false;
+            tabControl1.SelectedIndex = 1;
         }
         private void showConfigPanel(object errmes) {
             pnlConfig.Visible = true;
             if (!String.IsNullOrEmpty((string)errmes)) {
                 pnlErrMes.Show();
                 labErrMes.Text = (string)errmes;
+                tabControl1.SelectedIndex = 0;
             }
         }
 
@@ -482,6 +531,8 @@ namespace miniConf {
                 currentRoom.unreadMsgCount = 0;
                 popupWindow.updateRooms(rooms);
                 webBrowser1.addNoticeToView("Subject is: " + logs.GetSubject(currentRoom.roomName()));
+                if (currentRoom.getErrorMessage() != null)
+                    webBrowser1.addNoticeToView("<b><font color=red>" + currentRoom.getErrorMessage() + "</font></b>");
                 updateWinTitle();
             }
             webBrowser1.scrollDown();
@@ -538,6 +589,13 @@ namespace miniConf {
                 txtSendmessage.SelectAll();
                 e.SuppressKeyPress = true;
             }
+            if (e.KeyCode == Keys.V && e.Control) {
+                if (Clipboard.ContainsImage()) {
+                    string uploadfn = Program.dataDir + "Temporary Data\\upload.jpg";
+                    Clipboard.GetImage().Save(uploadfn);
+                    doMediaUpload(uploadfn);
+                }
+            }
             //if (e.Control && (e.KeyCode == Keys.A))
             //    e.SuppressKeyPress = true;
         }
@@ -593,7 +651,7 @@ namespace miniConf {
 
         private bool OnFormKeydown(Keys keyData) {
             Console.WriteLine("OnFormKeydown ; key=" + keyData);
-            
+
             switch (keyData) {
                 case Keys.Control | Keys.Q:
                     beendenToolStripMenuItem_Click(null, null);
@@ -609,14 +667,13 @@ namespace miniConf {
                     try { lbChatrooms.SelectedIndex += 1; lbChatrooms_Click(null, null); } catch (Exception ex) { }
                     return true;
                 case Keys.F9:
-                    ShowXmppDebugForm();
+                    xMPPConsoleToolStripMenuItem_Click(null, null);
                     return true;
                 case Keys.Shift | Keys.F9:
-                    var dbg = new DatabaseDebugForm(); dbg.database=logs; dbg.Show();
+                    sqliteConsoleToolStripMenuItem_Click(null, null);
                     return true;
                 case Keys.Control | Keys.F:
-                    filterBarPanel.Show();
-                    filterTextbox.Focus(); filterTextbox.SelectAll();
+                    findToolStripMenuItem_Click(null, null);
                     return true;
                 case Keys.Control | Keys.B:
                 case Keys.F4:
@@ -626,13 +683,10 @@ namespace miniConf {
                     pnlConfig.Visible = !pnlConfig.Visible;
                     break;
                 case Keys.Control | Keys.Shift | Keys.R:
-                    webBrowser1.loadStylesheet(Program.appDir, Program.dataDir);
+                    reloadStylesToolStripMenuItem_Click(null, null);
                     break;
                 case Keys.Control | Keys.Shift | Keys.E:
-                    if (!File.Exists(Program.dataDir + "style.txt")) {
-                        File.Copy(Program.appDir + "style.txt", Program.dataDir + "style.txt");
-                    }
-                    System.Diagnostics.Process.Start(Program.dataDir + "style.txt");
+                    editStylesToolStripMenuItem_Click(null, null);
                     break;
             }
             return false;
@@ -645,6 +699,9 @@ namespace miniConf {
 
         private void notifyIcon1_MouseClick(object sender, MouseEventArgs e) {
             openMiniConfToolStripMenuItem.Visible = true;
+            sendFileToolStripMenuItem.Visible = false;
+            extrasToolStripMenuItem.Visible = false;
+            findToolStripMenuItem.Visible = false;
             if (e.Button == System.Windows.Forms.MouseButtons.Left) {
                 openMiniConfToolStripMenuItem_Click(null, null);
             }
@@ -652,6 +709,9 @@ namespace miniConf {
 
         private void button4_Click(object sender, EventArgs e) {
             openMiniConfToolStripMenuItem.Visible = false;
+            sendFileToolStripMenuItem.Visible = true;
+            extrasToolStripMenuItem.Visible = true;
+            findToolStripMenuItem.Visible = true;
             contextMenuStrip1.Show((Control)sender, 0, ((Control)sender).Height);
         }
 
@@ -740,7 +800,6 @@ namespace miniConf {
         }
 
         private void searchForUpdatesToolStripMenuItem_Click(object sender, EventArgs e) {
-
             WinSparkle.win_sparkle_check_update_with_ui();
         }
 
@@ -794,7 +853,7 @@ namespace miniConf {
                 var reader = logs.GetFilteredLogs(this.currentRoom.roomName(), filterTextbox.Text, 0, 250);
                 clearMessageView();
                 webBrowser1.Document.GetElementById("tb").InnerHtml = "Search results, press ESC to quit filter mode";
-                
+
                 foreach (System.Data.Common.DbDataRecord k in reader) {
                     webBrowser1.addMessageToView(k.GetString(0), k.GetString(1), DateTime.Parse(k.GetString(2)), HtmlElementInsertionOrientation.AfterBegin);
                 }
@@ -807,7 +866,7 @@ namespace miniConf {
             }
         }
         private void filterTextbox_TextChanged(object sender, EventArgs e) {
-            
+
         }
 
         #endregion
@@ -815,6 +874,119 @@ namespace miniConf {
         private void chkFiletransferAutoAccept_CheckedChanged(object sender, EventArgs e) {
             jingle.AutoAccept = chkFiletransferAutoAccept.Checked;
         }
+
+        private void btnRoomList_Click(object sender, EventArgs e) {
+            var rooms = txtChatrooms.Text.Split('\n');
+            for (var i = 0; i < rooms.Length; i++) rooms[i] = rooms[i].Trim();
+            var f = new RoomListForm(rooms);
+            var res = f.ShowDialog();
+            if (res == System.Windows.Forms.DialogResult.Cancel) return;
+            var newRooms = new List<string>();
+            for (var i = 0; i < rooms.Length; i++) {
+                Jid j = new Jid(rooms[i]);
+                if (f.listView1.Items.ContainsKey(j.Bare)) {
+                    if (f.listView1.Items[j.Bare].Checked == false) {
+                        continue;
+                    }
+                    f.listView1.Items[j.Bare].Checked = false;
+                }
+                newRooms.Add(rooms[i]);
+            }
+            foreach (ListViewItem lvi in f.listView1.Items) {
+                if (lvi.Checked) newRooms.Add((string)lvi.Tag);
+            }
+            txtChatrooms.Text = string.Join("\r\n", newRooms.ToArray());
+        }
+
+        private void txtSendmessage_DragEnter(object sender, DragEventArgs e) {
+            if (e.Data.GetDataPresent("FileDrop")) {
+                string[] files = (string[])e.Data.GetData("FileDrop");
+                if (files.Length == 1) {
+                    var fn = files[0].ToUpper();
+                    //if (fn.EndsWith(".JPG") || fn.EndsWith(".PNG") || fn.EndsWith(".GIF") || fn.EndsWith(".TIF")) {
+                    e.Effect = DragDropEffects.Copy;
+                    //}
+                }
+            }
+        }
+
+        private void txtSendmessage_DragDrop(object sender, DragEventArgs e) {
+            string[] files = (string[])e.Data.GetData("FileDrop");
+            doMediaUpload(files[0]);
+        }
+
+        private void doMediaUpload(string filename) {
+            FileUploader.ApplicationUrl = cmbFileUploadService.Text;
+            var f = new MediaUploadForm(filename);
+            f.startUpload();
+            var result = f.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK) {
+                if (f.resultStatus == FileUploader.UploadFileStatus.Success || f.resultStatus == FileUploader.UploadFileStatus.AlreadyUploaded) {
+
+                    string hash = Convert.ToString(f.resultObject["hash"]);
+                    string ext = Path.GetExtension(filename).ToLower();
+                    txtSendmessage.AppendText(FileUploader.ApplicationUrl + "/" + hash + ext);
+
+                } else {
+                    MessageBox.Show("Media upload failed: " + f.resultStatus.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            f.Close();
+        }
+
+        private void txtSendmessage_TextChanged(object sender, EventArgs e) {
+
+        }
+
+        #region Tools Menu
+        private void sendFileToolStripMenuItem_Click(object sender, EventArgs e) {
+            using (OpenFileDialog ofd = new OpenFileDialog()) {
+                ofd.Title = "Send media file...";
+                ofd.Filter = "Supported media files|*.jpg;*.png;*.gif;*.tif;*.tiff;*.jpeg;*.bmp;*.mp4;*.mpg;*.wav;*.mp3;*.ogg;*.svg;*.ogv;*.webm|All files|*.*";
+                if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+                    doMediaUpload(ofd.FileName);
+                }
+            }
+        }
+
+        private void findToolStripMenuItem_Click(object sender, EventArgs e) {
+            filterBarPanel.Show();
+            filterTextbox.Focus(); filterTextbox.SelectAll();
+        }
+
+        private void xMPPConsoleToolStripMenuItem_Click(object sender, EventArgs e) {
+            ShowXmppDebugForm();
+        }
+
+        private void sqliteConsoleToolStripMenuItem_Click(object sender, EventArgs e) {
+            var dbg = new DatabaseDebugForm(); dbg.database = logs; dbg.Show();
+        }
+
+        private void editStylesToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (!File.Exists(Program.dataDir + "style.txt")) {
+                File.Copy(Program.appDir + "style.txt", Program.dataDir + "style.txt");
+            }
+            System.Diagnostics.Process.Start(Program.dataDir + "style.txt");
+        }
+
+        private void reloadStylesToolStripMenuItem_Click(object sender, EventArgs e) {
+            webBrowser1.loadStylesheet();
+        }
+        #endregion
+
+        private void txtPrefUsername_KeyPress(object sender, KeyPressEventArgs e) {
+            txtNickname.Text = "";
+        }
+
+        private void comboMessageTheme_SelectedIndexChanged(object sender, EventArgs e) {
+            Program.glob.setPara("messageView__theme", comboMessageTheme.Text);
+            webBrowser1.loadStylesheet();
+        }
+
+        private void lnkConnectAdvanced_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            pnlPrefConnectAdvanced.Show();
+        }
+
 
 
 

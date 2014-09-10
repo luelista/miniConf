@@ -1,0 +1,5 @@
+﻿
+
+/* create lines like this for custom coloring of people :
+   .from_INSERT-NICKNAME-HERE strong { color: #dd0000; }
+*/
