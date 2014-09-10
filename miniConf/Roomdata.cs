@@ -1,5 +1,6 @@
 ﻿using agsXMPP;
 using agsXMPP.protocol.client;
+using agsXMPP.protocol.extensions.chatstates;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,9 @@ namespace miniConf {
 
         public ErrorCondition errorCondition = (ErrorCondition)(999);
 
+        public Chatstate chatstate;
+        public Dictionary<string, Chatstate> users_states = new Dictionary<string, Chatstate>();
+
         public Roomdata(Jid myjid) {
             jid = myjid;
         }
@@ -21,6 +25,33 @@ namespace miniConf {
             return jid.Bare;
         }
 
+
+        public void sendChatstate(agsXMPP.protocol.extensions.chatstates.Chatstate state) {
+            if (chatstate == state) return;
+            chatstate = state;
+            var msg = new agsXMPP.protocol.client.Message(new Jid(roomName()), Program.conn.MyJID);
+            msg.Type = MessageType.groupchat;
+            msg.Chatstate = state;
+            Program.conn.Send(msg);
+        }
+        public bool hasTypingUser() {
+            foreach(Chatstate state in users_states.Values) {
+                if (state == Chatstate.composing) return true;
+            }
+            return false;
+        }
+        public string getTypingNotice() {
+            List<String> names = new List<string>();
+            foreach (var kvp in users_states) {
+                if (kvp.Value == Chatstate.composing && kvp.Key != jid.Resource) names.Add(kvp.Key);
+            }
+            if (names.Count == 0) return null;
+            return String.Join(", ", names.ToArray()) +  (names.Count == 1?" is":" are")+" writing...";
+        }
+        public void handleChatstate(Message msg) {
+            if (msg.Chatstate == Chatstate.None) return;
+            users_states[msg.From.Resource] = msg.Chatstate;
+        }
 
         public string getErrorMessage() {
             string msg = "";

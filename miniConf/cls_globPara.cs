@@ -17,28 +17,18 @@ namespace miniConf {
 
         //: ========== Globale Variablen ==========================================
 
-        string m_paraFileSpec;
+        //string m_paraFileSpec;
         Dictionary<string, string> m_content = new Dictionary<string, string>();
+        SqlDatabase db;
 
         const string tabDelimiter = "<=" + Constants.vbTab;
 
 
         //: ========== Konstruktor + Destruktor ==================================
 
-        public cls_globPara(string fileSpec = "") {
-            m_paraFileSpec = fileSpec;
-
-            if (string.IsNullOrEmpty(m_paraFileSpec)) {
-                m_paraFileSpec = Path.ChangeExtension(Application.ExecutablePath, "para.txt");
-            }
-            string folder = Path.GetDirectoryName(m_paraFileSpec);
-            Directory.CreateDirectory(folder);
-
-            readFile();
-        }
-        ~cls_globPara() {
-            saveParaFile();
-            //base.Finalize();
+        public cls_globPara(SqlDatabase database) {
+            this.db = database;
+            this.readFromDatabase();
         }
 
 
@@ -49,21 +39,14 @@ namespace miniConf {
             return para(key, "");
         }
         public string para(string key, string defaultValue) {
-            string functionReturnValue = null;
-            if (m_content.ContainsKey(key)) {
-                functionReturnValue = m_content[key];
-            } else {
-                functionReturnValue = defaultValue;
-            }
-            return functionReturnValue;
+            string result = defaultValue;
+            m_content.TryGetValue(key, out result);
+            return result;
         }
 
         public void setPara(string key, string value) {
-            if (m_content.ContainsKey(key)) {
-                m_content[key] = value;
-            } else {
-                m_content.Add(key, value);
-            }
+            this.db.ExecSQL("INSERT OR REPLACE INTO params (item, value) VALUES (?, ?)",
+                key, value);
         }
 
 
@@ -214,7 +197,15 @@ namespace miniConf {
 
         //: ========== Private Funktionen ====================
 
-        private void readFile() {
+        public void readFromDatabase() {
+            var cmd = this.db.BuildCommand("SELECT item,value FROM params", new object[0]);
+            var reader = cmd.ExecuteReader();
+            foreach (System.Data.Common.DbDataRecord k in reader) {
+                m_content[k.GetString(0)] = k.IsDBNull(1) ? "" : k.GetString(1);
+            }
+        }
+
+        public void legacyImport(string m_paraFileSpec) {
             if (!File.Exists(m_paraFileSpec))
                 return;
 
@@ -227,7 +218,9 @@ namespace miniConf {
                     if (line.Length < 2)
                         continue;
 
-                    m_content.Add(line[0], Strings.Replace(line[1], "|-ZS-|", Constants.vbNewLine));
+                    this.db.ExecSQL("INSERT OR IGNORE INTO params (item,value) VALUES (?,?)",
+                        line[0], Strings.Replace(line[1], "|-ZS-|", Constants.vbNewLine));
+                    //m_content.Add(line[0], Strings.Replace(line[1], "|-ZS-|", Constants.vbNewLine));
                     //TT.Write("ParaRead", line(0))
                     //Debug.Print(lineString)
                     //Stop
@@ -237,20 +230,8 @@ namespace miniConf {
                 Interaction.MsgBox("beim Laden der Einstellungen ist ein Fehler aufgetreten:" + Constants.vbNewLine + e.Message + Constants.vbNewLine + "(cls_globPara)");
             }
 
-        }
+            readFromDatabase();
 
-        public void saveParaFile() {
-            string cont = "";
-            string item = null;
-
-            foreach (string key in m_content.Keys) {
-                item = m_content[key];
-                item = Strings.Replace(item, Constants.vbNewLine, "|-ZS-|");
-                cont += key + tabDelimiter + item + tabDelimiter + Constants.vbNewLine;
-            }
-            //MsgBox(cont)
-
-            File.WriteAllText(m_paraFileSpec, cont);
         }
 
 

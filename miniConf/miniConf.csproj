@@ -84,6 +84,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Jabber.cs" />
     <Compile Include="Jingle.cs" />
     <Compile Include="MediaUploadForm.cs">
       <SubType>Form</SubType>
@@ -104,6 +105,7 @@
       <DependentUpon>RoomListForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Socks5.cs" />
+    <Compile Include="SqlDatabase.cs" />
     <Compile Include="UnreadMessageForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -23,20 +23,24 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DirectMessageForm));
             this.panel1 = new System.Windows.Forms.Panel();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.messageView1 = new miniConf.MessageView();
+            this.labChatstate = new System.Windows.Forms.Label();
+            this.tmrChatstatePaused = new System.Windows.Forms.Timer(this.components);
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.labChatstate);
             this.panel1.Controls.Add(this.textBox1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 284);
+            this.panel1.Location = new System.Drawing.Point(0, 269);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(497, 75);
+            this.panel1.Size = new System.Drawing.Size(497, 90);
             this.panel1.TabIndex = 1;
             // 
             // textBox1
@@ -47,7 +51,7 @@
             this.textBox1.Location = new System.Drawing.Point(5, 6);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(470, 63);
+            this.textBox1.Size = new System.Drawing.Size(480, 63);
             this.textBox1.TabIndex = 0;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
@@ -58,11 +62,26 @@
             this.messageView1.Location = new System.Drawing.Point(0, 0);
             this.messageView1.MinimumSize = new System.Drawing.Size(20, 20);
             this.messageView1.Name = "messageView1";
-            this.messageView1.Size = new System.Drawing.Size(497, 284);
+            this.messageView1.Size = new System.Drawing.Size(497, 269);
             this.messageView1.TabIndex = 0;
             this.messageView1.Url = new System.Uri("about:blank", System.UriKind.Absolute);
             this.messageView1.OnSpecialUrl += new miniConf.MessageView.SpecialUrlEvent(this.messageView1_OnSpecialUrl);
             this.messageView1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.messageView1_DocumentCompleted);
+            // 
+            // labChatstate
+            // 
+            this.labChatstate.AutoSize = true;
+            this.labChatstate.ForeColor = System.Drawing.Color.DarkGray;
+            this.labChatstate.Location = new System.Drawing.Point(8, 73);
+            this.labChatstate.Name = "labChatstate";
+            this.labChatstate.Size = new System.Drawing.Size(31, 13);
+            this.labChatstate.TabIndex = 1;
+            this.labChatstate.Text = "        ";
+            // 
+            // tmrChatstatePaused
+            // 
+            this.tmrChatstatePaused.Interval = 5000;
+            this.tmrChatstatePaused.Tick += new System.EventHandler(this.tmrChatstatePaused_Tick);
             // 
             // DirectMessageForm
             // 
@@ -86,5 +105,7 @@
         private MessageView messageView1;
         private System.Windows.Forms.Panel panel1;
         public System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label labChatstate;
+        private System.Windows.Forms.Timer tmrChatstatePaused;
     }
 }
