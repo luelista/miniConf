@@ -24,5 +24,14 @@ namespace miniConf {
             return GetForegroundWindow() == wnd.Handle;
         }
 
+        private const int EM_SETCUEBANNER = 0x1501;
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern Int32 SendMessage(IntPtr hWnd, int msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)]string lParam);
+
+        public static void SetCueBanner(TextBox textBox, string banner) {
+            SendMessage(textBox.Handle, EM_SETCUEBANNER, 0, banner);
+
+        }
     }
 }

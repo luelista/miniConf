@@ -36,16 +36,33 @@
             this.txtPrefUsername = new System.Windows.Forms.TextBox();
             this.txtPrefPassword = new System.Windows.Forms.TextBox();
             this.pnlConfig = new System.Windows.Forms.Panel();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.pnlPrefConnectAdvanced = new System.Windows.Forms.Panel();
+            this.txtPrefServerPort = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.lnkConnectAdvanced = new System.Windows.Forms.LinkLabel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.btnConnect = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.btnRegister = new System.Windows.Forms.Button();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.btnConnect2 = new System.Windows.Forms.Button();
+            this.txtChatrooms = new System.Windows.Forms.TextBox();
+            this.btnRoomList = new System.Windows.Forms.Button();
+            this.lvPrefChatrooms = new System.Windows.Forms.ListView();
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.label7 = new System.Windows.Forms.Label();
+            this.cmbFileUploadService = new System.Windows.Forms.ComboBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.chkEnableImagePreview = new System.Windows.Forms.CheckBox();
+            this.chkSternchen = new System.Windows.Forms.CheckBox();
+            this.comboMessageTheme = new System.Windows.Forms.ComboBox();
             this.chkFiletransferAutoAccept = new System.Windows.Forms.CheckBox();
             this.chkDisplayOccupantStatus = new System.Windows.Forms.CheckBox();
-            this.comboMessageTheme = new System.Windows.Forms.ComboBox();
-            this.chkSternchen = new System.Windows.Forms.CheckBox();
-            this.chkEnableImagePreview = new System.Windows.Forms.CheckBox();
-            this.btnRegister = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.btnConnect = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.lvOnlineStatus = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -57,7 +74,6 @@
             this.button1 = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.webBrowser1 = new miniConf.MessageView();
             this.txtSendmessage = new System.Windows.Forms.TextBox();
             this.txtNickname = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -68,7 +84,16 @@
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openMiniConfToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sendFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
+            this.searchForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.extrasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.xMPPConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sqliteConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editStylesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reloadStylesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.enableNotificationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.enablePopupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -80,33 +105,17 @@
             this.filterBarPanel = new System.Windows.Forms.Panel();
             this.filterBarCloseBtn = new System.Windows.Forms.Button();
             this.filterTextbox = new System.Windows.Forms.TextBox();
-            this.extrasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
-            this.xMPPConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sqliteConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.editStylesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.reloadStylesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sendFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.searchForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.label6 = new System.Windows.Forms.Label();
-            this.cmbFileUploadService = new System.Windows.Forms.ComboBox();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.label7 = new System.Windows.Forms.Label();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.btnRoomList = new System.Windows.Forms.Button();
-            this.txtChatrooms = new System.Windows.Forms.TextBox();
-            this.txtPrefServerPort = new System.Windows.Forms.ComboBox();
-            this.lnkConnectAdvanced = new System.Windows.Forms.LinkLabel();
-            this.pnlPrefConnectAdvanced = new System.Windows.Forms.Panel();
-            this.lvPrefChatrooms = new System.Windows.Forms.ListView();
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.btnConnect2 = new System.Windows.Forms.Button();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.txtConnInfo = new System.Windows.Forms.TextBox();
+            this.labChatstates = new System.Windows.Forms.Label();
+            this.tmrChatstatePaused = new System.Windows.Forms.Timer(this.components);
+            this.webBrowser1 = new miniConf.MessageView();
             this.pnlConfig.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.pnlPrefConnectAdvanced.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.pnlToolbar.SuspendLayout();
             this.panel3.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -115,11 +124,7 @@
             this.pnlErrMes.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.filterBarPanel.SuspendLayout();
-            this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            this.tabPage3.SuspendLayout();
-            this.pnlPrefConnectAdvanced.SuspendLayout();
+            this.tabPage4.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtPrefServer
@@ -156,6 +161,288 @@
             this.pnlConfig.TabIndex = 5;
             this.pnlConfig.Visible = false;
             // 
+            // tabControl1
+            // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage4);
+            this.tabControl1.Location = new System.Drawing.Point(6, 4);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(603, 201);
+            this.tabControl1.TabIndex = 18;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.pnlPrefConnectAdvanced);
+            this.tabPage1.Controls.Add(this.lnkConnectAdvanced);
+            this.tabPage1.Controls.Add(this.txtPrefUsername);
+            this.tabPage1.Controls.Add(this.txtPrefPassword);
+            this.tabPage1.Controls.Add(this.label2);
+            this.tabPage1.Controls.Add(this.btnConnect);
+            this.tabPage1.Controls.Add(this.label3);
+            this.tabPage1.Controls.Add(this.btnRegister);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(595, 175);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Login";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // pnlPrefConnectAdvanced
+            // 
+            this.pnlPrefConnectAdvanced.Controls.Add(this.txtPrefServerPort);
+            this.pnlPrefConnectAdvanced.Controls.Add(this.txtPrefServer);
+            this.pnlPrefConnectAdvanced.Controls.Add(this.label1);
+            this.pnlPrefConnectAdvanced.Location = new System.Drawing.Point(2, 108);
+            this.pnlPrefConnectAdvanced.Name = "pnlPrefConnectAdvanced";
+            this.pnlPrefConnectAdvanced.Size = new System.Drawing.Size(310, 61);
+            this.pnlPrefConnectAdvanced.TabIndex = 13;
+            this.pnlPrefConnectAdvanced.Visible = false;
+            // 
+            // txtPrefServerPort
+            // 
+            this.txtPrefServerPort.FormattingEnabled = true;
+            this.txtPrefServerPort.Items.AddRange(new object[] {
+            "5222"});
+            this.txtPrefServerPort.Location = new System.Drawing.Point(232, 7);
+            this.txtPrefServerPort.Name = "txtPrefServerPort";
+            this.txtPrefServerPort.Size = new System.Drawing.Size(54, 21);
+            this.txtPrefServerPort.TabIndex = 11;
+            this.txtPrefServerPort.Text = "5222";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(7, 10);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(65, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Server/Port:";
+            // 
+            // lnkConnectAdvanced
+            // 
+            this.lnkConnectAdvanced.AutoSize = true;
+            this.lnkConnectAdvanced.Location = new System.Drawing.Point(9, 106);
+            this.lnkConnectAdvanced.Name = "lnkConnectAdvanced";
+            this.lnkConnectAdvanced.Size = new System.Drawing.Size(65, 13);
+            this.lnkConnectAdvanced.TabIndex = 12;
+            this.lnkConnectAdvanced.TabStop = true;
+            this.lnkConnectAdvanced.Text = "Advanced...";
+            this.lnkConnectAdvanced.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkConnectAdvanced_LinkClicked);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(9, 24);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(56, 13);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "Jabber ID:";
+            // 
+            // btnConnect
+            // 
+            this.btnConnect.BackColor = System.Drawing.SystemColors.Control;
+            this.btnConnect.Location = new System.Drawing.Point(88, 73);
+            this.btnConnect.Name = "btnConnect";
+            this.btnConnect.Size = new System.Drawing.Size(105, 22);
+            this.btnConnect.TabIndex = 8;
+            this.btnConnect.Text = "Connect >";
+            this.btnConnect.UseVisualStyleBackColor = true;
+            this.btnConnect.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(9, 50);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(56, 13);
+            this.label3.TabIndex = 4;
+            this.label3.Text = "Password:";
+            // 
+            // btnRegister
+            // 
+            this.btnRegister.BackColor = System.Drawing.SystemColors.Control;
+            this.btnRegister.Location = new System.Drawing.Point(199, 73);
+            this.btnRegister.Name = "btnRegister";
+            this.btnRegister.Size = new System.Drawing.Size(89, 22);
+            this.btnRegister.TabIndex = 9;
+            this.btnRegister.Text = "New Account";
+            this.btnRegister.UseVisualStyleBackColor = true;
+            this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.btnConnect2);
+            this.tabPage3.Controls.Add(this.txtChatrooms);
+            this.tabPage3.Controls.Add(this.btnRoomList);
+            this.tabPage3.Controls.Add(this.lvPrefChatrooms);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(595, 175);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Conferences";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // btnConnect2
+            // 
+            this.btnConnect2.BackColor = System.Drawing.SystemColors.Control;
+            this.btnConnect2.Location = new System.Drawing.Point(10, 147);
+            this.btnConnect2.Name = "btnConnect2";
+            this.btnConnect2.Size = new System.Drawing.Size(105, 22);
+            this.btnConnect2.TabIndex = 17;
+            this.btnConnect2.Text = "OK";
+            this.btnConnect2.UseVisualStyleBackColor = true;
+            this.btnConnect2.Click += new System.EventHandler(this.btnConnect2_Click);
+            // 
+            // txtChatrooms
+            // 
+            this.txtChatrooms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtChatrooms.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtChatrooms.Location = new System.Drawing.Point(10, 9);
+            this.txtChatrooms.Multiline = true;
+            this.txtChatrooms.Name = "txtChatrooms";
+            this.txtChatrooms.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txtChatrooms.Size = new System.Drawing.Size(579, 138);
+            this.txtChatrooms.TabIndex = 7;
+            this.txtChatrooms.Text = "feedback@chat.teamwiki.de\r\nlounge@chat.teamwiki.de";
+            this.txtChatrooms.WordWrap = false;
+            // 
+            // btnRoomList
+            // 
+            this.btnRoomList.BackColor = System.Drawing.SystemColors.Control;
+            this.btnRoomList.Location = new System.Drawing.Point(121, 147);
+            this.btnRoomList.Name = "btnRoomList";
+            this.btnRoomList.Size = new System.Drawing.Size(74, 22);
+            this.btnRoomList.TabIndex = 15;
+            this.btnRoomList.Text = "List ...";
+            this.btnRoomList.UseVisualStyleBackColor = true;
+            this.btnRoomList.Click += new System.EventHandler(this.btnRoomList_Click);
+            // 
+            // lvPrefChatrooms
+            // 
+            this.lvPrefChatrooms.CheckBoxes = true;
+            this.lvPrefChatrooms.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader3,
+            this.columnHeader4,
+            this.columnHeader5});
+            this.lvPrefChatrooms.FullRowSelect = true;
+            this.lvPrefChatrooms.Location = new System.Drawing.Point(10, 9);
+            this.lvPrefChatrooms.MultiSelect = false;
+            this.lvPrefChatrooms.Name = "lvPrefChatrooms";
+            this.lvPrefChatrooms.Size = new System.Drawing.Size(578, 158);
+            this.lvPrefChatrooms.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.lvPrefChatrooms.TabIndex = 16;
+            this.lvPrefChatrooms.UseCompatibleStateImageBehavior = false;
+            this.lvPrefChatrooms.View = System.Windows.Forms.View.Details;
+            this.lvPrefChatrooms.Visible = false;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Name";
+            this.columnHeader3.Width = 127;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Topic";
+            this.columnHeader4.Width = 306;
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Nickname";
+            this.columnHeader5.Width = 102;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.label7);
+            this.tabPage2.Controls.Add(this.cmbFileUploadService);
+            this.tabPage2.Controls.Add(this.label6);
+            this.tabPage2.Controls.Add(this.chkEnableImagePreview);
+            this.tabPage2.Controls.Add(this.chkSternchen);
+            this.tabPage2.Controls.Add(this.comboMessageTheme);
+            this.tabPage2.Controls.Add(this.chkFiletransferAutoAccept);
+            this.tabPage2.Controls.Add(this.chkDisplayOccupantStatus);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(595, 175);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Appearance";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(204, 40);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(64, 13);
+            this.label7.TabIndex = 18;
+            this.label7.Text = "Chat theme:";
+            // 
+            // cmbFileUploadService
+            // 
+            this.cmbFileUploadService.FormattingEnabled = true;
+            this.cmbFileUploadService.Items.AddRange(new object[] {
+            "https://mediacru.sh"});
+            this.cmbFileUploadService.Location = new System.Drawing.Point(318, 9);
+            this.cmbFileUploadService.Name = "cmbFileUploadService";
+            this.cmbFileUploadService.Size = new System.Drawing.Size(177, 21);
+            this.cmbFileUploadService.TabIndex = 17;
+            this.cmbFileUploadService.Text = "https://mediacru.sh";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(204, 12);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(98, 13);
+            this.label6.TabIndex = 16;
+            this.label6.Text = "File upload service:";
+            // 
+            // chkEnableImagePreview
+            // 
+            this.chkEnableImagePreview.AutoSize = true;
+            this.chkEnableImagePreview.Location = new System.Drawing.Point(26, 12);
+            this.chkEnableImagePreview.Name = "chkEnableImagePreview";
+            this.chkEnableImagePreview.Size = new System.Drawing.Size(100, 17);
+            this.chkEnableImagePreview.TabIndex = 10;
+            this.chkEnableImagePreview.Text = "Preview images";
+            this.chkEnableImagePreview.UseVisualStyleBackColor = true;
+            this.chkEnableImagePreview.CheckedChanged += new System.EventHandler(this.chkEnableImagePreview_CheckedChanged);
+            // 
+            // chkSternchen
+            // 
+            this.chkSternchen.AutoSize = true;
+            this.chkSternchen.Location = new System.Drawing.Point(26, 104);
+            this.chkSternchen.Name = "chkSternchen";
+            this.chkSternchen.Size = new System.Drawing.Size(30, 17);
+            this.chkSternchen.TabIndex = 11;
+            this.chkSternchen.Text = "*";
+            this.chkSternchen.UseVisualStyleBackColor = true;
+            this.chkSternchen.CheckedChanged += new System.EventHandler(this.chkSternchen_CheckedChanged);
+            // 
+            // comboMessageTheme
+            // 
+            this.comboMessageTheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboMessageTheme.FormattingEnabled = true;
+            this.comboMessageTheme.Items.AddRange(new object[] {
+            "Default",
+            "Compact",
+            "Conversations",
+            "Custom"});
+            this.comboMessageTheme.Location = new System.Drawing.Point(318, 37);
+            this.comboMessageTheme.Name = "comboMessageTheme";
+            this.comboMessageTheme.Size = new System.Drawing.Size(138, 21);
+            this.comboMessageTheme.TabIndex = 13;
+            this.comboMessageTheme.SelectedIndexChanged += new System.EventHandler(this.comboMessageTheme_SelectedIndexChanged);
+            // 
             // chkFiletransferAutoAccept
             // 
             this.chkFiletransferAutoAccept.AutoSize = true;
@@ -179,93 +466,6 @@
             this.chkDisplayOccupantStatus.Text = "Display status texts";
             this.chkDisplayOccupantStatus.UseVisualStyleBackColor = true;
             this.chkDisplayOccupantStatus.CheckedChanged += new System.EventHandler(this.chkDisplayOccupantStatus_CheckedChanged);
-            // 
-            // comboMessageTheme
-            // 
-            this.comboMessageTheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboMessageTheme.FormattingEnabled = true;
-            this.comboMessageTheme.Items.AddRange(new object[] {
-            "Default",
-            "Compact",
-            "Conversations",
-            "Custom"});
-            this.comboMessageTheme.Location = new System.Drawing.Point(318, 37);
-            this.comboMessageTheme.Name = "comboMessageTheme";
-            this.comboMessageTheme.Size = new System.Drawing.Size(138, 21);
-            this.comboMessageTheme.TabIndex = 13;
-            this.comboMessageTheme.SelectedIndexChanged += new System.EventHandler(this.comboMessageTheme_SelectedIndexChanged);
-            // 
-            // chkSternchen
-            // 
-            this.chkSternchen.AutoSize = true;
-            this.chkSternchen.Location = new System.Drawing.Point(26, 104);
-            this.chkSternchen.Name = "chkSternchen";
-            this.chkSternchen.Size = new System.Drawing.Size(30, 17);
-            this.chkSternchen.TabIndex = 11;
-            this.chkSternchen.Text = "*";
-            this.chkSternchen.UseVisualStyleBackColor = true;
-            this.chkSternchen.CheckedChanged += new System.EventHandler(this.chkSternchen_CheckedChanged);
-            // 
-            // chkEnableImagePreview
-            // 
-            this.chkEnableImagePreview.AutoSize = true;
-            this.chkEnableImagePreview.Location = new System.Drawing.Point(26, 12);
-            this.chkEnableImagePreview.Name = "chkEnableImagePreview";
-            this.chkEnableImagePreview.Size = new System.Drawing.Size(100, 17);
-            this.chkEnableImagePreview.TabIndex = 10;
-            this.chkEnableImagePreview.Text = "Preview images";
-            this.chkEnableImagePreview.UseVisualStyleBackColor = true;
-            this.chkEnableImagePreview.CheckedChanged += new System.EventHandler(this.chkEnableImagePreview_CheckedChanged);
-            // 
-            // btnRegister
-            // 
-            this.btnRegister.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRegister.BackColor = System.Drawing.SystemColors.Control;
-            this.btnRegister.Location = new System.Drawing.Point(199, 73);
-            this.btnRegister.Name = "btnRegister";
-            this.btnRegister.Size = new System.Drawing.Size(89, 22);
-            this.btnRegister.TabIndex = 9;
-            this.btnRegister.Text = "New Account";
-            this.btnRegister.UseVisualStyleBackColor = true;
-            this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(9, 50);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(56, 13);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Password:";
-            // 
-            // btnConnect
-            // 
-            this.btnConnect.BackColor = System.Drawing.SystemColors.Control;
-            this.btnConnect.Location = new System.Drawing.Point(88, 73);
-            this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(105, 22);
-            this.btnConnect.TabIndex = 8;
-            this.btnConnect.Text = "Connect >";
-            this.btnConnect.UseVisualStyleBackColor = true;
-            this.btnConnect.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(9, 24);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(58, 13);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Username:";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 10);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(65, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Server/Port:";
             // 
             // lvOnlineStatus
             // 
@@ -320,6 +520,7 @@
             // pnlToolbar
             // 
             this.pnlToolbar.BackColor = System.Drawing.Color.DimGray;
+            this.pnlToolbar.Controls.Add(this.labChatstates);
             this.pnlToolbar.Controls.Add(this.button4);
             this.pnlToolbar.Controls.Add(this.chkToggleSidebar);
             this.pnlToolbar.Controls.Add(this.txtSubject);
@@ -411,27 +612,12 @@
             this.splitContainer1.SplitterDistance = 506;
             this.splitContainer1.TabIndex = 9;
             // 
-            // webBrowser1
-            // 
-            this.webBrowser1.AllowWebBrowserDrop = false;
-            this.webBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.webBrowser1.Location = new System.Drawing.Point(1, 3);
-            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.ScriptErrorsSuppressed = true;
-            this.webBrowser1.Size = new System.Drawing.Size(504, 260);
-            this.webBrowser1.TabIndex = 0;
-            this.webBrowser1.Url = new System.Uri("about:blank", System.UriKind.Absolute);
-            this.webBrowser1.OnRealKeyDown += new System.Windows.Forms.HtmlElementEventHandler(this.webBrowser1_OnRealKeyDown);
-            this.webBrowser1.OnSpecialUrl += new miniConf.MessageView.SpecialUrlEvent(this.webBrowser1_OnSpecialUrl);
-            // 
             // txtSendmessage
             // 
             this.txtSendmessage.AllowDrop = true;
             this.txtSendmessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSendmessage.Enabled = false;
             this.txtSendmessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
             this.txtSendmessage.Location = new System.Drawing.Point(0, 266);
             this.txtSendmessage.Multiline = true;
@@ -551,12 +737,82 @@
             this.openMiniConfToolStripMenuItem.Text = "Open miniConf";
             this.openMiniConfToolStripMenuItem.Click += new System.EventHandler(this.openMiniConfToolStripMenuItem_Click);
             // 
+            // sendFileToolStripMenuItem
+            // 
+            this.sendFileToolStripMenuItem.Name = "sendFileToolStripMenuItem";
+            this.sendFileToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.sendFileToolStripMenuItem.Text = "Send file ...";
+            this.sendFileToolStripMenuItem.Click += new System.EventHandler(this.sendFileToolStripMenuItem_Click);
+            // 
+            // findToolStripMenuItem
+            // 
+            this.findToolStripMenuItem.Name = "findToolStripMenuItem";
+            this.findToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+F";
+            this.findToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.findToolStripMenuItem.Text = "Find ...";
+            this.findToolStripMenuItem.Click += new System.EventHandler(this.findToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem3
+            // 
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(171, 6);
+            // 
+            // searchForUpdatesToolStripMenuItem
+            // 
+            this.searchForUpdatesToolStripMenuItem.Name = "searchForUpdatesToolStripMenuItem";
+            this.searchForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.searchForUpdatesToolStripMenuItem.Text = "Search for updates";
+            this.searchForUpdatesToolStripMenuItem.Click += new System.EventHandler(this.searchForUpdatesToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.helpToolStripMenuItem.Text = "Help";
             this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
+            // 
+            // extrasToolStripMenuItem
+            // 
+            this.extrasToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.xMPPConsoleToolStripMenuItem,
+            this.sqliteConsoleToolStripMenuItem,
+            this.editStylesToolStripMenuItem,
+            this.reloadStylesToolStripMenuItem});
+            this.extrasToolStripMenuItem.Name = "extrasToolStripMenuItem";
+            this.extrasToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.extrasToolStripMenuItem.Text = "Tools";
+            // 
+            // xMPPConsoleToolStripMenuItem
+            // 
+            this.xMPPConsoleToolStripMenuItem.Name = "xMPPConsoleToolStripMenuItem";
+            this.xMPPConsoleToolStripMenuItem.ShortcutKeyDisplayString = "F9";
+            this.xMPPConsoleToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.xMPPConsoleToolStripMenuItem.Text = "XMPP console";
+            this.xMPPConsoleToolStripMenuItem.Click += new System.EventHandler(this.xMPPConsoleToolStripMenuItem_Click);
+            // 
+            // sqliteConsoleToolStripMenuItem
+            // 
+            this.sqliteConsoleToolStripMenuItem.Name = "sqliteConsoleToolStripMenuItem";
+            this.sqliteConsoleToolStripMenuItem.ShortcutKeyDisplayString = "Shift+F9";
+            this.sqliteConsoleToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.sqliteConsoleToolStripMenuItem.Text = "Sqlite console";
+            this.sqliteConsoleToolStripMenuItem.Click += new System.EventHandler(this.sqliteConsoleToolStripMenuItem_Click);
+            // 
+            // editStylesToolStripMenuItem
+            // 
+            this.editStylesToolStripMenuItem.Name = "editStylesToolStripMenuItem";
+            this.editStylesToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+Shift+E";
+            this.editStylesToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.editStylesToolStripMenuItem.Text = "Edit styles";
+            this.editStylesToolStripMenuItem.Click += new System.EventHandler(this.editStylesToolStripMenuItem_Click);
+            // 
+            // reloadStylesToolStripMenuItem
+            // 
+            this.reloadStylesToolStripMenuItem.Name = "reloadStylesToolStripMenuItem";
+            this.reloadStylesToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+Shift+R";
+            this.reloadStylesToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.reloadStylesToolStripMenuItem.Text = "Reload styles";
+            this.reloadStylesToolStripMenuItem.Click += new System.EventHandler(this.reloadStylesToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -645,271 +901,57 @@
             this.filterTextbox.TextChanged += new System.EventHandler(this.filterTextbox_TextChanged);
             this.filterTextbox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.filterTextbox_KeyDown);
             // 
-            // extrasToolStripMenuItem
+            // tabPage4
             // 
-            this.extrasToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.xMPPConsoleToolStripMenuItem,
-            this.sqliteConsoleToolStripMenuItem,
-            this.editStylesToolStripMenuItem,
-            this.reloadStylesToolStripMenuItem});
-            this.extrasToolStripMenuItem.Name = "extrasToolStripMenuItem";
-            this.extrasToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
-            this.extrasToolStripMenuItem.Text = "Tools";
+            this.tabPage4.Controls.Add(this.txtConnInfo);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(595, 175);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "Infos";
+            this.tabPage4.UseVisualStyleBackColor = true;
             // 
-            // toolStripMenuItem3
+            // txtConnInfo
             // 
-            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(171, 6);
+            this.txtConnInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtConnInfo.Location = new System.Drawing.Point(9, 9);
+            this.txtConnInfo.Multiline = true;
+            this.txtConnInfo.Name = "txtConnInfo";
+            this.txtConnInfo.Size = new System.Drawing.Size(580, 160);
+            this.txtConnInfo.TabIndex = 0;
             // 
-            // xMPPConsoleToolStripMenuItem
+            // labChatstates
             // 
-            this.xMPPConsoleToolStripMenuItem.Name = "xMPPConsoleToolStripMenuItem";
-            this.xMPPConsoleToolStripMenuItem.ShortcutKeyDisplayString = "F9";
-            this.xMPPConsoleToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
-            this.xMPPConsoleToolStripMenuItem.Text = "XMPP console";
-            this.xMPPConsoleToolStripMenuItem.Click += new System.EventHandler(this.xMPPConsoleToolStripMenuItem_Click);
+            this.labChatstates.BackColor = System.Drawing.Color.Cyan;
+            this.labChatstates.Location = new System.Drawing.Point(33, 3);
+            this.labChatstates.Name = "labChatstates";
+            this.labChatstates.Size = new System.Drawing.Size(514, 23);
+            this.labChatstates.TabIndex = 4;
+            this.labChatstates.Text = "label4";
+            this.labChatstates.Visible = false;
             // 
-            // sqliteConsoleToolStripMenuItem
+            // tmrChatstatePaused
             // 
-            this.sqliteConsoleToolStripMenuItem.Name = "sqliteConsoleToolStripMenuItem";
-            this.sqliteConsoleToolStripMenuItem.ShortcutKeyDisplayString = "Shift+F9";
-            this.sqliteConsoleToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
-            this.sqliteConsoleToolStripMenuItem.Text = "Sqlite console";
-            this.sqliteConsoleToolStripMenuItem.Click += new System.EventHandler(this.sqliteConsoleToolStripMenuItem_Click);
+            this.tmrChatstatePaused.Interval = 7500;
+            this.tmrChatstatePaused.Tick += new System.EventHandler(this.tmrChatstatePaused_Tick);
             // 
-            // editStylesToolStripMenuItem
+            // webBrowser1
             // 
-            this.editStylesToolStripMenuItem.Name = "editStylesToolStripMenuItem";
-            this.editStylesToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+Shift+E";
-            this.editStylesToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
-            this.editStylesToolStripMenuItem.Text = "Edit styles";
-            this.editStylesToolStripMenuItem.Click += new System.EventHandler(this.editStylesToolStripMenuItem_Click);
-            // 
-            // reloadStylesToolStripMenuItem
-            // 
-            this.reloadStylesToolStripMenuItem.Name = "reloadStylesToolStripMenuItem";
-            this.reloadStylesToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+Shift+R";
-            this.reloadStylesToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
-            this.reloadStylesToolStripMenuItem.Text = "Reload styles";
-            this.reloadStylesToolStripMenuItem.Click += new System.EventHandler(this.reloadStylesToolStripMenuItem_Click);
-            // 
-            // sendFileToolStripMenuItem
-            // 
-            this.sendFileToolStripMenuItem.Name = "sendFileToolStripMenuItem";
-            this.sendFileToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
-            this.sendFileToolStripMenuItem.Text = "Send file ...";
-            this.sendFileToolStripMenuItem.Click += new System.EventHandler(this.sendFileToolStripMenuItem_Click);
-            // 
-            // findToolStripMenuItem
-            // 
-            this.findToolStripMenuItem.Name = "findToolStripMenuItem";
-            this.findToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+F";
-            this.findToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
-            this.findToolStripMenuItem.Text = "Find ...";
-            this.findToolStripMenuItem.Click += new System.EventHandler(this.findToolStripMenuItem_Click);
-            // 
-            // searchForUpdatesToolStripMenuItem
-            // 
-            this.searchForUpdatesToolStripMenuItem.Name = "searchForUpdatesToolStripMenuItem";
-            this.searchForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
-            this.searchForUpdatesToolStripMenuItem.Text = "Search for updates";
-            this.searchForUpdatesToolStripMenuItem.Click += new System.EventHandler(this.searchForUpdatesToolStripMenuItem_Click);
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(204, 12);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(98, 13);
-            this.label6.TabIndex = 16;
-            this.label6.Text = "File upload service:";
-            // 
-            // cmbFileUploadService
-            // 
-            this.cmbFileUploadService.FormattingEnabled = true;
-            this.cmbFileUploadService.Items.AddRange(new object[] {
-            "https://mediacru.sh"});
-            this.cmbFileUploadService.Location = new System.Drawing.Point(318, 9);
-            this.cmbFileUploadService.Name = "cmbFileUploadService";
-            this.cmbFileUploadService.Size = new System.Drawing.Size(177, 21);
-            this.cmbFileUploadService.TabIndex = 17;
-            this.cmbFileUploadService.Text = "https://mediacru.sh";
-            // 
-            // tabControl1
-            // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.webBrowser1.AllowWebBrowserDrop = false;
+            this.webBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage3);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(6, 4);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(603, 201);
-            this.tabControl1.TabIndex = 18;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.pnlPrefConnectAdvanced);
-            this.tabPage1.Controls.Add(this.lnkConnectAdvanced);
-            this.tabPage1.Controls.Add(this.txtPrefUsername);
-            this.tabPage1.Controls.Add(this.txtPrefPassword);
-            this.tabPage1.Controls.Add(this.label2);
-            this.tabPage1.Controls.Add(this.btnConnect);
-            this.tabPage1.Controls.Add(this.label3);
-            this.tabPage1.Controls.Add(this.btnRegister);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(595, 175);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Server info";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.label7);
-            this.tabPage2.Controls.Add(this.cmbFileUploadService);
-            this.tabPage2.Controls.Add(this.label6);
-            this.tabPage2.Controls.Add(this.chkEnableImagePreview);
-            this.tabPage2.Controls.Add(this.chkSternchen);
-            this.tabPage2.Controls.Add(this.comboMessageTheme);
-            this.tabPage2.Controls.Add(this.chkFiletransferAutoAccept);
-            this.tabPage2.Controls.Add(this.chkDisplayOccupantStatus);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(595, 175);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Appearance";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(204, 40);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(64, 13);
-            this.label7.TabIndex = 18;
-            this.label7.Text = "Chat theme:";
-            // 
-            // tabPage3
-            // 
-            this.tabPage3.Controls.Add(this.btnConnect2);
-            this.tabPage3.Controls.Add(this.txtChatrooms);
-            this.tabPage3.Controls.Add(this.btnRoomList);
-            this.tabPage3.Controls.Add(this.lvPrefChatrooms);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(595, 175);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Conferences";
-            this.tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // btnRoomList
-            // 
-            this.btnRoomList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRoomList.BackColor = System.Drawing.SystemColors.Control;
-            this.btnRoomList.Location = new System.Drawing.Point(121, 147);
-            this.btnRoomList.Name = "btnRoomList";
-            this.btnRoomList.Size = new System.Drawing.Size(74, 22);
-            this.btnRoomList.TabIndex = 15;
-            this.btnRoomList.Text = "List ...";
-            this.btnRoomList.UseVisualStyleBackColor = true;
-            this.btnRoomList.Click += new System.EventHandler(this.btnRoomList_Click);
-            // 
-            // txtChatrooms
-            // 
-            this.txtChatrooms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtChatrooms.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtChatrooms.Location = new System.Drawing.Point(10, 9);
-            this.txtChatrooms.Multiline = true;
-            this.txtChatrooms.Name = "txtChatrooms";
-            this.txtChatrooms.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtChatrooms.Size = new System.Drawing.Size(579, 138);
-            this.txtChatrooms.TabIndex = 7;
-            this.txtChatrooms.Text = "feedback@chat.teamwiki.de\r\nlounge@chat.teamwiki.de";
-            this.txtChatrooms.WordWrap = false;
-            // 
-            // txtPrefServerPort
-            // 
-            this.txtPrefServerPort.FormattingEnabled = true;
-            this.txtPrefServerPort.Items.AddRange(new object[] {
-            "5222"});
-            this.txtPrefServerPort.Location = new System.Drawing.Point(232, 7);
-            this.txtPrefServerPort.Name = "txtPrefServerPort";
-            this.txtPrefServerPort.Size = new System.Drawing.Size(54, 21);
-            this.txtPrefServerPort.TabIndex = 11;
-            this.txtPrefServerPort.Text = "5222";
-            // 
-            // lnkConnectAdvanced
-            // 
-            this.lnkConnectAdvanced.AutoSize = true;
-            this.lnkConnectAdvanced.Location = new System.Drawing.Point(9, 106);
-            this.lnkConnectAdvanced.Name = "lnkConnectAdvanced";
-            this.lnkConnectAdvanced.Size = new System.Drawing.Size(65, 13);
-            this.lnkConnectAdvanced.TabIndex = 12;
-            this.lnkConnectAdvanced.TabStop = true;
-            this.lnkConnectAdvanced.Text = "Advanced...";
-            this.lnkConnectAdvanced.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkConnectAdvanced_LinkClicked);
-            // 
-            // pnlPrefConnectAdvanced
-            // 
-            this.pnlPrefConnectAdvanced.Controls.Add(this.txtPrefServerPort);
-            this.pnlPrefConnectAdvanced.Controls.Add(this.txtPrefServer);
-            this.pnlPrefConnectAdvanced.Controls.Add(this.label1);
-            this.pnlPrefConnectAdvanced.Location = new System.Drawing.Point(2, 108);
-            this.pnlPrefConnectAdvanced.Name = "pnlPrefConnectAdvanced";
-            this.pnlPrefConnectAdvanced.Size = new System.Drawing.Size(310, 61);
-            this.pnlPrefConnectAdvanced.TabIndex = 13;
-            this.pnlPrefConnectAdvanced.Visible = false;
-            // 
-            // lvPrefChatrooms
-            // 
-            this.lvPrefChatrooms.CheckBoxes = true;
-            this.lvPrefChatrooms.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader3,
-            this.columnHeader4,
-            this.columnHeader5});
-            this.lvPrefChatrooms.FullRowSelect = true;
-            this.lvPrefChatrooms.Location = new System.Drawing.Point(10, 9);
-            this.lvPrefChatrooms.MultiSelect = false;
-            this.lvPrefChatrooms.Name = "lvPrefChatrooms";
-            this.lvPrefChatrooms.Size = new System.Drawing.Size(578, 158);
-            this.lvPrefChatrooms.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.lvPrefChatrooms.TabIndex = 16;
-            this.lvPrefChatrooms.UseCompatibleStateImageBehavior = false;
-            this.lvPrefChatrooms.View = System.Windows.Forms.View.Details;
-            this.lvPrefChatrooms.Visible = false;
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "Name";
-            this.columnHeader3.Width = 127;
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "Topic";
-            this.columnHeader4.Width = 306;
-            // 
-            // columnHeader5
-            // 
-            this.columnHeader5.Text = "Nickname";
-            this.columnHeader5.Width = 102;
-            // 
-            // btnConnect2
-            // 
-            this.btnConnect2.BackColor = System.Drawing.SystemColors.Control;
-            this.btnConnect2.Location = new System.Drawing.Point(10, 147);
-            this.btnConnect2.Name = "btnConnect2";
-            this.btnConnect2.Size = new System.Drawing.Size(105, 22);
-            this.btnConnect2.TabIndex = 17;
-            this.btnConnect2.Text = "OK";
-            this.btnConnect2.UseVisualStyleBackColor = true;
-            this.btnConnect2.Click += new System.EventHandler(this.btnConnect2_Click);
+            this.webBrowser1.Location = new System.Drawing.Point(1, 3);
+            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser1.Name = "webBrowser1";
+            this.webBrowser1.ScriptErrorsSuppressed = true;
+            this.webBrowser1.Size = new System.Drawing.Size(504, 260);
+            this.webBrowser1.TabIndex = 0;
+            this.webBrowser1.Url = new System.Uri("about:blank", System.UriKind.Absolute);
+            this.webBrowser1.OnRealKeyDown += new System.Windows.Forms.HtmlElementEventHandler(this.webBrowser1_OnRealKeyDown);
+            this.webBrowser1.OnSpecialUrl += new miniConf.MessageView.SpecialUrlEvent(this.webBrowser1_OnSpecialUrl);
             // 
             // Form1
             // 
@@ -932,6 +974,15 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.pnlConfig.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            this.pnlPrefConnectAdvanced.ResumeLayout(false);
+            this.pnlPrefConnectAdvanced.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
             this.pnlToolbar.ResumeLayout(false);
             this.pnlToolbar.PerformLayout();
             this.panel3.ResumeLayout(false);
@@ -944,15 +995,8 @@
             this.contextMenuStrip1.ResumeLayout(false);
             this.filterBarPanel.ResumeLayout(false);
             this.filterBarPanel.PerformLayout();
-            this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
-            this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
-            this.pnlPrefConnectAdvanced.ResumeLayout(false);
-            this.pnlPrefConnectAdvanced.PerformLayout();
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1033,6 +1077,10 @@
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ColumnHeader columnHeader5;
         private System.Windows.Forms.Button btnConnect2;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.TextBox txtConnInfo;
+        private System.Windows.Forms.Label labChatstates;
+        private System.Windows.Forms.Timer tmrChatstatePaused;
     }
 }
 

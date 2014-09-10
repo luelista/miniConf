@@ -12,6 +12,7 @@ namespace miniConf {
         public static agsXMPP.XmppClientConnection conn = null;
         public static string dataDir;
         public static string appDir;
+        public static string tempDir;
 
         public static cls_globPara glob;
         public static ChatDatabase db;
@@ -27,6 +28,7 @@ namespace miniConf {
             System.IO.Directory.CreateDirectory(dataDir);
             System.IO.Directory.CreateDirectory(dataDir + "Received Files");
             System.IO.Directory.CreateDirectory(dataDir + "Temporary Data");
+            tempDir = dataDir + "Temporary Data\\";
 
             singleInstanceMutex = new Mutex(true, "singleInstanceMutex@miniConf.luelista.net");
             if (singleInstanceMutex.WaitOne(TimeSpan.Zero, true)) {

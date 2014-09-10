@@ -6,78 +6,65 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace miniConf {
-    public class ChatDatabase {
-        SQLiteConnection dataBase;
+    public class ChatDatabase : SqlDatabase {
 
-        public ChatDatabase(string dbfile) {
-            var connString = new SQLiteConnectionStringBuilder();
-            connString.DataSource = dbfile;
+        public const long schemaVersion = 6;
 
-            dataBase = new SQLiteConnection(connString.ConnectionString);
-            dataBase.Open();
+        public ChatDatabase(string dbfile)
+            : base(dbfile) {
 
-            this.CreateSchema();
-
+            this.CreateSchema(this.databaseVersion);
         }
 
-        public void ExecSQL(string sql) {
-            var cmd = this.BuildCommand(sql, new object[0]);
-            cmd.ExecuteNonQuery();
-        }
-
-        public void ExecSQL(string sql, params object[] args) {
-            var cmd = this.BuildCommand(sql, args);
-            cmd.ExecuteNonQuery();
-        }
-
-        public object GetScalarSQL(string sql, params object[] args) {
-            var cmd = this.BuildCommand(sql, args);
-            return cmd.ExecuteScalar();
-        }
-        public SQLiteCommand BuildCommand(string sql, object[] args) {
-            var cmd = dataBase.CreateCommand();
-            cmd.CommandText = sql;
-            foreach (var o in args) {
-                cmd.Parameters.Add(new SQLiteParameter(System.Data.DbType.Object, o));
-            }
-            return cmd;
-        }
-
-
-        public void CreateSchema() {
-            long version = (long)this.GetScalarSQL("PRAGMA user_version;  ");
+        public void CreateSchema(long currentVersion) {
             try {
-
-                if (version < 1) {
+                
+                if (currentVersion < 1) {
                     this.ExecSQL("CREATE TABLE IF NOT EXISTS messages (room TEXT, xmppid TEXT, sender TEXT, messagebody TEXT, datedt TEXT, CONSTRAINT message_unique UNIQUE ( room,xmppid,sender,datedt ) ON CONFLICT REPLACE ); ");
                     this.ExecSQL("CREATE TABLE IF NOT EXISTS roommates (room TEXT, nickname TEXT, lastseendt INTEGER, onlinestate TEXT, CONSTRAINT mate_unique UNIQUE (room,nickname) ON CONFLICT FAIL ); ");
                     this.ExecSQL("CREATE TABLE IF NOT EXISTS room (room TEXT, lastmessagedt TEXT, subject TEXT, CONSTRAINT room_unique UNIQUE (room) ON CONFLICT IGNORE); ");
                 }
 
-                if (version < 2) {
+                if (currentVersion < 2) {
                     this.ExecSQL("ALTER TABLE roommates ADD COLUMN affiliation TEXT; ");
                     this.ExecSQL("ALTER TABLE roommates ADD COLUMN role TEXT; ");
 
                 }
 
-                if (version < 3) {
+                if (currentVersion < 3) {
                     this.ExecSQL("ALTER TABLE roommates ADD COLUMN status_str TEXT; ");
 
                 }
-                if (version < 4) {
+                if (currentVersion < 4) {
                     this.ExecSQL("ALTER TABLE roommates ADD COLUMN user_jid TEXT; ");
 
                 }
 
-                if (version < 5) {
+                if (currentVersion < 5) {
                     this.ExecSQL("CREATE TABLE IF NOT EXISTS params (item TEXT, value TEXT); ");
+                }
+
+                if (currentVersion < 6) {
+                    this.ExecSQL("DROP TABLE IF EXISTS params; CREATE TABLE params (item TEXT, value TEXT, CONSTRAINT para_unique UNIQUE (item) ON CONFLICT REPLACE); ");
 
                     // update db version number
-                    this.ExecSQL("PRAGMA user_version = 5; ");
+                    this.ExecSQL("PRAGMA user_version = " + ChatDatabase.schemaVersion.ToString());
                 }
 
             } catch (Exception ex) {
-                MessageBox.Show("Database error\n" + ex.Message, "Updater", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                System.IO.File.AppendAllText(Program.tempDir + "error.log", GetNowString() + "\tDatabase error (schema update):\t" + ex.Message);
+                
+                switch (MessageBox.Show("Database error\n" + ex.Message, "Updater", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2)) {
+                    case DialogResult.Abort:
+                        return;
+                    case DialogResult.Retry:
+                        CreateSchema(currentVersion + 1);
+                        return;
+                    case DialogResult.Ignore:
+                        // update db version number
+                        this.ExecSQL("PRAGMA user_version = " + ChatDatabase.schemaVersion.ToString());
+                        return;
+                }
             }
         }
 

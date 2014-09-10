@@ -1,4 +1,5 @@
 ﻿using agsXMPP;
+using agsXMPP.Xml.Dom;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,6 +16,8 @@ namespace miniConf {
 
         private agsXMPP.protocol.client.Message beforeLoadedMessage = null;
         private bool loaded = false;
+
+        private agsXMPP.protocol.extensions.chatstates.Chatstate lastChatstate;
 
         public DirectMessageForm() {
             InitializeComponent();
@@ -36,13 +39,26 @@ namespace miniConf {
         public void onMessage(agsXMPP.protocol.client.Message msg) {
             if (loaded == false) { beforeLoadedMessage = msg; return; }
 
-            messageView1.addMessageToView(msg.From, msg.GetTag("body"), DateTime.Now);
+            // XEP-0280, Message Carbons
+            var carbonsSent = msg.SelectSingleElement("sent", Jabber.URN_CARBONS);
+            var carbonsReceived = msg.SelectSingleElement("received", Jabber.URN_CARBONS);
+            if (carbonsSent != null) {
+                msg = (agsXMPP.protocol.client.Message)carbonsSent.SelectSingleElement("message", true);
+            } else if (carbonsReceived != null) {
+                msg = (agsXMPP.protocol.client.Message)carbonsReceived.SelectSingleElement("message", true);
+            }
+            if (msg.HasTag("body")) {
+                messageView1.addMessageToView(msg.From, msg.GetTag("body"), DateTime.Now);
+            }
+            if (msg.Chatstate != agsXMPP.protocol.extensions.chatstates.Chatstate.None) {
+                labChatstate.Text = msg.Chatstate.ToString();
+            }
         }
 
         private void sendMessage(string text) {
             var msg = new agsXMPP.protocol.client.Message(this.otherEnd.Bare, Program.conn.MyJID, agsXMPP.protocol.client.MessageType.chat, text);
             msg.Id = Guid.NewGuid().ToString();
-
+            msg.Chatstate = agsXMPP.protocol.extensions.chatstates.Chatstate.active;
             Program.conn.Send(msg);
         }
 
@@ -52,7 +68,17 @@ namespace miniConf {
                 messageView1.addMessageToView("self", textBox1.Text, DateTime.Now);
                 textBox1.Text = "";
                 e.SuppressKeyPress = true; e.Handled = true;
+            } else {
+                
             }
+        }
+
+        private void sendChatstate(agsXMPP.protocol.extensions.chatstates.Chatstate state) {
+            lastChatstate = state;
+            var msg = new agsXMPP.protocol.client.Message(new Jid(this.otherEnd.Bare), Program.conn.MyJID);
+            msg.Type = agsXMPP.protocol.client.MessageType.chat;
+            msg.Chatstate = state;
+            Program.conn.Send(msg);
         }
 
         private void messageView1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
@@ -62,7 +88,15 @@ namespace miniConf {
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e) {
-
+            var newState = agsXMPP.protocol.extensions.chatstates.Chatstate.active;
+            tmrChatstatePaused.Stop();
+            if (textBox1.Text != "") {
+                newState = agsXMPP.protocol.extensions.chatstates.Chatstate.composing;
+                 tmrChatstatePaused.Start();
+            }
+            if (lastChatstate != newState) {
+                sendChatstate(newState);
+            }
         }
 
         private void messageView1_OnSpecialUrl(string url) {
@@ -74,6 +108,11 @@ namespace miniConf {
                     Process.Start("explorer.exe", "/e,\"" + Program.dataDir + "Received Files\"");
                     break;
             }
+        }
+
+        private void tmrChatstatePaused_Tick(object sender, EventArgs e) {
+            tmrChatstatePaused.Stop();
+            sendChatstate(agsXMPP.protocol.extensions.chatstates.Chatstate.paused);
         }
 
 
