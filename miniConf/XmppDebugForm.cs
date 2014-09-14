@@ -15,10 +15,10 @@ namespace miniConf {
         }
 
         private void XmppDebugForm_Load(object sender, EventArgs e) {
-            Program.conn.OnReadXml += conn_OnReadXml;
-            Program.conn.OnPresence += conn_OnPresence;
-            Program.conn.OnMessage += conn_OnMessage;
-            Program.conn.OnIq += conn_OnIq;
+            Program.Jabber.conn.OnReadXml += conn_OnReadXml;
+            Program.Jabber.conn.OnPresence += conn_OnPresence;
+            Program.Jabber.conn.OnMessage += conn_OnMessage;
+            Program.Jabber.conn.OnIq += conn_OnIq;
             textEditorControl1.Document.DocumentChanged += Document_DocumentChanged;
             textEditorControl1.SetHighlighting("XML");
         }
@@ -100,6 +100,10 @@ namespace miniConf {
 
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e) {
 
+        }
+
+        private void toolStripSplitButton1_ButtonClick(object sender, EventArgs e) {
+            Program.Jabber.conn.Send(textEditorControl1.Text);
         }
 
     }

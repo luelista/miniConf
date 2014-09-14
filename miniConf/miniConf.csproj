@@ -84,7 +84,11 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Jabber.cs" />
+    <Compile Include="JabberAvatars.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="JabberContact.cs" />
+    <Compile Include="JabberService.cs" />
     <Compile Include="Jingle.cs" />
     <Compile Include="MediaUploadForm.cs">
       <SubType>Form</SubType>

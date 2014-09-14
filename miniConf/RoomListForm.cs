@@ -27,8 +27,8 @@ namespace miniConf {
         }
 
         private void RoomListForm_Load(object sender, EventArgs e) {
-            discoManager = new DiscoManager(Program.conn);
-            discoManager.DiscoverItems(new Jid(Program.conn.Server), new IqCB(OnDiscoServerResult), null);
+            discoManager = new DiscoManager(Program.Jabber.conn);
+            discoManager.DiscoverItems(new Jid(Program.Jabber.conn.Server), new IqCB(OnDiscoServerResult), null);
 
 
         }

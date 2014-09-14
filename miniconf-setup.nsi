@@ -1,7 +1,7 @@
 !include MUI2.nsh
 !addplugindir .\setups
 
-!define VERSION "1.6.1"
+!define VERSION "1.6.2"
 
 Function LicensePageShow
 

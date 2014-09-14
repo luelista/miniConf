@@ -9,7 +9,7 @@ namespace miniConf {
 
         public static Mutex singleInstanceMutex;
 
-        public static agsXMPP.XmppClientConnection conn = null;
+        public static JabberService Jabber { get; private set; }
         public static string dataDir;
         public static string appDir;
         public static string tempDir;
@@ -22,12 +22,14 @@ namespace miniConf {
         /// </summary>
         [STAThread]
         static void Main(string[] argv) {
+            Jabber = new JabberService();
 
             appDir = Path.GetDirectoryName(Application.ExecutablePath) + "\\";
             dataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\miniConf\\";
             System.IO.Directory.CreateDirectory(dataDir);
             System.IO.Directory.CreateDirectory(dataDir + "Received Files");
             System.IO.Directory.CreateDirectory(dataDir + "Temporary Data");
+            System.IO.Directory.CreateDirectory(dataDir + "Avatars");
             tempDir = dataDir + "Temporary Data\\";
 
             singleInstanceMutex = new Mutex(true, "singleInstanceMutex@miniConf.max-weller.de");

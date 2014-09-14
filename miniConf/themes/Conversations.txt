@@ -8,7 +8,15 @@ p strong.me{color:#555;}
 /* system notices (e.g. topic change) */
 p.notice { color: #999; border: none; padding: 1px 10px; } 
 
-p.msg { border: 1px solid #ddd; margin: 4px 100px 4px 10px; background-color: #fcfcfc;  }
-p strong, p i { font-size: 8pt; color: #999; padding-right: 5px; font-weight: normal; font-style: normal; }
+p.msg { border: 1px solid #ddd; margin: 4px 100px 4px 42px; background-color: #fcfcfc; }
+p strong, p i { font-size: 8pt; color: #999 !important; padding-right: 5px; font-weight: normal; font-style: normal; }
 p span {display:block;}
+
+.avatar { display: block; width: 32px; height: 32px; float: left; margin-top: -6px;
+		 margin-left: -38px; background-size: cover; background-color: #666; }
+.avatar img { width: 32px; height: 32px;  }
+
+p.msg.self { margin: 4px 42px 4px 100px; }
+p.msg.self .avatar { margin-left: 0; margin-right: -46px; float: right; }
+
 

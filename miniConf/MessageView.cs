@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,7 @@ namespace miniConf {
         public event HtmlElementEventHandler OnRealKeyDown;
 
         public string highlightString = "";
+        public string selfNickname = "";
         public bool imagePreview = false;
 
         public MessageView() {
@@ -53,7 +55,23 @@ namespace miniConf {
             }
         }
 
-        public void addMessageToView(string from, string text, DateTime time, HtmlElementInsertionOrientation where = HtmlElementInsertionOrientation.BeforeEnd) {
+        private static uint ReHash(int srcHash) {
+            unchecked {
+                uint h = (uint)srcHash;
+                h += (h << 15) ^ 0xffffcd7d;
+                h ^= (h >> 10);
+                h += (h << 3);
+                h ^= (h >> 6);
+                h += (h << 2) + (h << 14);
+                return (uint)(h ^ (h >> 16));
+            }
+        }
+        public Color getColorForNickname(string nick) {
+            double hue = (ReHash(nick.GetHashCode() >>1) % 720) / 360.0;
+            return WindowHelper.getColorForHSL(hue, 1, 0.4);
+        }
+
+        public void addMessageToView(string from, string text, DateTime time, string avatarFilename, HtmlElementInsertionOrientation where = HtmlElementInsertionOrientation.BeforeEnd) {
             var div = this.Document.CreateElement("p");
             text = text.Replace("<", "&lt;");
             if (!string.IsNullOrEmpty(highlightString)) text = Regex.Replace(text, highlightString, "<em>$0</em>");
@@ -63,17 +81,27 @@ namespace miniConf {
                          "<a href=\"$0\">$0</a>");
             var me = Regex.Match(text, "^/me\\s+");
             var timeEl = "<i title=" + time.ToShortDateString() + " " + time.ToLongTimeString() + ">" + (highlightString != "" ? time.ToShortDateString() : "") + " " + time.ToLongTimeString() + "</i>";
-            div.SetAttribute("className", "from_" + from);
+            var color = getColorForNickname(from);
+            string cssColor = ColorTranslator.ToHtml(color);
+            string classNames = "from_" + from + " ";
+            if (from == "self" || from == this.selfNickname) classNames += "self ";
             if (me.Success) {
                 div.InnerHtml = timeEl + "<span> *** <strong>" + from + "</strong> " + text.Substring(me.Length) + "</span>";
             } else {
-                div.SetAttribute("className", "msg from_" + from);
+                classNames += "msg ";
                 if (imagePreview && imageLink.Success) {
                     text += "<br><img src=\"" + imageLink.Value + "\" class=\"imprev\" style='max-width:150px;'>";
                 }
-                div.InnerHtml = timeEl + "<strong>" + from + ":</strong> <span>" + text + "</span>";
+                string avatar = "<tt class='avatar' style='background-color: " + cssColor + "; '></tt>";
+                if (!string.IsNullOrEmpty(avatarFilename))
+                    avatar = "<tt class='avatar'><img src='" + avatarFilename + "'></tt>";
+                    
+                div.InnerHtml = avatar + timeEl + 
+                    "<strong style='color: "+cssColor+"'>" + from + ":</strong> <span>" 
+                    + text + "</span>";
 
             }
+            div.SetAttribute("className", classNames);
             //this.Document.Body.AppendChild(div);
             this.Document.GetElementById("m").InsertAdjacentElement(where, div);
             if (where == HtmlElementInsertionOrientation.BeforeEnd)

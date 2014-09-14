@@ -27,6 +27,7 @@
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.textEditorControl1 = new ICSharpCode.TextEditor.TextEditorControl();
             this.listBox1 = new System.Windows.Forms.ListBox();
@@ -34,7 +35,6 @@
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
             this.deleteSelectedTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -65,6 +65,10 @@
             // columnHeader2
             // 
             this.columnHeader2.Text = "Timestamp";
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "StanzaType";
             // 
             // splitContainer1
             // 
@@ -122,7 +126,7 @@
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(502, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(471, 17);
             this.toolStripStatusLabel1.Spring = true;
             this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -137,17 +141,13 @@
             this.toolStripSplitButton1.Name = "toolStripSplitButton1";
             this.toolStripSplitButton1.Size = new System.Drawing.Size(101, 20);
             this.toolStripSplitButton1.Text = "Send stanza";
+            this.toolStripSplitButton1.ButtonClick += new System.EventHandler(this.toolStripSplitButton1_ButtonClick);
             // 
             // deleteSelectedTemplateToolStripMenuItem
             // 
             this.deleteSelectedTemplateToolStripMenuItem.Name = "deleteSelectedTemplateToolStripMenuItem";
             this.deleteSelectedTemplateToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.deleteSelectedTemplateToolStripMenuItem.Text = "Delete selected template";
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.DisplayIndex = 0;
-            this.columnHeader3.Text = "StanzaType";
             // 
             // XmppDebugForm
             // 
