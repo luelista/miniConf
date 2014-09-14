@@ -47,6 +47,7 @@ namespace miniConf {
         public void setPara(string key, string value) {
             this.db.ExecSQL("INSERT OR REPLACE INTO params (item, value) VALUES (?, ?)",
                 key, value);
+            m_content[key] = value;
         }
 
 

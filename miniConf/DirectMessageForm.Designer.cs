@@ -26,15 +26,17 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DirectMessageForm));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.labChatstate = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.messageView1 = new miniConf.MessageView();
-            this.labChatstate = new System.Windows.Forms.Label();
             this.tmrChatstatePaused = new System.Windows.Forms.Timer(this.components);
+            this.cmbResources = new System.Windows.Forms.ComboBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.cmbResources);
             this.panel1.Controls.Add(this.labChatstate);
             this.panel1.Controls.Add(this.textBox1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -43,8 +45,19 @@
             this.panel1.Size = new System.Drawing.Size(497, 90);
             this.panel1.TabIndex = 1;
             // 
+            // labChatstate
+            // 
+            this.labChatstate.AutoSize = true;
+            this.labChatstate.ForeColor = System.Drawing.Color.DarkGray;
+            this.labChatstate.Location = new System.Drawing.Point(8, 73);
+            this.labChatstate.Name = "labChatstate";
+            this.labChatstate.Size = new System.Drawing.Size(31, 13);
+            this.labChatstate.TabIndex = 1;
+            this.labChatstate.Text = "        ";
+            // 
             // textBox1
             // 
+            this.textBox1.AllowDrop = true;
             this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox1.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -54,6 +67,8 @@
             this.textBox1.Size = new System.Drawing.Size(480, 63);
             this.textBox1.TabIndex = 0;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.textBox1.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBox1_DragDrop);
+            this.textBox1.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBox1_DragEnter);
             this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
             // 
             // messageView1
@@ -68,20 +83,18 @@
             this.messageView1.OnSpecialUrl += new miniConf.MessageView.SpecialUrlEvent(this.messageView1_OnSpecialUrl);
             this.messageView1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.messageView1_DocumentCompleted);
             // 
-            // labChatstate
-            // 
-            this.labChatstate.AutoSize = true;
-            this.labChatstate.ForeColor = System.Drawing.Color.DarkGray;
-            this.labChatstate.Location = new System.Drawing.Point(8, 73);
-            this.labChatstate.Name = "labChatstate";
-            this.labChatstate.Size = new System.Drawing.Size(31, 13);
-            this.labChatstate.TabIndex = 1;
-            this.labChatstate.Text = "        ";
-            // 
             // tmrChatstatePaused
             // 
             this.tmrChatstatePaused.Interval = 5000;
             this.tmrChatstatePaused.Tick += new System.EventHandler(this.tmrChatstatePaused_Tick);
+            // 
+            // cmbResources
+            // 
+            this.cmbResources.FormattingEnabled = true;
+            this.cmbResources.Location = new System.Drawing.Point(279, 68);
+            this.cmbResources.Name = "cmbResources";
+            this.cmbResources.Size = new System.Drawing.Size(206, 21);
+            this.cmbResources.TabIndex = 2;
             // 
             // DirectMessageForm
             // 
@@ -107,5 +120,6 @@
         public System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label labChatstate;
         private System.Windows.Forms.Timer tmrChatstatePaused;
+        private System.Windows.Forms.ComboBox cmbResources;
     }
 }

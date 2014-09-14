@@ -8,7 +8,7 @@ using System.Windows.Forms;
 namespace miniConf {
     public class ChatDatabase : SqlDatabase {
 
-        public const long schemaVersion = 6;
+        public const long schemaVersion = 7;
 
         public ChatDatabase(string dbfile)
             : base(dbfile) {
@@ -46,6 +46,10 @@ namespace miniConf {
 
                 if (currentVersion < 6) {
                     this.ExecSQL("DROP TABLE IF EXISTS params; CREATE TABLE params (item TEXT, value TEXT, CONSTRAINT para_unique UNIQUE (item) ON CONFLICT REPLACE); ");
+                }
+
+                if (currentVersion < 7) {
+                    this.ExecSQL("ALTER TABLE messages ADD COLUMN jid TEXT; ");
 
                     // update db version number
                     this.ExecSQL("PRAGMA user_version = " + ChatDatabase.schemaVersion.ToString());
@@ -70,7 +74,7 @@ namespace miniConf {
 
         public int InsertMessage(string room, string id, string sender, string body, string date_dt) {
             var cmd = dataBase.CreateCommand();
-            cmd.CommandText = "INSERT INTO messages VALUES (@room, @id, @sender, @body, @ts)";
+            cmd.CommandText = "INSERT INTO messages VALUES (@room, @id, @sender, @body, @ts, NULL)";
             cmd.Parameters.Add(new SQLiteParameter("@room", String.IsNullOrEmpty(room) ? "" : room));
             cmd.Parameters.Add(new SQLiteParameter("@id", String.IsNullOrEmpty(id) ? "" : id));
             cmd.Parameters.Add(new SQLiteParameter("@sender", String.IsNullOrEmpty(sender) ? "" : sender));
@@ -105,6 +109,16 @@ namespace miniConf {
         }
         public void SetOnlineStatus(string room, string onlinestate) {
             this.ExecSQL("UPDATE roommates SET onlinestate = ? WHERE room = ? ", onlinestate, room);
+        }
+
+        //private Dictionary<string, string> userJidCache = new Dictionary<string, string>();
+        public string GetUserJid(string room, string nick) {
+            var cmd = dataBase.CreateCommand();
+            cmd.CommandText = "SELECT user_jid FROM roommates WHERE room = @room AND nickname = @nick;";
+            cmd.Parameters.AddWithValue("@room", room);
+            cmd.Parameters.AddWithValue("@nick", nick);
+            object result = cmd.ExecuteScalar();
+            if (result is DBNull) return null; else return (string) result;
         }
 
         public SQLiteDataReader GetMembers(string room) {

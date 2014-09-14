@@ -1,0 +1,54 @@
+frage:
+
+<iq type='get'
+    from='luelista@teamwiki.de/miniConf-WIN-SJHT7FL2KJG'
+    to='someuser@teamwiki.de'
+    id='items1'>
+  <pubsub xmlns='http://jabber.org/protocol/pubsub'>
+    <items node='urn:xmpp:avatar:metadata'/>
+  </pubsub>
+</iq>
+
+antwort:
+
+<iq xmlns="jabber:client" from="someuser@teamwiki.de" to="luelista@teamwiki.de/miniConf-WIN-SJHT7FL2KJG" type="result" id="items1">
+  <pubsub xmlns="http://jabber.org/protocol/pubsub">
+    <items node="urn:xmpp:avatar:metadata">
+      <item id="c06c9c7ce20f078113fa67e00833eec221d7415a">
+        <metadata xmlns="urn:xmpp:avatar:metadata">
+          <info id="c06c9c7ce20f078113fa67e00833eec221d7415a" height="192" width="192" type="image/webp" bytes="1862" />
+        </metadata>
+      </item>
+    </items>
+  </pubsub>
+</iq>
+
+
+frage 2:
+
+<iq type='get'
+    from='luelista@teamwiki.de/miniConf-WIN-SJHT7FL2KJG'
+    to='someuser@teamwiki.de'
+    id='items1'>
+  <pubsub xmlns='http://jabber.org/protocol/pubsub'>
+    <items node='urn:xmpp:avatar:data'>
+    <item id="c06c9c7ce20f078113fa67e00833eec221d7415a"/>
+    </items>
+  </pubsub>
+</iq>
+
+
+antwort2:
+
+<iq xmlns="jabber:client" from="someuser@teamwiki.de" to="luelista@teamwiki.de/miniConf-WIN-SJHT7FL2KJG" type="result" id="items1">
+  <pubsub xmlns="http://jabber.org/protocol/pubsub">
+    <items node="urn:xmpp:avatar:data">
+      <item id="c06c9c7ce20f078113fa67e00833eec221d7415a">
+        <data xmlns="urn:xmpp:avatar:data">UklGRj4HAABXRUJQVlA4IDIHAADQ
+        [.....]
+        </data>
+      </item>
+    </items>
+  </pubsub>
+</iq>
+        

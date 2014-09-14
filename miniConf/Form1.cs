@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Media;
 using System.IO;
 using agsXMPP.Xml.Dom;
+using agsXMPP.protocol.iq.disco;
 
 namespace miniConf {
     public partial class Form1 : Form {
@@ -32,8 +33,7 @@ namespace miniConf {
         Dictionary<string, DirectMessageForm> dmSessions = new Dictionary<string, DirectMessageForm>();
         HashSet<string> onlineContacts = new HashSet<string>();
         XmppDebugForm debugForm;
-        HashSet<string> serverFeatures = new HashSet<string>();
-
+        
         Icon icon1;
         Icon icon2;
 
@@ -41,7 +41,7 @@ namespace miniConf {
         #region Jabber Connection
 
         agsXMPP.protocol.x.muc.MucManager muc;
-        Jingle jingle;
+        JabberService jabber = Program.Jabber;
         cls_globPara glob;
         ChatDatabase logs;
         Dictionary<string, Roomdata> rooms = new Dictionary<string, Roomdata>();
@@ -66,46 +66,63 @@ namespace miniConf {
         }
 
         private void jabberConnect() {
-            if (Program.conn == null) {
-                Program.conn = new XmppClientConnection();
-                Program.conn.OnAuthError += conn_OnAuthError;
-                Program.conn.OnXmppConnectionStateChanged += conn_OnXmppConnectionStateChanged;
-                Program.conn.OnSocketError += conn_OnSocketError;
-                Program.conn.OnError += conn_OnError;
-                Program.conn.OnLogin += conn_OnLogin;
-                Program.conn.OnIq += conn_OnIq;
-                muc = new agsXMPP.protocol.x.muc.MucManager(Program.conn);
-                jingle = new Jingle(Program.conn);
+            if (jabber.conn == null) {
+                jabber.conn = new XmppClientConnection();
+                jabber.conn.DiscoInfo.AddFeature(new DiscoFeature( "urn:xmpp:avatar:metadata+notify"));
+                jabber.conn.Capabilities.SetVersion(jabber.conn.DiscoInfo);
+                //jabber.conn.Capabilities.AddChild(new agsXMPP.protocol.iq.disco.DiscoFeature("urn:xmpp:avatar:metadata+notify"));
+                jabber.conn.EnableCapabilities = true;
 
-                Program.conn.OnPresence += conn_OnPresence;
-                Program.conn.OnMessage += conn_OnMessage;
+                jabber.conn.OnAuthError += conn_OnAuthError;
+                jabber.conn.OnXmppConnectionStateChanged += conn_OnXmppConnectionStateChanged;
+                jabber.conn.OnSocketError += conn_OnSocketError;
+                jabber.conn.OnError += conn_OnError;
+                jabber.conn.OnLogin += conn_OnLogin;
+                jabber.conn.OnIq += conn_OnIq;
+                muc = new agsXMPP.protocol.x.muc.MucManager(jabber.conn);
+                jabber.jingle = new Jingle(jabber.conn);
+                jabber.listenToRoster();
 
-                jingle.OnFileReceived += delegate(Jid fromJid, string filename, string status) {
+                jabber.conn.OnPresence += conn_OnPresence;
+                jabber.conn.OnMessage += conn_OnMessage;
+
+                jabber.jingle.OnFileReceived += delegate(Jid fromJid, string filename, string status) {
                     this.Invoke(new Jingle.OnFileReceivedEvent(jingle_OnFileReceived), fromJid, filename, status);
                 };
+
+                jabber.OnServerFeaturesUpdated += jabber_OnServerFeaturesUpdated;
 
                 if (glob.para("showXmppDebugOnStartup", "FALSE") == "TRUE") ShowXmppDebugForm();
 
             } else {
-                Program.conn.Close(); Application.DoEvents();
+                jabber.conn.Close(); Application.DoEvents();
                 System.Threading.Thread.Sleep(400); Application.DoEvents();
             }
             
             string[] username = getUsername();
             if (username == null) return;
 
-            Program.conn.Server = username[1];
+            jabber.conn.Server = username[1];
             int port;
             if (!Int32.TryParse(txtPrefServerPort.Text,out port)) {
                 port = 5222; txtPrefServerPort.Text = "5222";
             }
-            Program.conn.Port = port;
+            jabber.conn.Port = port;
             
-            Program.conn.UseSSL = false;
-            Program.conn.UseStartTLS = (glob.para("useSSL", "TRUE") != "FALSE");
-            //Program.conn.UseSSL = (glob.para("useSSL", "TRUE") != "FALSE");
-            Program.conn.Open(username[0], txtPrefPassword.Text, "miniConf-" + Environment.MachineName, 0);
+            jabber.conn.UseSSL = false;
+            jabber.conn.UseStartTLS = (glob.para("useSSL", "TRUE") != "FALSE");
+            //jabber.conn.UseSSL = (glob.para("useSSL", "TRUE") != "FALSE");
+            jabber.conn.Open(username[0], txtPrefPassword.Text, "miniConf-" + Environment.MachineName, 0);
 
+        }
+
+        void jabber_OnServerFeaturesUpdated(object sender, EventArgs e) {
+            this.Invoke((MethodInvoker)delegate() {
+                listServerFeatures.Items.Clear();
+                foreach (string feat in jabber.serverFeatures) {
+                    listServerFeatures.Items.Add(feat);
+                }
+            });
         }
 
         void jingle_OnFileReceived(Jid fromJid, string filename, string status) {
@@ -143,7 +160,7 @@ namespace miniConf {
                 if (ping != null) {
                     var pong = new agsXMPP.protocol.client.IQ(agsXMPP.protocol.client.IqType.result, iq.To, iq.From);
                     pong.Id = iq.Id;
-                    Program.conn.Send(pong);
+                    jabber.conn.Send(pong);
                 }
             }
         }
@@ -208,6 +225,7 @@ namespace miniConf {
 
         void conn_OnLogin(object sender) {
             tmrReconnect.Stop();
+            jabber.conn.SendMyPresence(); 
             var rooms = txtChatrooms.Text.Split('\n');
             foreach (var room in rooms) {
                 if (String.IsNullOrEmpty(room) || room.Trim() == "" || room.StartsWith("//") || room.StartsWith("-- ")) continue;
@@ -217,32 +235,9 @@ namespace miniConf {
             this.Invoke(new ThreadStart(hideConfigPanel));
             loginError = false;
 
-            txtConnInfo.Text = "";
-            var iq = new agsXMPP.protocol.client.IQ(agsXMPP.protocol.client.IqType.get, Program.conn.MyJID,new Jid( Program.conn.MyJID.Server));
-            iq.AddChild(new agsXMPP.protocol.iq.disco.DiscoInfo()); iq.GenerateId();
-            Program.conn.IqGrabber.SendIq(iq, delegate (object a, agsXMPP.protocol.client.IQ b, object c) {
-                this.Invoke((MethodInvoker)delegate() {
-                    txtConnInfo.AppendText("Features:\r\n");
-                    serverFeatures.Clear();
-                    foreach (Element child in b.SelectSingleElement("query").SelectElements("feature")) {
-                        txtConnInfo.AppendText("* " + child.GetAttribute("var") + "\r\n");
-                        serverFeatures.Add(child.GetAttribute("var"));
-                    }
-                });
-                SendCarbonsEnableIq();
-            } );
-        }
-
-        /**
-         * XEP-0280, Message Carbons
-         **/
-        private void SendCarbonsEnableIq() {
-            if (serverFeatures.Contains(Jabber.URN_CARBONS)) {
-                var iq = new agsXMPP.protocol.client.IQ(agsXMPP.protocol.client.IqType.set);
-                iq.From = Program.conn.MyJID; iq.GenerateId();
-                iq.AddChild(new agsXMPP.Xml.Dom.Element("enable", "", Jabber.URN_CARBONS));
-                Program.conn.Send(iq);
-            }
+            jabber.CheckServerFeatures();
+            
+            
         }
 
         private void OnMucSelfPresence(agsXMPP.protocol.client.Presence pres, agsXMPP.Xml.Dom.Element xChild) { 
@@ -310,9 +305,10 @@ namespace miniConf {
             } else {
                 dt = ChatDatabase.GetNowString();
             }
-            if (rooms!= null) room.handleChatstate(msg);
-            if (currentRoom == room) updateChatstates();
-
+            if (room != null) {
+                if (room.handleChatstate(msg))
+                    if (currentRoom == room) { updateChatstates(); updateMemberList(); }
+            }
             if (msg.HasTag("subject")) {
                 string subject = msg.GetTag("subject");
                 logs.SetSubject(msg.From.Bare, subject);
@@ -325,7 +321,8 @@ namespace miniConf {
                 logs.InsertMessage(msg.From.Bare, msg.GetAttribute("id"), msg.From.Resource, messageBody, dt);
                 logs.SetLastmessageDatetime(msg.From.Bare, dt);
                 if (currentRoom != null && msg.From.Bare == currentRoom.jid.Bare) {
-                    webBrowser1.addMessageToView(msg.From.Resource, messageBody, DateTime.Parse(dt));
+                    string avatarFile = jabber.avatar.GetAvatarIfAvailabe( logs.GetUserJid(msg.From.Bare, msg.From.Resource));
+                    webBrowser1.addMessageToView(msg.From.Resource, messageBody, DateTime.Parse(dt), avatarFile);
                 }
                 if (!msg.HasTag("delay") && (glob.para("notifications__" + msg.From.Bare) != "FALSE" || IsMention(messageBody))) {
                     if (enableSoundToolStripMenuItem.Checked) {
@@ -363,14 +360,13 @@ namespace miniConf {
         }
 
         private void OnPrivateMessage(agsXMPP.protocol.client.Message msg) {
-            if (msg.HasTag("body")) {
-                DirectMessageForm dmfrm = MakeDmForm(msg.From);
-                dmfrm.onMessage(msg); dmfrm.Show(); dmfrm.Activate();
-            }
+            DirectMessageForm dmfrm = MakeDmForm(msg.From);
+            dmfrm.onMessage(msg); dmfrm.Show();
+            if(msg.HasTag("body")) dmfrm.Activate();
         }
 
         private void ShowXmppDebugForm() {
-            if (debugForm == null || !debugForm.IsDisposed) debugForm = new XmppDebugForm();
+            if (debugForm == null || debugForm.IsDisposed) debugForm = new XmppDebugForm();
             debugForm.Show();
             debugForm.Activate();
             glob.setPara("showXmppDebugOnStartup", "TRUE");
@@ -397,7 +393,7 @@ namespace miniConf {
 
             /// Setup Room
             agsXMPP.protocol.client.Presence MUCpresence = new agsXMPP.protocol.client.Presence();
-            //MUCpresence.From = Program.conn.MyJID;
+            //MUCpresence.From = jabber.conn.MyJID;
             MUCpresence.To = roomJid;
 
             var xMuc = new agsXMPP.protocol.x.muc.Muc();
@@ -424,16 +420,16 @@ namespace miniConf {
             //MUCpresence.SetAttribute("type", "groupchat");
 
             Console.WriteLine("-> " + MUCpresence.ToString());
-            Program.conn.Send(MUCpresence);
+            jabber.conn.Send(MUCpresence);
 
         }
 
         private void sendMessage(string text) {
-            var msg = new agsXMPP.protocol.client.Message(currentRoom.roomName(), Program.conn.MyJID, agsXMPP.protocol.client.MessageType.groupchat, text);
+            var msg = new agsXMPP.protocol.client.Message(currentRoom.roomName(), jabber.conn.MyJID, agsXMPP.protocol.client.MessageType.groupchat, text);
             msg.Id = Guid.NewGuid().ToString();
             msg.Chatstate = agsXMPP.protocol.extensions.chatstates.Chatstate.active;
             currentRoom.chatstate = agsXMPP.protocol.extensions.chatstates.Chatstate.active;
-            Program.conn.Send(msg);
+            jabber.conn.Send(msg);
         }
 
         void conn_OnError(object sender, Exception ex) {
@@ -482,7 +478,7 @@ namespace miniConf {
         private void updateWinTitle() {
 
             this.Text = (chkSternchen.Checked ? "*" : "") + Application.ProductName + " " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3) +
-                (currentRoom != null ? " | " + currentRoom.roomName() : "") + " | " + (Program.conn != null ? (Program.conn.XmppConnectionState == XmppConnectionState.SessionStarted ? Program.conn.MyJID.ToString() : Program.conn.XmppConnectionState.ToString()) : "NoConnection");
+                (currentRoom != null ? " | " + currentRoom.roomName() : "") + " | " + (jabber.conn != null ? (jabber.conn.XmppConnectionState == XmppConnectionState.SessionStarted ? jabber.conn.MyJID.ToString() : jabber.conn.XmppConnectionState.ToString()) : "NoConnection");
         }
 
         private void button1_Click(object sender, EventArgs e) {
@@ -587,6 +583,7 @@ namespace miniConf {
                 glob.setPara("currentRoom", currentRoom.roomName());
                 currentRoom.unreadMsgCount = 0;
                 popupWindow.updateRooms(rooms);
+                webBrowser1.selfNickname = currentRoom.jid.Resource;
                 webBrowser1.addNoticeToView("Subject is: " + logs.GetSubject(currentRoom.roomName()));
                 if (currentRoom.getErrorMessage() != null)
                     webBrowser1.addNoticeToView("<b><font color=red>" + currentRoom.getErrorMessage() + "</font></b>");
@@ -602,7 +599,7 @@ namespace miniConf {
             if (currentRoom == null) return;
             string typing = currentRoom.getTypingNotice();
             labChatstates.Visible = typing != null;
-            labChatstates.Text = typing;
+            labChatstates.Text ="             "+ typing;
         }
 
         private void updateMemberList() {
@@ -614,8 +611,9 @@ namespace miniConf {
                 var item = lvOnlineStatus.Items.Add(nick, k.GetString(2));
                 string statusStr = (k.IsDBNull(5)) ? "" : k.GetString(5);
                 string jid = (k.IsDBNull(6)) ? "" : k.GetString(6);
-                item.ToolTipText = k.GetString(2) + " - last seen: " + DateTime.FromBinary(k.GetInt64(1)).ToString() + " - affiliation: " + k.GetString(3) + " - role: " + k.GetString(4) + " - jid: " + jid + " - status: " + statusStr;
+                item.ToolTipText = k.GetString(2) +" "+ currentRoom.getChatstate(nick) + " - last seen: " + DateTime.FromBinary(k.GetInt64(1)).ToString() + " - affiliation: " + k.GetString(3) + " - role: " + k.GetString(4) + " - jid: " + jid + " - status: " + statusStr;
                 item.SubItems.Add(statusStr);
+                item.ForeColor = currentRoom.getChatstateColor(nick);
                 item.Tag = jid;
                 item.Group = lvOnlineStatus.Groups[k.GetString(2) == "off" ? 1 : 0];
             }
@@ -634,7 +632,9 @@ namespace miniConf {
             }
             var msgs = logs.GetLogs(currentRoom.roomName(), histAmount, count);
             foreach (System.Data.Common.DbDataRecord k in msgs) {
-                webBrowser1.addMessageToView(k.GetString(0), k.GetString(1), DateTime.Parse(k.GetString(2)), HtmlElementInsertionOrientation.AfterBegin);
+                string jid = logs.GetUserJid(currentRoom.roomName(), k.GetString(0));
+                string avatarFile = jabber.avatar.GetAvatarIfAvailabe(jid);
+                webBrowser1.addMessageToView(k.GetString(0), k.GetString(1), DateTime.Parse(k.GetString(2)), avatarFile, HtmlElementInsertionOrientation.AfterBegin);
             }
             histAmount += count;
         }
@@ -935,7 +935,7 @@ namespace miniConf {
                 webBrowser1.Document.GetElementById("tb").InnerHtml = "Search results, press ESC to quit filter mode";
 
                 foreach (System.Data.Common.DbDataRecord k in reader) {
-                    webBrowser1.addMessageToView(k.GetString(0), k.GetString(1), DateTime.Parse(k.GetString(2)), HtmlElementInsertionOrientation.AfterBegin);
+                    webBrowser1.addMessageToView(k.GetString(0), k.GetString(1), DateTime.Parse(k.GetString(2)), null, HtmlElementInsertionOrientation.AfterBegin);
                 }
                 e.SuppressKeyPress = true;
             }
@@ -952,7 +952,7 @@ namespace miniConf {
         #endregion
 
         private void chkFiletransferAutoAccept_CheckedChanged(object sender, EventArgs e) {
-            jingle.AutoAccept = chkFiletransferAutoAccept.Checked;
+            jabber.jingle.AutoAccept = chkFiletransferAutoAccept.Checked;
         }
 
         private void btnRoomList_Click(object sender, EventArgs e) {

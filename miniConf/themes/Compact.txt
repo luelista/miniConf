@@ -11,3 +11,4 @@ p i {float:right; color: #aaa;}
 
 p.msg { padding-left: 1.5em;text-indent:-1em; }  p.msg i { text-indent:0; } 
 
+.avatar { display: none; }

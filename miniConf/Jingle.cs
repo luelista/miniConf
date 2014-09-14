@@ -31,56 +31,75 @@ namespace miniConf {
             if (!iq.HasTag("jingle")) return;
             var jingle = iq.SelectSingleElement("jingle");
 
+            Element contentIn,transportIn;
+            string sid;
+            JingleSession session;
+                    
             switch (jingle.GetAttribute("action")) {
+                    // incoming, first step
                 case "session-initiate":
-                    var ses = new JingleSession(iq, conn);
+                    session = new JingleSession(conn, iq);
 
                     var fileName = "";
                     try { fileName = jingle.SelectSingleElement("file", true).GetTag("name"); } catch (Exception exx) { }
                     if (!AutoAccept) { // && MessageBox.Show("Incoming File Transfer from " + iq.From.ToString() + "\n\n" +fileName, "Jingle file-transfer", MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.Cancel) {
                         SendIqResult(iq);
-                        var sesTerm = ses.BuildSessionTerminate("decline");
+                        var sesTerm = session.BuildSessionTerminate("decline");
                         conn.Send(sesTerm);
                         return;
                     }
                     SendIqResult(iq);
 
-                    ongoingTransports[ses.transportSid] = ses;
-                    ses.OnFileReceived += ses_OnFileReceived;
-                    var ack = ses.BuildSessionAccept();
+                    ongoingTransports[session.transportSid] = session;
+                    session.OnFileReceived += ses_OnFileReceived;
+                    var ack = session.BuildSessionAccept();
                     conn.Send(ack);
 
-                    var cFirst = ses.transportIn.FirstChild;
-                    var cUsed = ses.BuildCandidateUsed(cFirst.GetAttribute("cid"), "candidate-used");
+                    var cFirst = session.transportIn.FirstChild;
+                    var cUsed = session.BuildCandidateUsed(cFirst.GetAttribute("cid"), "candidate-used");
                     conn.Send(cUsed);
 
-                    ses.DoReceive(cFirst);
+                    session.DoTransmission(cFirst);
                     
                     break;
 
+                    // incoming AND sending, second step
                 case "transport-info":
 
-                    var contentIn = jingle.SelectSingleElement("content");
-                    var transportIn = contentIn.SelectSingleElement("transport");
-                    var sid = transportIn.GetAttribute("sid");
+                    contentIn = jingle.SelectSingleElement("content");
+                    transportIn = contentIn.SelectSingleElement("transport");
+                    sid = transportIn.GetAttribute("sid");
                     if (!ongoingTransports.ContainsKey(sid)) {
                         SendIqerror(iq); return;
                     }
 
-                    var session = ongoingTransports[sid];
+                    session = ongoingTransports[sid];
                     if (transportIn.HasTag("candidate-used")) {
                         var cid = transportIn.SelectSingleElement("candidate-used").GetAttribute("cid");
                         var info = session.GetTransportCandidate(cid);
-                        var ok = session.DoReceive(info);
+                        bool ok = session.DoTransmission(info);
                         if (ok) SendIqResult(iq); else SendIqerror(iq);
                     } else if (transportIn.HasTag("candidate-error")) {
                         SendIqResult(iq);
                     }
                     
-                    
-
                     break;
 
+
+                    // sending, first step
+                case "session-accept":
+                    contentIn = jingle.SelectSingleElement("content");
+                    transportIn = contentIn.SelectSingleElement("transport");
+                    sid = transportIn.GetAttribute("sid");
+                    if (!ongoingTransports.ContainsKey(sid)) {
+                        SendIqerror(iq); return;
+                    }
+                    session = ongoingTransports[sid];
+                    var cFirst1 = session.transportIn.FirstChild;
+                    var cUsed1 = session.BuildCandidateUsed(cFirst1.GetAttribute("cid"), "candidate-used");
+                    conn.Send(cUsed1);
+
+                    break;
             }
         }
 
@@ -100,6 +119,14 @@ namespace miniConf {
             conn.Send(ack);
         }
 
+        public void SendFile(string to, string fileName) {
+            string proxyServer = "proxy.teamwiki.de";
+            string proxyPort = "5000";
+            JingleSession session = new JingleSession(conn, to, fileName, proxyServer, proxyPort);
+            ongoingTransports[session.transportSid] = session;
+
+        }
+
         class JingleSession {
             public event OnFileReceivedEvent OnFileReceived;
 
@@ -111,20 +138,87 @@ namespace miniConf {
             public Element transportIn;
             public string transportSid;
 
-            public JingleSession(agsXMPP.protocol.client.IQ initIq, XmppClientConnection xmppClient) {
+            public bool selfInitiated;
+
+            public string jingle_initiator, jingle_sid, content_name;
+            public Jid iq_from, iq_to;
+
+            public string localFilespec;
+
+            /**
+             * make incoming Jingle session
+             */
+            public JingleSession(XmppClientConnection xmppClient, agsXMPP.protocol.client.IQ initIq) {
+                selfInitiated = false;
                 this.conn = xmppClient;
+
                 this.initiateIq = initIq;
                 this.initiateJingle = initIq.SelectSingleElement("jingle");
                 this.contentIn = initiateJingle.SelectSingleElement("content");
                 this.transportIn = contentIn.SelectSingleElement("transport");
                 this.transportSid = (string)transportIn.Attributes["sid"];
+                jingle_initiator = initiateJingle.GetAttribute("initiator");
+                jingle_sid = initiateJingle.GetAttribute("sid");
+                content_name = contentIn.GetAttribute("name");
+                iq_from = initiateIq.To;
+                iq_to = initiateIq.From;
+
+                var filename = contentIn.SelectSingleElement("file", true).GetTag("name");
+                localFilespec = Program.dataDir + "received files\\" + filename;
+
             }
 
+            /*
+             * make outgoing Jingle Session
+             */
+            public JingleSession(XmppClientConnection xmppClient, string to, string fileName, string proxy, string proxyPort) {
+                selfInitiated = true;
+                localFilespec = fileName;
+                this.conn = xmppClient;
+
+                iq_to = new Jid(to); iq_from = Program.Jabber.conn.MyJID;
+                content_name = Guid.NewGuid().ToString();
+                jingle_initiator = iq_from;
+                jingle_sid = Guid.NewGuid().ToString();
+                transportSid = Guid.NewGuid().ToString();
+
+                initiateIq = BuildSessionInitiate(fileName);
+                this.initiateJingle = initiateIq.SelectSingleElement("jingle");
+                this.contentIn = initiateJingle.SelectSingleElement("content");
+                this.transportIn = contentIn.SelectSingleElement("transport");
+
+                Element candidate = new Element("candidate");
+                candidate.SetAttribute("priority", "999999"); candidate.SetAttribute("jid", proxy);
+                candidate.SetAttribute("cid", "1000"); candidate.SetAttribute("type", "proxy");
+                candidate.SetAttribute("host", proxy); candidate.SetAttribute("port", proxyPort);
+                transportIn.AddChild(candidate);
+
+                conn.Send(initiateIq);
+
+
+            }
+
+            // initiate: first step for sending
+            public agsXMPP.protocol.client.IQ BuildSessionInitiate(string fileName) {
+                var ack = BuildJingleIQPacket("session-initiate");
+                ack.SelectSingleElement("jingle").SetAttribute("action", "session-initiate");
+                Element content = ack.SelectSingleElement("content", true), transport = content.SelectSingleElement("transport");
+
+                Element desc = new Element("description", null, "urn:xmpp:jingle:apps:file-transfer:3"),
+                     offer = new Element("offer"), file = new Element("file");
+                content.AddChild(desc); desc.AddChild(offer); offer.AddChild(file);
+                FileInfo info = new FileInfo(fileName);
+                file.SetTag("name", info.Name);
+                file.SetTag("size", info.Length);
+                
+                return ack;
+            }
+
+            // accept: first step for receiving
             public agsXMPP.protocol.client.IQ BuildSessionAccept() {
                 if (OnFileReceived != null) OnFileReceived(initiateIq.From, "", "starting");
 
-                var ack = BuildJingleTransportInfo();
-                ack.SelectSingleElement("jingle").SetAttribute("action", "session-accept");
+                var ack = BuildJingleIQPacket("session-accept");
                 Element content = ack.SelectSingleElement("content", true), transport = content.SelectSingleElement("transport");
 
                 Element fileIn = contentIn.SelectSingleElement("file", true),
@@ -133,12 +227,12 @@ namespace miniConf {
                 content.AddChild(desc); desc.AddChild(offer); offer.AddChild(file);
                 foreach (Element el in fileIn.SelectElements<Element>())
                     file.SetTag(el.TagName, el.Value);
-                
+
                 return ack;
             }
 
             public agsXMPP.protocol.client.IQ BuildCandidateUsed(string cid, string statusTag) {
-                var ack = BuildJingleTransportInfo();
+                var ack = BuildJingleIQPacket("transport-info");
                 var transport = ack.SelectSingleElement("transport", true);
 
                 var candUsed = new Element(statusTag);
@@ -156,35 +250,35 @@ namespace miniConf {
                 ack.AddChild(query);
                 query.Attributes["sid"] = initiateJingle.Attributes["sid"];
 
-                query.SetTag("activate", initiateIq.From.ToString());
+                query.SetTag("activate", iq_to);
 
                 return ack;
             }
 
 
-            public agsXMPP.protocol.client.IQ BuildJingleTransportInfo() {
-                var ack = new agsXMPP.protocol.client.IQ(agsXMPP.protocol.client.IqType.set, initiateIq.To, initiateIq.From);
+            public agsXMPP.protocol.client.IQ BuildJingleIQPacket(string action) {
+                var ack = new agsXMPP.protocol.client.IQ(agsXMPP.protocol.client.IqType.set, iq_from, iq_to);
                 ack.GenerateId();
                 var jingle = new Element("jingle", null, "urn:xmpp:jingle:1");
                 ack.AddChild(jingle);
-                jingle.Attributes["action"] = "transport-info";
-                jingle.Attributes["initiator"] = initiateJingle.Attributes["initiator"];
-                jingle.Attributes["sid"] = initiateJingle.Attributes["sid"];
+                jingle.Attributes["action"] = action;
+                jingle.Attributes["initiator"] = jingle_initiator;
+                jingle.Attributes["sid"] = jingle_sid;
 
                 var content = new Element("content");
                 content.Attributes["creator"] = "initiator";
-                content.Attributes["name"] = contentIn.Attributes["name"];
+                content.Attributes["name"] = content_name;
                 jingle.AddChild(content);
 
                 var transport = new Element("transport", null, "urn:xmpp:jingle:transports:s5b:1");
-                transport.Attributes["sid"] = transportIn.Attributes["sid"];
+                transport.Attributes["sid"] = transportSid;
                 content.AddChild(transport);
 
                 return ack;
             }
 
             public agsXMPP.protocol.client.IQ BuildSessionTerminate(string reason) {
-                var ack = new agsXMPP.protocol.client.IQ(agsXMPP.protocol.client.IqType.set, initiateIq.To, initiateIq.From);
+                var ack = new agsXMPP.protocol.client.IQ(agsXMPP.protocol.client.IqType.set, iq_from, iq_to);
                 ack.GenerateId();
                 var jingle = new Element("jingle", null, "urn:xmpp:jingle:1");
                 ack.AddChild(jingle);
@@ -212,7 +306,7 @@ namespace miniConf {
                 return null;
             }
 
-            public bool DoReceive(Element transportCandidate) {
+            public bool DoTransmission(Element transportCandidate) {
                 if (transportCandidate == null) return false;
 
                 switch (transportCandidate.GetAttribute("type")) {
@@ -230,11 +324,7 @@ namespace miniConf {
 
             private void SocksThread(object infoEl) {
                 try {
-
-                    var filename = contentIn.SelectSingleElement("file", true).GetTag("name");
-                    var filespec = Program.dataDir + "received files\\" + filename;
-
-                    if (OnFileReceived != null) OnFileReceived(initiateIq.From, filespec, "loading");
+                    if (OnFileReceived != null) OnFileReceived(iq_to, localFilespec, "loading");
 
                     Element info = (Element)infoEl;
                     var client = new System.Net.Sockets.TcpClient(info.GetAttribute("host"), info.GetAttributeInt("port"));
@@ -242,41 +332,47 @@ namespace miniConf {
                     var stream = client.GetStream();
 
                     //TODO swap to/from for socks initiated by remote end (neccessary when sending files to other client)
-                    var socksid = Socks5.GetSHA1Hash(initiateJingle.Attributes["sid"] + initiateIq.From.ToString() + initiateIq.To.ToString());
+                    var socksid = Socks5.GetSHA1Hash(initiateJingle.Attributes["sid"] + initiateIq.From.ToString()  + initiateIq.To.ToString());
                     Console.WriteLine("Socks shaid=" + socksid + ";");
                     Socks5.WriteSocksHeader(stream, socksid);
                     stream.Flush();
                     Thread.Sleep(100);
-                    /*
-                    var proxyActivate = this.BuildActivateBytestream(info.GetAttributeJid("jid"));
-                    conn.Send(proxyActivate);
 
-                    var cActivated = this.BuildCandidateUsed(info.GetAttribute("cid"), "activated");
-                    conn.Send(cActivated);
-                    */
+                    if (selfInitiated) {
+                        var proxyActivate = this.BuildActivateBytestream(info.GetAttributeJid("jid"));
+                        conn.Send(proxyActivate);
+
+                        var cActivated = this.BuildCandidateUsed(info.GetAttribute("cid"), "activated");
+                        conn.Send(cActivated);
+                    }
+
                     Socks5.ReadSocksHeaderAnswer(stream);
 
                     int fileSize = this.contentIn.SelectSingleElement("file", true).GetTagInt("size");
-
-                    using (var fileStream = File.Create(filespec)) {
-
-                        CopyStream(stream, fileStream, fileSize);
-
+                    if (selfInitiated) {
+                        using (var fileStream = File.OpenRead(localFilespec)) {
+                            CopyStream(fileStream, stream, fileSize);
+                        }
+                    } else {
+                        using (var fileStream = File.Create(localFilespec)) {
+                            CopyStream(stream, fileStream, fileSize);
+                        }
                     }
-
+                    
                     stream.Close();
                     client.Client.Close();
 
                     var sesTerm = BuildSessionTerminate("success");
                     conn.Send(sesTerm);
 
-                    if (OnFileReceived != null) OnFileReceived(initiateIq.From, filespec, "done");
+                    if (OnFileReceived != null) OnFileReceived(iq_to, localFilespec, "done");
 
                 } catch (Exception ex) {
-                    if (OnFileReceived != null) OnFileReceived(initiateIq.From, ex.ToString(), "failed");
+                    if (OnFileReceived != null) OnFileReceived(iq_to, ex.ToString(), "failed");
 
                 }
             }
+
 
             /// <summary>
             /// Copies the contents of input to output. Doesn't close either stream.

@@ -63,17 +63,21 @@
             this.comboMessageTheme = new System.Windows.Forms.ComboBox();
             this.chkFiletransferAutoAccept = new System.Windows.Forms.CheckBox();
             this.chkDisplayOccupantStatus = new System.Windows.Forms.CheckBox();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.txtConnInfo = new System.Windows.Forms.TextBox();
             this.lvOnlineStatus = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.pnlToolbar = new System.Windows.Forms.Panel();
+            this.labChatstates = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
             this.chkToggleSidebar = new System.Windows.Forms.CheckBox();
             this.txtSubject = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.webBrowser1 = new miniConf.MessageView();
             this.txtSendmessage = new System.Windows.Forms.TextBox();
             this.txtNickname = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -105,17 +109,16 @@
             this.filterBarPanel = new System.Windows.Forms.Panel();
             this.filterBarCloseBtn = new System.Windows.Forms.Button();
             this.filterTextbox = new System.Windows.Forms.TextBox();
-            this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.txtConnInfo = new System.Windows.Forms.TextBox();
-            this.labChatstates = new System.Windows.Forms.Label();
             this.tmrChatstatePaused = new System.Windows.Forms.Timer(this.components);
-            this.webBrowser1 = new miniConf.MessageView();
+            this.listServerFeatures = new System.Windows.Forms.ListBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.pnlConfig.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.pnlPrefConnectAdvanced.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tabPage4.SuspendLayout();
             this.pnlToolbar.SuspendLayout();
             this.panel3.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -124,7 +127,6 @@
             this.pnlErrMes.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.filterBarPanel.SuspendLayout();
-            this.tabPage4.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtPrefServer
@@ -467,6 +469,29 @@
             this.chkDisplayOccupantStatus.UseVisualStyleBackColor = true;
             this.chkDisplayOccupantStatus.CheckedChanged += new System.EventHandler(this.chkDisplayOccupantStatus_CheckedChanged);
             // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.label4);
+            this.tabPage4.Controls.Add(this.listServerFeatures);
+            this.tabPage4.Controls.Add(this.txtConnInfo);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(595, 175);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "Infos";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // txtConnInfo
+            // 
+            this.txtConnInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtConnInfo.Location = new System.Drawing.Point(233, 9);
+            this.txtConnInfo.Multiline = true;
+            this.txtConnInfo.Name = "txtConnInfo";
+            this.txtConnInfo.Size = new System.Drawing.Size(356, 160);
+            this.txtConnInfo.TabIndex = 0;
+            // 
             // lvOnlineStatus
             // 
             this.lvOnlineStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -530,6 +555,22 @@
             this.pnlToolbar.Name = "pnlToolbar";
             this.pnlToolbar.Size = new System.Drawing.Size(616, 27);
             this.pnlToolbar.TabIndex = 6;
+            // 
+            // labChatstates
+            // 
+            this.labChatstates.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.labChatstates.BackColor = System.Drawing.Color.Cyan;
+            this.labChatstates.Image = ((System.Drawing.Image)(resources.GetObject("labChatstates.Image")));
+            this.labChatstates.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.labChatstates.Location = new System.Drawing.Point(33, 1);
+            this.labChatstates.Name = "labChatstates";
+            this.labChatstates.Padding = new System.Windows.Forms.Padding(10, 0, 0, 0);
+            this.labChatstates.Size = new System.Drawing.Size(514, 25);
+            this.labChatstates.TabIndex = 4;
+            this.labChatstates.Text = "             label4";
+            this.labChatstates.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.labChatstates.Visible = false;
             // 
             // button4
             // 
@@ -611,6 +652,22 @@
             this.splitContainer1.Size = new System.Drawing.Size(616, 327);
             this.splitContainer1.SplitterDistance = 506;
             this.splitContainer1.TabIndex = 9;
+            // 
+            // webBrowser1
+            // 
+            this.webBrowser1.AllowWebBrowserDrop = false;
+            this.webBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.webBrowser1.Location = new System.Drawing.Point(1, 3);
+            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser1.Name = "webBrowser1";
+            this.webBrowser1.ScriptErrorsSuppressed = true;
+            this.webBrowser1.Size = new System.Drawing.Size(504, 260);
+            this.webBrowser1.TabIndex = 0;
+            this.webBrowser1.Url = new System.Uri("about:blank", System.UriKind.Absolute);
+            this.webBrowser1.OnRealKeyDown += new System.Windows.Forms.HtmlElementEventHandler(this.webBrowser1_OnRealKeyDown);
+            this.webBrowser1.OnSpecialUrl += new miniConf.MessageView.SpecialUrlEvent(this.webBrowser1_OnSpecialUrl);
             // 
             // txtSendmessage
             // 
@@ -901,57 +958,27 @@
             this.filterTextbox.TextChanged += new System.EventHandler(this.filterTextbox_TextChanged);
             this.filterTextbox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.filterTextbox_KeyDown);
             // 
-            // tabPage4
-            // 
-            this.tabPage4.Controls.Add(this.txtConnInfo);
-            this.tabPage4.Location = new System.Drawing.Point(4, 22);
-            this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(595, 175);
-            this.tabPage4.TabIndex = 3;
-            this.tabPage4.Text = "Infos";
-            this.tabPage4.UseVisualStyleBackColor = true;
-            // 
-            // txtConnInfo
-            // 
-            this.txtConnInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtConnInfo.Location = new System.Drawing.Point(9, 9);
-            this.txtConnInfo.Multiline = true;
-            this.txtConnInfo.Name = "txtConnInfo";
-            this.txtConnInfo.Size = new System.Drawing.Size(580, 160);
-            this.txtConnInfo.TabIndex = 0;
-            // 
-            // labChatstates
-            // 
-            this.labChatstates.BackColor = System.Drawing.Color.Cyan;
-            this.labChatstates.Location = new System.Drawing.Point(33, 3);
-            this.labChatstates.Name = "labChatstates";
-            this.labChatstates.Size = new System.Drawing.Size(514, 23);
-            this.labChatstates.TabIndex = 4;
-            this.labChatstates.Text = "label4";
-            this.labChatstates.Visible = false;
-            // 
             // tmrChatstatePaused
             // 
             this.tmrChatstatePaused.Interval = 7500;
             this.tmrChatstatePaused.Tick += new System.EventHandler(this.tmrChatstatePaused_Tick);
             // 
-            // webBrowser1
+            // listServerFeatures
             // 
-            this.webBrowser1.AllowWebBrowserDrop = false;
-            this.webBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.webBrowser1.Location = new System.Drawing.Point(1, 3);
-            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.ScriptErrorsSuppressed = true;
-            this.webBrowser1.Size = new System.Drawing.Size(504, 260);
-            this.webBrowser1.TabIndex = 0;
-            this.webBrowser1.Url = new System.Uri("about:blank", System.UriKind.Absolute);
-            this.webBrowser1.OnRealKeyDown += new System.Windows.Forms.HtmlElementEventHandler(this.webBrowser1_OnRealKeyDown);
-            this.webBrowser1.OnSpecialUrl += new miniConf.MessageView.SpecialUrlEvent(this.webBrowser1_OnSpecialUrl);
+            this.listServerFeatures.FormattingEnabled = true;
+            this.listServerFeatures.Location = new System.Drawing.Point(7, 24);
+            this.listServerFeatures.Name = "listServerFeatures";
+            this.listServerFeatures.Size = new System.Drawing.Size(220, 147);
+            this.listServerFeatures.TabIndex = 1;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(6, 5);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(82, 13);
+            this.label4.TabIndex = 2;
+            this.label4.Text = "Server features:";
             // 
             // Form1
             // 
@@ -983,6 +1010,8 @@
             this.tabPage3.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
             this.pnlToolbar.ResumeLayout(false);
             this.pnlToolbar.PerformLayout();
             this.panel3.ResumeLayout(false);
@@ -995,8 +1024,6 @@
             this.contextMenuStrip1.ResumeLayout(false);
             this.filterBarPanel.ResumeLayout(false);
             this.filterBarPanel.PerformLayout();
-            this.tabPage4.ResumeLayout(false);
-            this.tabPage4.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1081,6 +1108,8 @@
         private System.Windows.Forms.TextBox txtConnInfo;
         private System.Windows.Forms.Label labChatstates;
         private System.Windows.Forms.Timer tmrChatstatePaused;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ListBox listServerFeatures;
     }
 }
 

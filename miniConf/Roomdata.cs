@@ -3,6 +3,7 @@ using agsXMPP.protocol.client;
 using agsXMPP.protocol.extensions.chatstates;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 
@@ -16,6 +17,7 @@ namespace miniConf {
 
         public Chatstate chatstate;
         public Dictionary<string, Chatstate> users_states = new Dictionary<string, Chatstate>();
+        public Dictionary<string, string> users_jid = new Dictionary<string, string>();
 
         public Roomdata(Jid myjid) {
             jid = myjid;
@@ -29,10 +31,10 @@ namespace miniConf {
         public void sendChatstate(agsXMPP.protocol.extensions.chatstates.Chatstate state) {
             if (chatstate == state) return;
             chatstate = state;
-            var msg = new agsXMPP.protocol.client.Message(new Jid(roomName()), Program.conn.MyJID);
+            var msg = new agsXMPP.protocol.client.Message(new Jid(roomName()), Program.Jabber.conn.MyJID);
             msg.Type = MessageType.groupchat;
             msg.Chatstate = state;
-            Program.conn.Send(msg);
+            Program.Jabber.conn.Send(msg);
         }
         public bool hasTypingUser() {
             foreach(Chatstate state in users_states.Values) {
@@ -48,11 +50,38 @@ namespace miniConf {
             if (names.Count == 0) return null;
             return String.Join(", ", names.ToArray()) +  (names.Count == 1?" is":" are")+" writing...";
         }
-        public void handleChatstate(Message msg) {
-            if (msg.Chatstate == Chatstate.None) return;
+        public bool handleChatstate(Message msg) {
+            if (msg.Chatstate == Chatstate.None) return false;
+            bool change = true;
+            Chatstate old_state;
+            if (users_states.TryGetValue(msg.From.Resource, out old_state))
+                change = old_state != msg.Chatstate;
+            
             users_states[msg.From.Resource] = msg.Chatstate;
+            return change;
         }
 
+        public void handlePresence(Presence pres) {
+            //agsXMPP.protocol.x.muc.User user = pres.SelectSingleElement(typeof agsXMPP.protocol.x.muc.User);
+            //users_jid[pres.From.Resource] = user.Item.Jid.Bare;
+
+        }
+
+        public Color getChatstateColor(string nick) {
+            Chatstate state;
+            if (!users_states.TryGetValue(nick, out state)) return Color.Black;
+            switch (state) {
+                case Chatstate.paused: return Color.DarkCyan;
+                case Chatstate.composing: return Color.Cyan;
+                case Chatstate.active: return Color.DarkGreen;
+                default: return Color.Black;
+            }
+        }
+        public string getChatstate(string nick) {
+            Chatstate state;
+            if (!users_states.TryGetValue(nick, out state)) return "";
+            return state.ToString();
+        }
         public string getErrorMessage() {
             string msg = "";
             switch(errorCondition) {

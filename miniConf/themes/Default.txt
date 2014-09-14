@@ -16,3 +16,6 @@ p.msg strong {
 	overflow: hidden;
 } 
 p span {margin-left: 110px;display:block;}
+
+.avatar { display: none; }
+

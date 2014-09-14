@@ -26,7 +26,22 @@ namespace miniConf {
 
         private void DirectMessageForm_Load(object sender, EventArgs e) {
             messageView1.loadStylesheet();
+            Program.Jabber.OnContactPresence += Jabber_OnContactPresence;
             
+        }
+
+        void Jabber_OnContactPresence(object sender, miniConf.JabberService.JabberEventArgs e) {
+            if (e.jabberId == otherEnd.Bare) {
+                updateResources();
+            }
+        }
+
+        void updateResources() {
+            cmbResources.Items.Clear();
+            JabberContact contact;
+            if (Program.Jabber.contacts.TryGetValue(otherEnd.Bare, out contact) == false) return;
+            foreach (string res in contact.resources)
+                cmbResources.Items.Add(otherEnd.Bare + "/" + res);
         }
 
         public void onNotice(string text) {
@@ -40,15 +55,15 @@ namespace miniConf {
             if (loaded == false) { beforeLoadedMessage = msg; return; }
 
             // XEP-0280, Message Carbons
-            var carbonsSent = msg.SelectSingleElement("sent", Jabber.URN_CARBONS);
-            var carbonsReceived = msg.SelectSingleElement("received", Jabber.URN_CARBONS);
+            var carbonsSent = msg.SelectSingleElement("sent", JabberService.URN_CARBONS);
+            var carbonsReceived = msg.SelectSingleElement("received", JabberService.URN_CARBONS);
             if (carbonsSent != null) {
                 msg = (agsXMPP.protocol.client.Message)carbonsSent.SelectSingleElement("message", true);
             } else if (carbonsReceived != null) {
                 msg = (agsXMPP.protocol.client.Message)carbonsReceived.SelectSingleElement("message", true);
             }
             if (msg.HasTag("body")) {
-                messageView1.addMessageToView(msg.From, msg.GetTag("body"), DateTime.Now);
+                messageView1.addMessageToView(msg.From, msg.GetTag("body"), DateTime.Now, Program.Jabber.avatar.GetAvatarIfAvailabe(msg.From));
             }
             if (msg.Chatstate != agsXMPP.protocol.extensions.chatstates.Chatstate.None) {
                 labChatstate.Text = msg.Chatstate.ToString();
@@ -56,16 +71,16 @@ namespace miniConf {
         }
 
         private void sendMessage(string text) {
-            var msg = new agsXMPP.protocol.client.Message(this.otherEnd.Bare, Program.conn.MyJID, agsXMPP.protocol.client.MessageType.chat, text);
+            var msg = new agsXMPP.protocol.client.Message(this.otherEnd.Bare, Program.Jabber.conn.MyJID, agsXMPP.protocol.client.MessageType.chat, text);
             msg.Id = Guid.NewGuid().ToString();
             msg.Chatstate = agsXMPP.protocol.extensions.chatstates.Chatstate.active;
-            Program.conn.Send(msg);
+            Program.Jabber.conn.Send(msg);
         }
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.Enter && !e.Shift && !e.Alt && !e.Control) {
                 sendMessage(textBox1.Text);
-                messageView1.addMessageToView("self", textBox1.Text, DateTime.Now);
+                messageView1.addMessageToView("self", textBox1.Text, DateTime.Now, null);
                 textBox1.Text = "";
                 e.SuppressKeyPress = true; e.Handled = true;
             } else {
@@ -75,16 +90,18 @@ namespace miniConf {
 
         private void sendChatstate(agsXMPP.protocol.extensions.chatstates.Chatstate state) {
             lastChatstate = state;
-            var msg = new agsXMPP.protocol.client.Message(new Jid(this.otherEnd.Bare), Program.conn.MyJID);
+            var msg = new agsXMPP.protocol.client.Message(new Jid(this.otherEnd.Bare), Program.Jabber.conn.MyJID);
             msg.Type = agsXMPP.protocol.client.MessageType.chat;
             msg.Chatstate = state;
-            Program.conn.Send(msg);
+            Program.Jabber.conn.Send(msg);
         }
 
         private void messageView1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
             loaded = true;
             if (beforeLoadedMessage != null) onMessage(beforeLoadedMessage);
             messageView1.Document.GetElementById("tb").InnerHtml = "Private conversation started at " + DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString();
+            updateResources();
+            cmbResources.Text = otherEnd.ToString();
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e) {
@@ -113,6 +130,35 @@ namespace miniConf {
         private void tmrChatstatePaused_Tick(object sender, EventArgs e) {
             tmrChatstatePaused.Stop();
             sendChatstate(agsXMPP.protocol.extensions.chatstates.Chatstate.paused);
+        }
+
+        private bool isImageDrop(IDataObject data) {
+            if (data.GetDataPresent("FileDrop")) {
+                string[] files = (string[])data.GetData("FileDrop");
+                if (files.Length == 1 && (files[0].ToLower().EndsWith(".jpg")
+                    || files[0].ToLower().EndsWith(".jpeg")
+                    || files[0].ToLower().EndsWith(".png")
+                    || files[0].ToLower().EndsWith(".webp"))) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void textBox1_DragEnter(object sender, DragEventArgs e) {
+            if (isImageDrop(e.Data)) {
+
+                        e.Effect = DragDropEffects.Copy;
+
+            }
+        }
+
+        private void textBox1_DragDrop(object sender, DragEventArgs e) {
+            if (!isImageDrop(e.Data)) return;
+
+            string fileName = ((string[])e.Data.GetData("FileDrop"))[0];
+            Program.Jabber.jingle.SendFile(cmbResources.Text, fileName);
+            messageView1.addNoticeToView("<img src=\"" + fileName + "\" style='width:240px'><br>Sending image ...");
         }
 
 
