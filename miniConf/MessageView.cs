@@ -32,6 +32,7 @@ namespace miniConf {
             this.Document.Body.KeyDown += Body_KeyDown;
             
             this.loadStylesheet();
+            this.loadSmileyTheme();
 
             base.OnDocumentCompleted(e);
         }
