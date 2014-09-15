@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Online", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Not available", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Online", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Not available", System.Windows.Forms.HorizontalAlignment.Left);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.txtPrefServer = new System.Windows.Forms.TextBox();
             this.txtPrefUsername = new System.Windows.Forms.TextBox();
@@ -115,6 +115,8 @@
             this.label8 = new System.Windows.Forms.Label();
             this.cmbSmileyTheme = new System.Windows.Forms.ComboBox();
             this.webBrowser1 = new miniConf.MessageView();
+            this.lnkInstallSmiley = new System.Windows.Forms.LinkLabel();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.pnlConfig.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -366,6 +368,8 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.linkLabel1);
+            this.tabPage2.Controls.Add(this.lnkInstallSmiley);
             this.tabPage2.Controls.Add(this.label8);
             this.tabPage2.Controls.Add(this.cmbSmileyTheme);
             this.tabPage2.Controls.Add(this.btnClosePrefs);
@@ -539,13 +543,13 @@
             this.columnHeader1,
             this.columnHeader2});
             this.lvOnlineStatus.FullRowSelect = true;
-            listViewGroup1.Header = "Online";
-            listViewGroup1.Name = "online";
-            listViewGroup2.Header = "Not available";
-            listViewGroup2.Name = "off";
+            listViewGroup3.Header = "Online";
+            listViewGroup3.Name = "online";
+            listViewGroup4.Header = "Not available";
+            listViewGroup4.Name = "off";
             this.lvOnlineStatus.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1,
-            listViewGroup2});
+            listViewGroup3,
+            listViewGroup4});
             this.lvOnlineStatus.LargeImageList = this.imageList1;
             this.lvOnlineStatus.Location = new System.Drawing.Point(0, 0);
             this.lvOnlineStatus.Name = "lvOnlineStatus";
@@ -1029,6 +1033,28 @@
             this.webBrowser1.OnRealKeyDown += new System.Windows.Forms.HtmlElementEventHandler(this.webBrowser1_OnRealKeyDown);
             this.webBrowser1.OnSpecialUrl += new miniConf.MessageView.SpecialUrlEvent(this.webBrowser1_OnSpecialUrl);
             // 
+            // lnkInstallSmiley
+            // 
+            this.lnkInstallSmiley.AutoSize = true;
+            this.lnkInstallSmiley.Location = new System.Drawing.Point(315, 88);
+            this.lnkInstallSmiley.Name = "lnkInstallSmiley";
+            this.lnkInstallSmiley.Size = new System.Drawing.Size(43, 13);
+            this.lnkInstallSmiley.TabIndex = 22;
+            this.lnkInstallSmiley.TabStop = true;
+            this.lnkInstallSmiley.Text = "Install...";
+            this.lnkInstallSmiley.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkInstallSmiley_LinkClicked);
+            // 
+            // linkLabel1
+            // 
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.Location = new System.Drawing.Point(364, 88);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(33, 13);
+            this.linkLabel1.TabIndex = 23;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "Get...";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1163,6 +1189,8 @@
         private System.Windows.Forms.Button btnClosePrefs;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ComboBox cmbSmileyTheme;
+        private System.Windows.Forms.LinkLabel lnkInstallSmiley;
+        private System.Windows.Forms.LinkLabel linkLabel1;
     }
 }
 

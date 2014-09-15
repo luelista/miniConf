@@ -1165,6 +1165,14 @@ namespace miniConf {
             if (e.Button == System.Windows.Forms.MouseButtons.Right) updateSmileyThemeList();
         }
 
+        private void lnkInstallSmiley_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            System.Diagnostics.Process.Start("explorer.exe", Program.dataDir + "Emoticons\\");
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            System.Diagnostics.Process.Start("http://home.luelista.net/programme/miniconf/smilies/");
+        }
+
 
 
 
