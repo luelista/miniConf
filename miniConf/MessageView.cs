@@ -14,6 +14,13 @@ namespace miniConf {
         public string highlightString = "";
         public string selfNickname = "";
         public bool imagePreview = false;
+        public List<Smiley> smileys = new List<Smiley>();
+
+        public class Smiley {
+            public string text, imageFilename;
+        }
+
+        public DateTime lastTimeTop=DateTime.MinValue, lastTimeBottom=DateTime.MinValue;
 
         public MessageView() {
 
@@ -21,13 +28,14 @@ namespace miniConf {
 
         protected override void OnDocumentCompleted(WebBrowserDocumentCompletedEventArgs e) {
             this.Document.Write("<html><head><style id='st'></style></head>" +
-                 "<body><p id='tb'>Eile mit Weile ...</p><div id='m'></div></body></html>");
+                 "<body><p id='tb'>Eile mit Weile ...</p><p class='notice date' id='firstdate'></p><div id='m'></div></body></html>");
             this.Document.Body.KeyDown += Body_KeyDown;
-
+            
             this.loadStylesheet();
 
             base.OnDocumentCompleted(e);
         }
+
 
         void Body_KeyDown(object sender, HtmlElementEventArgs e) {
             if (OnRealKeyDown != null) OnRealKeyDown(sender, e);
@@ -54,6 +62,31 @@ namespace miniConf {
                 Console.WriteLine("Error applying stylesheet: " + e.Message);
             }
         }
+        public void loadSmileyTheme() {
+            string dataDir = Program.dataDir,
+                   themeName = Program.glob.para("Form1__cmbSmileyTheme", "(none)"),
+                   themeDir = dataDir+"Emoticons\\"+themeName;
+            smileys = new List<Smiley>();
+            if (themeName == "(none)" || !Directory.Exists(themeDir)) return;
+            string[] themeIni = File.ReadAllLines(themeDir + "\\theme");
+            string category = null;
+            foreach (string lineIter in themeIni) {
+                string line = lineIter.Trim();
+                if (String.IsNullOrEmpty(line) || line.StartsWith(";")) continue;
+                if (line.StartsWith("[") && line.EndsWith("]")) { category = line; continue; }
+
+                if (category != null) {
+                    string[] info = line.Split(' ', '\t');
+                    for (int i = 1; i < info.Length; i++) {
+                        if (info[i] == "") continue;
+                        Smiley s = new Smiley();
+                        s.text = info[i];
+                        s.imageFilename = themeDir + "\\" + info[0];
+                        smileys.Add(s);
+                    }
+                }
+            }
+        }
 
         private static uint ReHash(int srcHash) {
             unchecked {
@@ -71,34 +104,69 @@ namespace miniConf {
             return WindowHelper.getColorForHSL(hue, 1, 0.4);
         }
 
-        public void addMessageToView(string from, string text, DateTime time, string avatarFilename, HtmlElementInsertionOrientation where = HtmlElementInsertionOrientation.BeforeEnd) {
+        public void updateMessage(string oldId, string newId, string newBody, DateTime editTimestamp) {
+            var el = Document.GetElementById("MSGID_" + oldId);
+            var spans = el.GetElementsByTagName("SPAN");
+            spans[0].InnerHtml = prepareInnerHtml(newBody) + "<br><small> (Edited) </small>"; 
+            el.Id = "MSGID_" + newId;
+
+        }
+
+        public void clear() {
+            this.Document.GetElementById("m").InnerHtml = "";
+            this.Document.GetElementById("firstdate").InnerHtml = "";
+            lastTimeTop = DateTime.MinValue;
+            lastTimeBottom = DateTime.MinValue;
+        }
+        public bool updateLastTime(HtmlElementInsertionOrientation where, DateTime newTime) {
+            if (lastTimeTop == DateTime.MinValue && lastTimeBottom == DateTime.MinValue) {
+                this.Document.GetElementById("firstdate").InnerHtml = newTime.ToLongDateString();
+                lastTimeBottom = newTime; lastTimeTop = newTime; return true;
+            }
+            if (where == HtmlElementInsertionOrientation.AfterBegin) {
+                if (lastTimeTop.Date != newTime.Date) {
+                    addDateToView(lastTimeTop.ToLongDateString(), where);
+                    this.Document.GetElementById("firstdate").InnerHtml = newTime.ToLongDateString();
+                    lastTimeTop = newTime;
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                if (lastTimeBottom.Date != newTime.Date) {
+                    addDateToView(newTime.ToLongDateString(), where);
+                    lastTimeBottom = newTime;
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        public void addMessageToView(string from, string text, DateTime time, string editDt, string jabberId, string id, HtmlElementInsertionOrientation where = HtmlElementInsertionOrientation.BeforeEnd) {
+            updateLastTime(where, time);
             var div = this.Document.CreateElement("p");
-            text = text.Replace("<", "&lt;");
-            if (!string.IsNullOrEmpty(highlightString)) text = Regex.Replace(text, highlightString, "<em>$0</em>");
-            text = text.Replace("\n", "\n<br>");
-            var imageLink = Regex.Match(text, "https?://[\\w.-]+/[\\w_.,/+?&%$!=)(\\[\\]{}-]*\\.(png|jpg|gif)");
-            text = Regex.Replace(text, "(?i)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))",
-                         "<a href=\"$0\">$0</a>");
+            div.Id = "MSGID_" + id;
+            text = prepareInnerHtml(text);
             var me = Regex.Match(text, "^/me\\s+");
             var timeEl = "<i title=" + time.ToShortDateString() + " " + time.ToLongTimeString() + ">" + (highlightString != "" ? time.ToShortDateString() : "") + " " + time.ToLongTimeString() + "</i>";
+            if (!String.IsNullOrEmpty(editDt)) timeEl += "<i class='edited' title='" + editDt + "'>(Edited)</i>";
             var color = getColorForNickname(from);
             string cssColor = ColorTranslator.ToHtml(color);
             string classNames = "from_" + from + " ";
-            if (from == "self" || from == this.selfNickname) classNames += "self ";
+            if (from == "self" || (!String.IsNullOrEmpty(jabberId) && jabberId.StartsWith( this.selfNickname))) classNames += "self ";
             if (me.Success) {
                 div.InnerHtml = timeEl + "<span> *** <strong>" + from + "</strong> " + text.Substring(me.Length) + "</span>";
             } else {
                 classNames += "msg ";
-                if (imagePreview && imageLink.Success) {
-                    text += "<br><img src=\"" + imageLink.Value + "\" class=\"imprev\" style='max-width:150px;'>";
-                }
                 string avatar = "<tt class='avatar' style='background-color: " + cssColor + "; '></tt>";
+                string avatarFilename = Program.Jabber.avatar.GetAvatarIfAvailabe(jabberId);
                 if (!string.IsNullOrEmpty(avatarFilename))
                     avatar = "<tt class='avatar'><img src='" + avatarFilename + "'></tt>";
                     
-                div.InnerHtml = avatar + timeEl + 
-                    "<strong style='color: "+cssColor+"'>" + from + ":</strong> <span>" 
-                    + text + "</span>";
+                div.InnerHtml = avatar + "<span class='wrap'>" + timeEl + 
+                    "<strong style='color: "+cssColor+"'>" + from + ":</strong><span class='body'> " 
+                    + text + "</span></span>";
 
             }
             div.SetAttribute("className", classNames);
@@ -106,6 +174,31 @@ namespace miniConf {
             this.Document.GetElementById("m").InsertAdjacentElement(where, div);
             if (where == HtmlElementInsertionOrientation.BeforeEnd)
                 scrollDown();
+        }
+        protected string prepareInnerHtml(string text) {
+            text = text.Replace("<", "&lt;");
+            if (!string.IsNullOrEmpty(highlightString)) text = Regex.Replace(text, highlightString, "<em>$0</em>");
+            text = text.Replace("\n", "\n<br>");
+            var imageLink = Regex.Match(text, "https?://[\\w.-]+/[\\w_.,/+?&%$!=)(\\[\\]{}-]*\\.(png|jpg|gif|webp)");
+            text = Regex.Replace(text, "(?i)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))",
+                         "<a href=\"$0\">$0</a>");
+            if (imagePreview && imageLink.Success) {
+                string link = imageLink.Value; 
+                //HACK HACK HACK
+                if (link.EndsWith(".webp")) link = link.Replace(".webp", ".png");
+
+                text += "<br><a href=\""+link+"\"><img src=\"" + link + "\" class=\"imprev\" style='max-width:150px;'></a>";
+            }
+            foreach (Smiley s in smileys) {
+                text = text.Replace(s.text, "<img src='" + s.imageFilename + "' title='" + s.text + "'>");
+            }
+            return text;
+        }
+        public void addDateToView(string text, HtmlElementInsertionOrientation where) {
+            var div = this.Document.CreateElement("p");
+            div.SetAttribute("className", "date notice");
+            div.InnerHtml = "* " + text + "";
+            this.Document.GetElementById("m").InsertAdjacentElement(where, div);
         }
         public void addNoticeToView(string text) {
             var div = this.Document.CreateElement("p");
@@ -116,6 +209,28 @@ namespace miniConf {
         }
         public void scrollDown() {
             this.Document.Body.ScrollTop = 99999;
+        }
+
+        public string getLastMessageId(string from) {
+            var msgs = this.Document.GetElementsByTagName("p");
+            for (int i = msgs.Count - 1; i > 0; i--) {
+                if (!String.IsNullOrEmpty(msgs[i].Id) 
+                    && msgs[i].GetAttribute("className").Contains("from_"+from) 
+                    && msgs[i].Id.StartsWith("MSGID_")) {
+                    return msgs[i].Id.Substring(6);
+                }
+            }
+            return null;
+        }
+
+        public void setMessageEditing(string id, bool on) {
+            var msg = this.Document.GetElementById("MSGID_" + id);
+            if (msg==null)return;
+            if (on) {
+                msg.SetAttribute("className", msg.GetAttribute("className") + " editing");
+            } else {
+                msg.SetAttribute("className", msg.GetAttribute("className").Replace(" editing", ""));
+            }
         }
 
         public delegate void SpecialUrlEvent(string url);

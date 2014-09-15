@@ -30,6 +30,7 @@ namespace miniConf {
             System.IO.Directory.CreateDirectory(dataDir + "Received Files");
             System.IO.Directory.CreateDirectory(dataDir + "Temporary Data");
             System.IO.Directory.CreateDirectory(dataDir + "Avatars");
+            System.IO.Directory.CreateDirectory(dataDir + "Emoticons");
             tempDir = dataDir + "Temporary Data\\";
 
             singleInstanceMutex = new Mutex(true, "singleInstanceMutex@miniConf.max-weller.de");

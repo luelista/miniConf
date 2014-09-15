@@ -27,7 +27,7 @@ namespace miniConf {
         private void DirectMessageForm_Load(object sender, EventArgs e) {
             messageView1.loadStylesheet();
             Program.Jabber.OnContactPresence += Jabber_OnContactPresence;
-            
+            messageView1.imagePreview = Program.glob.para("Form1__chkEnableImagePreview", "TRUE") == "TRUE";
         }
 
         void Jabber_OnContactPresence(object sender, miniConf.JabberService.JabberEventArgs e) {
@@ -63,24 +63,26 @@ namespace miniConf {
                 msg = (agsXMPP.protocol.client.Message)carbonsReceived.SelectSingleElement("message", true);
             }
             if (msg.HasTag("body")) {
-                messageView1.addMessageToView(msg.From, msg.GetTag("body"), DateTime.Now, Program.Jabber.avatar.GetAvatarIfAvailabe(msg.From));
+                messageView1.addMessageToView(msg.From, msg.GetTag("body"), DateTime.Now, null,
+                    Program.Jabber.avatar.GetAvatarIfAvailabe(msg.From), msg.Id);
             }
             if (msg.Chatstate != agsXMPP.protocol.extensions.chatstates.Chatstate.None) {
                 labChatstate.Text = msg.Chatstate.ToString();
             }
         }
 
-        private void sendMessage(string text) {
+        private string sendMessage(string text) {
             var msg = new agsXMPP.protocol.client.Message(this.otherEnd.Bare, Program.Jabber.conn.MyJID, agsXMPP.protocol.client.MessageType.chat, text);
             msg.Id = Guid.NewGuid().ToString();
             msg.Chatstate = agsXMPP.protocol.extensions.chatstates.Chatstate.active;
             Program.Jabber.conn.Send(msg);
+            return msg.Id;
         }
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.Enter && !e.Shift && !e.Alt && !e.Control) {
-                sendMessage(textBox1.Text);
-                messageView1.addMessageToView("self", textBox1.Text, DateTime.Now, null);
+                var id = sendMessage(textBox1.Text);
+                messageView1.addMessageToView("self", textBox1.Text, DateTime.Now, null, null, id);
                 textBox1.Text = "";
                 e.SuppressKeyPress = true; e.Handled = true;
             } else {

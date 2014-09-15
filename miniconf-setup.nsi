@@ -1,7 +1,7 @@
 !include MUI2.nsh
 !addplugindir .\setups
 
-!define VERSION "1.6.2"
+!define VERSION "1.6.4"
 
 Function LicensePageShow
 
@@ -51,7 +51,7 @@ Section "Program Files" SecProgFiles
   File "miniConf\bin\Release\miniConf.exe"
   File "miniConf\bin\Release\*.dll"
   File "miniConf\bin\Release\*.txt"
-
+  
   SetOutPath "$INSTDIR\themes"
   File "miniConf\themes\*.txt"
 

@@ -33,7 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>1407193497_18735.ico</ApplicationIcon>
+    <ApplicationIcon>AppIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="agsXMPP">
@@ -169,6 +169,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="1407193497_18735.ico" />
+    <Content Include="AppIcon.ico" />
     <Content Include="ICSharpCode.TextEditor.dll" />
     <Content Include="libwebp.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -184,7 +185,13 @@
     <Content Include="themes\Conversations.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="themes\OldDefault.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="themes\Default.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="themes\Terminal.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="WinSparkle.dll">

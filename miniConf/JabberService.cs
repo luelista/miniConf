@@ -9,6 +9,7 @@ namespace miniConf {
     class JabberService {
 
         public const string URN_CARBONS = "urn:xmpp:carbons:2";
+        public const string URN_MESSAGE_CORRECT = "urn:xmpp:message-correct:0";
 
         public XmppClientConnection conn;
         public Jingle jingle;

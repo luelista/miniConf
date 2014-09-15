@@ -19,6 +19,7 @@ namespace miniConf {
         public Form1() {
             InitializeComponent();
 
+            webBrowser1.imagePreview = true;
             popupWindow.OnItemClick += popupWindow_OnItemClick;
             icon1 = this.Icon; icon2 = Icon.FromHandle(new Bitmap(imageList1.Images[2]).GetHicon());
 
@@ -68,8 +69,14 @@ namespace miniConf {
         private void jabberConnect() {
             if (jabber.conn == null) {
                 jabber.conn = new XmppClientConnection();
-                jabber.conn.DiscoInfo.AddFeature(new DiscoFeature( "urn:xmpp:avatar:metadata+notify"));
+                jabber.conn.DiscoInfo.AddFeature(new DiscoFeature("urn:xmpp:avatar:metadata+notify"));
+                jabber.conn.DiscoInfo.AddFeature(new DiscoFeature(JabberService.URN_MESSAGE_CORRECT));
+                
+                jabber.conn.DiscoInfo.AddIdentity(new DiscoIdentity("pc", "miniConf " + Application.ProductVersion, "client"));
                 jabber.conn.Capabilities.SetVersion(jabber.conn.DiscoInfo);
+                jabber.conn.Capabilities.Node = "http://home.max-weller.de/programme/miniconf";
+                jabber.conn.Capabilities.SetAttribute("clientver", Application.ProductVersion);
+
                 //jabber.conn.Capabilities.AddChild(new agsXMPP.protocol.iq.disco.DiscoFeature("urn:xmpp:avatar:metadata+notify"));
                 jabber.conn.EnableCapabilities = true;
 
@@ -113,7 +120,8 @@ namespace miniConf {
             jabber.conn.UseStartTLS = (glob.para("useSSL", "TRUE") != "FALSE");
             //jabber.conn.UseSSL = (glob.para("useSSL", "TRUE") != "FALSE");
             jabber.conn.Open(username[0], txtPrefPassword.Text, "miniConf-" + Environment.MachineName, 0);
-
+            txtConnInfo.Text = "";
+            webBrowser1.selfNickname = txtPrefUsername.Text;
         }
 
         void jabber_OnServerFeaturesUpdated(object sender, EventArgs e) {
@@ -309,6 +317,14 @@ namespace miniConf {
                 if (room.handleChatstate(msg))
                     if (currentRoom == room) { updateChatstates(); updateMemberList(); }
             }
+            if (msg.HasTag("replace") && msg.HasTag("body")) {
+                Element replace = msg.SelectSingleElement("replace");
+                string replaceId= replace.GetAttribute("id");
+                if (logs.EditMessage(room.roomName(), replaceId, msg.GetAttribute("id"), msg.From.Resource, msg.GetTag("body"), dt)) {
+                    webBrowser1.updateMessage( replaceId, msg.GetAttribute("id"), msg.GetTag("body"), DateTime.Parse(dt));
+                    return;
+                }
+            }
             if (msg.HasTag("subject")) {
                 string subject = msg.GetTag("subject");
                 logs.SetSubject(msg.From.Bare, subject);
@@ -321,8 +337,8 @@ namespace miniConf {
                 logs.InsertMessage(msg.From.Bare, msg.GetAttribute("id"), msg.From.Resource, messageBody, dt);
                 logs.SetLastmessageDatetime(msg.From.Bare, dt);
                 if (currentRoom != null && msg.From.Bare == currentRoom.jid.Bare) {
-                    string avatarFile = jabber.avatar.GetAvatarIfAvailabe( logs.GetUserJid(msg.From.Bare, msg.From.Resource));
-                    webBrowser1.addMessageToView(msg.From.Resource, messageBody, DateTime.Parse(dt), avatarFile);
+                    string fullJid = logs.GetUserJid(msg.From.Bare, msg.From.Resource);
+                    webBrowser1.addMessageToView(msg.From.Resource, messageBody, DateTime.Parse(dt), null, fullJid, msg.Id);
                 }
                 if (!msg.HasTag("delay") && (glob.para("notifications__" + msg.From.Bare) != "FALSE" || IsMention(messageBody))) {
                     if (enableSoundToolStripMenuItem.Checked) {
@@ -427,8 +443,15 @@ namespace miniConf {
         private void sendMessage(string text) {
             var msg = new agsXMPP.protocol.client.Message(currentRoom.roomName(), jabber.conn.MyJID, agsXMPP.protocol.client.MessageType.groupchat, text);
             msg.Id = Guid.NewGuid().ToString();
+            if (editingMessageId != null) {
+                var replace = new Element("replace", null, JabberService.URN_MESSAGE_CORRECT);
+                replace.SetAttribute("id", editingMessageId);
+                msg.AddChild(replace);
+                stopEditingMessage();
+            }
             msg.Chatstate = agsXMPP.protocol.extensions.chatstates.Chatstate.active;
             currentRoom.chatstate = agsXMPP.protocol.extensions.chatstates.Chatstate.active;
+            
             jabber.conn.Send(msg);
         }
 
@@ -458,8 +481,11 @@ namespace miniConf {
             glob = new cls_globPara(logs); Program.glob = glob;
             if (logs.databaseVersion < 6) glob.legacyImport(Program.dataDir + "miniConf.ini");
 
+            updateSmileyThemeList();
+
             glob.readFormPos(this);
             glob.readTuttiFrutti(this);
+            this.Show();
 
             enableNotificationsToolStripMenuItem.Checked = glob.para("enableNotifications") == "TRUE";
             enableSoundToolStripMenuItem.Checked = glob.para("enableSound") != "FALSE";
@@ -502,6 +528,7 @@ namespace miniConf {
             //pnlConfig.Visible = false;
             pnlErrMes.Visible = false;
             tabControl1.SelectedIndex = 1;
+            glob.saveTuttiFrutti(this);
         }
         private void showConfigPanel(object errmes) {
             pnlConfig.Visible = true;
@@ -583,7 +610,6 @@ namespace miniConf {
                 glob.setPara("currentRoom", currentRoom.roomName());
                 currentRoom.unreadMsgCount = 0;
                 popupWindow.updateRooms(rooms);
-                webBrowser1.selfNickname = currentRoom.jid.Resource;
                 webBrowser1.addNoticeToView("Subject is: " + logs.GetSubject(currentRoom.roomName()));
                 if (currentRoom.getErrorMessage() != null)
                     webBrowser1.addNoticeToView("<b><font color=red>" + currentRoom.getErrorMessage() + "</font></b>");
@@ -591,6 +617,7 @@ namespace miniConf {
                 updateChatstates();
                 currentRoom.sendChatstate(txtSendmessage.Text == "" ? agsXMPP.protocol.extensions.chatstates.Chatstate.active : agsXMPP.protocol.extensions.chatstates.Chatstate.paused);
                 txtSendmessage.Enabled = true;
+                txtSendmessage.Focus();
             }
             webBrowser1.scrollDown();
         }
@@ -619,9 +646,8 @@ namespace miniConf {
             }
         }
         private void clearMessageView() {
-            webBrowser1.Document.GetElementById("m").InnerHtml = "";
-            webBrowser1.Document.GetElementById("tb").InnerHtml = "history: <a href='special:show_more_history'> 25 more</a> | <a href='special:show_more_more_history'> 100 more</a>";
-
+            webBrowser1.clear();
+            webBrowser1.Document.GetElementById("tb").InnerHtml = "history: <a href='special:show_more_history'> 10 more</a> | <a href='special:show_more_more_history'> 100 more</a>";
         }
         int histAmount = 0;
         private void showLastMessages(int count) {
@@ -633,8 +659,9 @@ namespace miniConf {
             var msgs = logs.GetLogs(currentRoom.roomName(), histAmount, count);
             foreach (System.Data.Common.DbDataRecord k in msgs) {
                 string jid = logs.GetUserJid(currentRoom.roomName(), k.GetString(0));
-                string avatarFile = jabber.avatar.GetAvatarIfAvailabe(jid);
-                webBrowser1.addMessageToView(k.GetString(0), k.GetString(1), DateTime.Parse(k.GetString(2)), avatarFile, HtmlElementInsertionOrientation.AfterBegin);
+                webBrowser1.addMessageToView(k.GetString(ChatDatabase.C_SENDER), k.GetString(ChatDatabase.C_BODY),
+                    DateTime.Parse(k.GetString(ChatDatabase.C_DATE)), logs.StringOrNull(k, ChatDatabase.C_EDIT),
+                    jid, k.GetString(ChatDatabase.C_ID), HtmlElementInsertionOrientation.AfterBegin);
             }
             histAmount += count;
         }
@@ -662,10 +689,39 @@ namespace miniConf {
                     doMediaUpload(uploadfn);
                 }
             }
+            if (txtSendmessage.Text == "" && e.KeyCode == Keys.Up) {
+                string id = webBrowser1.getLastMessageId(currentRoom.jid.Resource);
+                editMessage(id);
+            }
             //if (e.Control && (e.KeyCode == Keys.A))
             //    e.SuppressKeyPress = true;
         }
 
+
+        #region Message Editing
+
+        public string editingMessageId = null;
+
+        public void editMessage(string id) {
+            if (string.IsNullOrEmpty(id)) return;
+            if (editingMessageId != null) stopEditingMessage();
+            var message = logs.GetMessageById(currentRoom.roomName(), id);
+            if (message == null) return;
+            editingMessageId = id;
+            webBrowser1.setMessageEditing(id, true);
+            txtSendmessage.Text = message["messagebody"];
+            txtSendmessage.BackColor = Color.FromArgb(0xFA,0xFA,0xA0);
+            
+        }
+
+        public void stopEditingMessage() {
+            txtSendmessage.BackColor = Color.White;
+            txtSendmessage.Text = "";
+            webBrowser1.setMessageEditing(editingMessageId, false);
+            editingMessageId = null;
+        }
+
+        #endregion
 
         private void chkToggleSidebar_CheckedChanged(object sender, EventArgs e) {
             splitContainer1.Panel2Collapsed = chkToggleSidebar.Checked;
@@ -687,8 +743,8 @@ namespace miniConf {
         private void webBrowser1_OnSpecialUrl(string url) {
             switch (url) {
                 case "special:show_more_history":
-                    showLastMessages(30);
-                    //webBrowser1.Document.Body.ScrollTop = 0;
+                    showLastMessages(10);
+                    webBrowser1.Document.Body.ScrollTop = 0;
                     break;
                 case "special:show_more_more_history":
                     showLastMessages(100);
@@ -724,6 +780,7 @@ namespace miniConf {
                     return true;
                 case Keys.Escape:
                     if (filterBarPanel.Visible) filterBarCloseBtn_Click(null, null);
+                    else if (editingMessageId != null) stopEditingMessage();
                     else this.Close();
                     return true;
                 case Keys.F1:
@@ -935,7 +992,9 @@ namespace miniConf {
                 webBrowser1.Document.GetElementById("tb").InnerHtml = "Search results, press ESC to quit filter mode";
 
                 foreach (System.Data.Common.DbDataRecord k in reader) {
-                    webBrowser1.addMessageToView(k.GetString(0), k.GetString(1), DateTime.Parse(k.GetString(2)), null, HtmlElementInsertionOrientation.AfterBegin);
+                    webBrowser1.addMessageToView(k.GetString(0), k.GetString(1), DateTime.Parse(k.GetString(2)),  
+                        logs.StringOrNull(k, ChatDatabase.C_EDIT), null, k.GetString(ChatDatabase.C_ID), 
+                        HtmlElementInsertionOrientation.AfterBegin);
                 }
                 e.SuppressKeyPress = true;
             }
@@ -1025,6 +1084,7 @@ namespace miniConf {
             if (currentRoom.chatstate != newState) {
                 currentRoom.sendChatstate(newState);
             }
+            if (txtSendmessage.Text == "" && editingMessageId != null) stopEditingMessage();
         }
 
         #region Tools Menu
@@ -1081,6 +1141,29 @@ namespace miniConf {
             if (currentRoom != null) currentRoom.sendChatstate(agsXMPP.protocol.extensions.chatstates.Chatstate.paused);
         }
 
+        private void btnClosePrefs_Click(object sender, EventArgs e) {
+            pnlConfig.Visible = false;
+            glob.saveTuttiFrutti(this);
+            webBrowser1.loadSmileyTheme();
+            lbChatrooms_Click(null, null);
+        }
+
+        private void cmbSmileyTheme_DropDown(object sender, EventArgs e) {
+            
+        }
+
+        private void updateSmileyThemeList() {
+            string path = Program.dataDir + "Emoticons\\";
+            string[] emoteDirs = Directory.GetDirectories(path);
+            cmbSmileyTheme.Items.Clear();
+            cmbSmileyTheme.Items.Add("(none)");
+            foreach (string dir in emoteDirs)
+                cmbSmileyTheme.Items.Add(Path.GetFileName(dir));
+        }
+
+        private void Form1_MouseClick(object sender, MouseEventArgs e) {
+            if (e.Button == System.Windows.Forms.MouseButtons.Right) updateSmileyThemeList();
+        }
 
 
 
