@@ -55,6 +55,7 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.btnClosePrefs = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.cmbFileUploadService = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -64,6 +65,8 @@
             this.chkFiletransferAutoAccept = new System.Windows.Forms.CheckBox();
             this.chkDisplayOccupantStatus = new System.Windows.Forms.CheckBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.label4 = new System.Windows.Forms.Label();
+            this.listServerFeatures = new System.Windows.Forms.ListBox();
             this.txtConnInfo = new System.Windows.Forms.TextBox();
             this.lvOnlineStatus = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -77,7 +80,6 @@
             this.button1 = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.webBrowser1 = new miniConf.MessageView();
             this.txtSendmessage = new System.Windows.Forms.TextBox();
             this.txtNickname = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -110,8 +112,9 @@
             this.filterBarCloseBtn = new System.Windows.Forms.Button();
             this.filterTextbox = new System.Windows.Forms.TextBox();
             this.tmrChatstatePaused = new System.Windows.Forms.Timer(this.components);
-            this.listServerFeatures = new System.Windows.Forms.ListBox();
-            this.label4 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.cmbSmileyTheme = new System.Windows.Forms.ComboBox();
+            this.webBrowser1 = new miniConf.MessageView();
             this.pnlConfig.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -363,6 +366,9 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.label8);
+            this.tabPage2.Controls.Add(this.cmbSmileyTheme);
+            this.tabPage2.Controls.Add(this.btnClosePrefs);
             this.tabPage2.Controls.Add(this.label7);
             this.tabPage2.Controls.Add(this.cmbFileUploadService);
             this.tabPage2.Controls.Add(this.label6);
@@ -378,6 +384,17 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Appearance";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // btnClosePrefs
+            // 
+            this.btnClosePrefs.BackColor = System.Drawing.SystemColors.Control;
+            this.btnClosePrefs.Location = new System.Drawing.Point(26, 147);
+            this.btnClosePrefs.Name = "btnClosePrefs";
+            this.btnClosePrefs.Size = new System.Drawing.Size(105, 22);
+            this.btnClosePrefs.TabIndex = 19;
+            this.btnClosePrefs.Text = "OK";
+            this.btnClosePrefs.UseVisualStyleBackColor = true;
+            this.btnClosePrefs.Click += new System.EventHandler(this.btnClosePrefs_Click);
             // 
             // label7
             // 
@@ -411,6 +428,8 @@
             // chkEnableImagePreview
             // 
             this.chkEnableImagePreview.AutoSize = true;
+            this.chkEnableImagePreview.Checked = true;
+            this.chkEnableImagePreview.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkEnableImagePreview.Location = new System.Drawing.Point(26, 12);
             this.chkEnableImagePreview.Name = "chkEnableImagePreview";
             this.chkEnableImagePreview.Size = new System.Drawing.Size(100, 17);
@@ -436,8 +455,10 @@
             this.comboMessageTheme.FormattingEnabled = true;
             this.comboMessageTheme.Items.AddRange(new object[] {
             "Default",
+            "OldDefault",
             "Compact",
             "Conversations",
+            "Terminal",
             "Custom"});
             this.comboMessageTheme.Location = new System.Drawing.Point(318, 37);
             this.comboMessageTheme.Name = "comboMessageTheme";
@@ -481,6 +502,23 @@
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Infos";
             this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(6, 5);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(82, 13);
+            this.label4.TabIndex = 2;
+            this.label4.Text = "Server features:";
+            // 
+            // listServerFeatures
+            // 
+            this.listServerFeatures.FormattingEnabled = true;
+            this.listServerFeatures.Location = new System.Drawing.Point(7, 24);
+            this.listServerFeatures.Name = "listServerFeatures";
+            this.listServerFeatures.Size = new System.Drawing.Size(220, 147);
+            this.listServerFeatures.TabIndex = 1;
             // 
             // txtConnInfo
             // 
@@ -576,11 +614,10 @@
             // 
             this.button4.BackColor = System.Drawing.SystemColors.Control;
             this.button4.Image = ((System.Drawing.Image)(resources.GetObject("button4.Image")));
-            this.button4.Location = new System.Drawing.Point(7, 2);
+            this.button4.Location = new System.Drawing.Point(5, 0);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(25, 25);
+            this.button4.Size = new System.Drawing.Size(28, 26);
             this.button4.TabIndex = 0;
-            this.button4.Text = "=";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
@@ -602,10 +639,12 @@
             this.txtSubject.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSubject.BackColor = System.Drawing.Color.DimGray;
+            this.txtSubject.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtSubject.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtSubject.ForeColor = System.Drawing.Color.White;
-            this.txtSubject.Location = new System.Drawing.Point(36, 3);
+            this.txtSubject.Location = new System.Drawing.Point(36, 7);
             this.txtSubject.Name = "txtSubject";
-            this.txtSubject.Size = new System.Drawing.Size(506, 20);
+            this.txtSubject.Size = new System.Drawing.Size(506, 14);
             this.txtSubject.TabIndex = 1;
             // 
             // button1
@@ -653,27 +692,12 @@
             this.splitContainer1.SplitterDistance = 506;
             this.splitContainer1.TabIndex = 9;
             // 
-            // webBrowser1
-            // 
-            this.webBrowser1.AllowWebBrowserDrop = false;
-            this.webBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.webBrowser1.Location = new System.Drawing.Point(1, 3);
-            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.ScriptErrorsSuppressed = true;
-            this.webBrowser1.Size = new System.Drawing.Size(504, 260);
-            this.webBrowser1.TabIndex = 0;
-            this.webBrowser1.Url = new System.Uri("about:blank", System.UriKind.Absolute);
-            this.webBrowser1.OnRealKeyDown += new System.Windows.Forms.HtmlElementEventHandler(this.webBrowser1_OnRealKeyDown);
-            this.webBrowser1.OnSpecialUrl += new miniConf.MessageView.SpecialUrlEvent(this.webBrowser1_OnSpecialUrl);
-            // 
             // txtSendmessage
             // 
             this.txtSendmessage.AllowDrop = true;
             this.txtSendmessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSendmessage.BackColor = System.Drawing.SystemColors.Window;
             this.txtSendmessage.Enabled = false;
             this.txtSendmessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
             this.txtSendmessage.Location = new System.Drawing.Point(0, 266);
@@ -963,22 +987,47 @@
             this.tmrChatstatePaused.Interval = 7500;
             this.tmrChatstatePaused.Tick += new System.EventHandler(this.tmrChatstatePaused_Tick);
             // 
-            // listServerFeatures
+            // label8
             // 
-            this.listServerFeatures.FormattingEnabled = true;
-            this.listServerFeatures.Location = new System.Drawing.Point(7, 24);
-            this.listServerFeatures.Name = "listServerFeatures";
-            this.listServerFeatures.Size = new System.Drawing.Size(220, 147);
-            this.listServerFeatures.TabIndex = 1;
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(204, 67);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(72, 13);
+            this.label8.TabIndex = 21;
+            this.label8.Text = "Smiley theme:";
             // 
-            // label4
+            // cmbSmileyTheme
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 5);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(82, 13);
-            this.label4.TabIndex = 2;
-            this.label4.Text = "Server features:";
+            this.cmbSmileyTheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSmileyTheme.FormattingEnabled = true;
+            this.cmbSmileyTheme.Items.AddRange(new object[] {
+            "Default",
+            "OldDefault",
+            "Compact",
+            "Conversations",
+            "Terminal",
+            "Custom"});
+            this.cmbSmileyTheme.Location = new System.Drawing.Point(318, 64);
+            this.cmbSmileyTheme.Name = "cmbSmileyTheme";
+            this.cmbSmileyTheme.Size = new System.Drawing.Size(138, 21);
+            this.cmbSmileyTheme.TabIndex = 20;
+            this.cmbSmileyTheme.DropDown += new System.EventHandler(this.cmbSmileyTheme_DropDown);
+            // 
+            // webBrowser1
+            // 
+            this.webBrowser1.AllowWebBrowserDrop = false;
+            this.webBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.webBrowser1.Location = new System.Drawing.Point(1, 3);
+            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser1.Name = "webBrowser1";
+            this.webBrowser1.ScriptErrorsSuppressed = true;
+            this.webBrowser1.Size = new System.Drawing.Size(504, 260);
+            this.webBrowser1.TabIndex = 0;
+            this.webBrowser1.Url = new System.Uri("about:blank", System.UriKind.Absolute);
+            this.webBrowser1.OnRealKeyDown += new System.Windows.Forms.HtmlElementEventHandler(this.webBrowser1_OnRealKeyDown);
+            this.webBrowser1.OnSpecialUrl += new miniConf.MessageView.SpecialUrlEvent(this.webBrowser1_OnSpecialUrl);
             // 
             // Form1
             // 
@@ -1000,6 +1049,7 @@
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseClick);
             this.pnlConfig.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
@@ -1110,6 +1160,9 @@
         private System.Windows.Forms.Timer tmrChatstatePaused;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ListBox listServerFeatures;
+        private System.Windows.Forms.Button btnClosePrefs;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.ComboBox cmbSmileyTheme;
     }
 }
 

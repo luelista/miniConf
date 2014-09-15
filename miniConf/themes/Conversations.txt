@@ -8,15 +8,20 @@ p strong.me{color:#555;}
 /* system notices (e.g. topic change) */
 p.notice { color: #999; border: none; padding: 1px 10px; } 
 
-p.msg { border: 1px solid #ddd; margin: 4px 100px 4px 42px; background-color: #fcfcfc; }
-p strong, p i { font-size: 8pt; color: #999 !important; padding-right: 5px; font-weight: normal; font-style: normal; }
-p span {display:block;}
+p.date { margin-top: 15px; padding: 5px 10px; border-top: 1px solid #ddd; color: #666; }
 
-.avatar { display: block; width: 32px; height: 32px; float: left; margin-top: -6px;
+p.msg { border: 1px solid #ddd; margin: 4px 20% 4px 42px; background-color: #fcfcfc; }
+p strong, p i { margin: 0; font-size: 8pt; color: #999 !important; padding-right: 5px; font-weight: normal; font-style: normal; }
+p .body {display:block;}
+
+.avatar { display: block; width: 32px; height: 32px; float: left; margin-top: -5px;
 		 margin-left: -38px; background-size: cover; background-color: #666; }
 .avatar img { width: 32px; height: 32px;  }
 
-p.msg.self { margin: 4px 42px 4px 100px; }
-p.msg.self .avatar { margin-left: 0; margin-right: -46px; float: right; }
+p.msg.self { margin: 4px 42px 4px 20%; background: #f6fff6; }
+p.msg.self .avatar { margin-left: 0; position:absolute; right:10px; }
+
+/* bigger images */
+p.msg img.imprev { width: 200px!important; height: 160px!important; }
 
 

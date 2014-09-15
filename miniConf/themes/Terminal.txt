@@ -1,0 +1,31 @@
+﻿
+html { background-color: #111;  }
+* { font-family: "Courier New", monospace; font-size: 9pt; color: white; }
+
+#tb { font-family: "Courier New"; border: none; }
+
+p.date, #firstdate { margin-top: 9px; padding-top: 13px; border-top: 1px dashed #bbb!important; }
+
+/* styles for chat window */
+p strong { color: #373; } 
+p strong.me{color:#ddd;}
+
+/* system notices (e.g. topic change) */
+p.notice { color: #ccc; font-family: "Courier New", monospace; font-size: 9pt; border: none; } 
+
+/* message timestamp */
+p i {float:right; color: #aaa; font-style:normal;}
+
+a,a:visited,a:active { color:#55ddff; font-weight: bold; }
+
+p.msg { border: none; }
+p.msg strong {
+	color: #00ff00!important;
+} 
+
+
+.avatar { display: none; }
+
+/* bigger images */
+p.msg img.imprev { width: 200px!important; height: 160px!important; }
+
