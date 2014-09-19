@@ -54,14 +54,6 @@ namespace miniConf {
         public void onMessage(agsXMPP.protocol.client.Message msg) {
             if (loaded == false) { beforeLoadedMessage = msg; return; }
 
-            // XEP-0280, Message Carbons
-            var carbonsSent = msg.SelectSingleElement("sent", JabberService.URN_CARBONS);
-            var carbonsReceived = msg.SelectSingleElement("received", JabberService.URN_CARBONS);
-            if (carbonsSent != null) {
-                msg = (agsXMPP.protocol.client.Message)carbonsSent.SelectSingleElement("message", true);
-            } else if (carbonsReceived != null) {
-                msg = (agsXMPP.protocol.client.Message)carbonsReceived.SelectSingleElement("message", true);
-            }
             if (msg.HasTag("body")) {
                 messageView1.addMessageToView(msg.From, msg.GetTag("body"), DateTime.Now, null,
                     Program.Jabber.avatar.GetAvatarIfAvailabe(msg.From), msg.Id);
