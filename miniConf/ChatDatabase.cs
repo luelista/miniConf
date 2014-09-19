@@ -57,7 +57,7 @@ namespace miniConf {
                 if (currentVersion < 8) {
                     this.ExecSQL("ALTER TABLE messages ADD COLUMN editdt TEXT; ");
                     this.ExecSQL("ALTER TABLE messages ADD COLUMN override TEXT; ");
-                    
+
                     // update db version number
                     this.ExecSQL("PRAGMA user_version = " + ChatDatabase.schemaVersion.ToString());
                 }
@@ -182,30 +182,6 @@ namespace miniConf {
             cmd.Parameters.AddWithValue("@name", room);
             return (int)(long)cmd.ExecuteScalar();
         }
-
-        public SQLiteDataReader GetLogs(string room, int startingfrom, int maxcount) {
-            var cmd = dataBase.CreateCommand();
-            cmd.CommandText = "SELECT sender,messagebody,datedt,xmppid,editdt FROM messages WHERE room = @name AND (override IS NULL OR override = '') ORDER BY datedt DESC LIMIT @from, @count;";
-            cmd.Parameters.AddWithValue("@name", room);
-            cmd.Parameters.AddWithValue("@count", maxcount);
-            cmd.Parameters.AddWithValue("@from", startingfrom);
-            return cmd.ExecuteReader();
-        }
-        public SQLiteDataReader GetFilteredLogs(string room, string filterStr, int startingfrom, int maxcount) {
-            var cmd = dataBase.CreateCommand();
-            cmd.CommandText = "SELECT sender,messagebody,datedt,xmppid,editdt FROM messages WHERE room = @name AND messagebody LIKE @filterStr ORDER BY datedt DESC LIMIT @from, @count;";
-            cmd.Parameters.AddWithValue("@name", room);
-            cmd.Parameters.AddWithValue("@filterStr", "%"+filterStr+"%");
-            cmd.Parameters.AddWithValue("@count", maxcount);
-            cmd.Parameters.AddWithValue("@from", startingfrom);
-            return cmd.ExecuteReader();
-        }
-
-        public const int C_SENDER = 0;
-        public const int C_BODY = 1;
-        public const int C_DATE = 2;
-        public const int C_ID = 3;
-        public const int C_EDIT = 4;
 
 
         public static String GetNowString() {

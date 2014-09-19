@@ -13,15 +13,23 @@ using System.Windows.Forms;
 namespace miniConf {
     public partial class DirectMessageForm : Form {
         public Jid otherEnd;
+        public Roomdata room;
 
         private agsXMPP.protocol.client.Message beforeLoadedMessage = null;
         private bool loaded = false;
 
         private agsXMPP.protocol.extensions.chatstates.Chatstate lastChatstate;
 
+        public DirectMessageForm(Jid jid) : this() {
+            this.otherEnd = jid;
+            this.room = new Roomdata(jid);
+            this.Text = jid;
+        }
+
         public DirectMessageForm() {
             InitializeComponent();
             messageView1.Navigate("about:blank");
+            messageView1.selfNickname = Program.Jabber.conn.MyJID.Bare;
         }
 
         private void DirectMessageForm_Load(object sender, EventArgs e) {
@@ -52,7 +60,7 @@ namespace miniConf {
         }
 
         public void onMessage(agsXMPP.protocol.client.Message msg) {
-            if (loaded == false) { beforeLoadedMessage = msg; return; }
+            if (loaded == false) return;
 
             if (msg.HasTag("body")) {
                 messageView1.addMessageToView(msg.From, msg.GetTag("body"), DateTime.Now, null,
@@ -68,13 +76,15 @@ namespace miniConf {
             msg.Id = Guid.NewGuid().ToString();
             msg.Chatstate = agsXMPP.protocol.extensions.chatstates.Chatstate.active;
             Program.Jabber.conn.Send(msg);
+
+            Program.db.InsertMessage(room.roomName(), msg.Id, msg.From, msg.Body, ChatDatabase.GetNowString());
+            messageView1.addMessageToView(msg.From, msg.Body, DateTime.Now, null, msg.From, msg.Id);
             return msg.Id;
         }
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.Enter && !e.Shift && !e.Alt && !e.Control) {
                 var id = sendMessage(textBox1.Text);
-                messageView1.addMessageToView("self", textBox1.Text, DateTime.Now, null, null, id);
                 textBox1.Text = "";
                 e.SuppressKeyPress = true; e.Handled = true;
             } else {
@@ -92,8 +102,16 @@ namespace miniConf {
 
         private void messageView1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
             loaded = true;
-            if (beforeLoadedMessage != null) onMessage(beforeLoadedMessage);
+
             messageView1.Document.GetElementById("tb").InnerHtml = "Private conversation started at " + DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString();
+
+            var msgs = room.GetLogs(0, 10);
+            foreach (ChatMessage msg in msgs) {
+                msg.SenderJid = msg.Sender;
+                messageView1.addMessageToView(msg, HtmlElementInsertionOrientation.AfterBegin);
+            }
+            messageView1.scrollDown();
+
             updateResources();
             cmbResources.Text = otherEnd.ToString();
         }

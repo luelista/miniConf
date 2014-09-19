@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Data.Common;
 
 namespace miniConf {
     public class Roomdata {
@@ -18,6 +19,12 @@ namespace miniConf {
         public Chatstate chatstate;
         public Dictionary<string, Chatstate> users_states = new Dictionary<string, Chatstate>();
         public Dictionary<string, string> users_jid = new Dictionary<string, string>();
+
+        public RoomType roomType = RoomType.Multi;
+        public enum RoomType {
+            Single,
+            Multi
+        }
 
         public Roomdata(Jid myjid) {
             jid = myjid;
@@ -100,6 +107,35 @@ namespace miniConf {
             return msg + " (error code: " + errorCondition.ToString() + ")";
         }
 
+
+        public List<ChatMessage> GetLogs(int startingfrom, int maxcount) {
+            var cmd = Program.db.dataBase.CreateCommand();
+            cmd.CommandText = "SELECT sender,messagebody,datedt,xmppid,editdt FROM messages WHERE room = @name AND (override IS NULL OR override = '') ORDER BY datedt DESC LIMIT @from, @count;";
+            cmd.Parameters.AddWithValue("@name", roomName());
+            cmd.Parameters.AddWithValue("@count", maxcount);
+            cmd.Parameters.AddWithValue("@from", startingfrom);
+            return readChatMessages(cmd.ExecuteReader());
+        }
+        public List<ChatMessage> GetFilteredLogs(string filterStr, int startingfrom, int maxcount) {
+            var cmd = Program.db.dataBase.CreateCommand();
+            cmd.CommandText = "SELECT sender,messagebody,datedt,xmppid,editdt FROM messages WHERE room = @name AND messagebody LIKE @filterStr ORDER BY datedt DESC LIMIT @from, @count;";
+            cmd.Parameters.AddWithValue("@name", roomName());
+            cmd.Parameters.AddWithValue("@filterStr", "%" + filterStr + "%");
+            cmd.Parameters.AddWithValue("@count", maxcount);
+            cmd.Parameters.AddWithValue("@from", startingfrom);
+            return readChatMessages(cmd.ExecuteReader());
+        }
+        
+        private List<ChatMessage> readChatMessages(DbDataReader reader) {
+            var list = new List<ChatMessage>();
+            foreach (DbDataRecord record in reader) {
+                ChatMessage msg = ChatMessage.FromDbDataRecord(record);
+                if (roomType == RoomType.Multi)
+                    msg.SenderJid = Program.db.GetUserJid(roomName(), msg.Sender);
+                list.Add(msg);
+            }
+            return list;
+        }
 
 
     }

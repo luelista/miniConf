@@ -64,7 +64,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Chatlogs.cs" />
+    <Compile Include="ChatDatabase.cs" />
+    <Compile Include="ChatMessage.cs" />
     <Compile Include="cls_globPara.cs" />
     <Compile Include="DatabaseDebugForm.cs">
       <SubType>Form</SubType>
@@ -92,6 +93,7 @@
     <Compile Include="JabberContact.cs" />
     <Compile Include="JabberService.cs" />
     <Compile Include="Jingle.cs" />
+    <Compile Include="JTimer.cs" />
     <Compile Include="MediaUploadForm.cs">
       <SubType>Form</SubType>
     </Compile>

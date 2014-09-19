@@ -21,9 +21,8 @@ namespace miniConf
             }
             else
             {
-                dmfrm = new DirectMessageForm();
+                dmfrm = new DirectMessageForm(from);
                 dmSessions[from.Bare] = dmfrm;
-                dmfrm.Text = from; dmfrm.otherEnd = from;
                 dmfrm.Show(); dmfrm.Activate();
                 dmfrm.FormClosed += OnMessageFormClosed;
             }
@@ -51,6 +50,10 @@ namespace miniConf
                 msg = (agsXMPP.protocol.client.Message)carbonsReceived.SelectSingleElement("message", true);
                 relevantJid = msg.From;
             }
+
+            string dt = JabberService.GetMessageDt(msg);
+            if (msg.HasTag("body"))
+                Program.db.InsertMessage(relevantJid.Bare, msg.Id, msg.From, msg.Body, dt);
 
             DirectMessageForm dmfrm = GetWindow(relevantJid);
             dmfrm.onMessage(msg); dmfrm.Show();
