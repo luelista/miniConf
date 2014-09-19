@@ -29,6 +29,7 @@ namespace miniConf {
 
         public JabberService() {
             this.avatar = new JabberAvatars();
+            this.jingle = new Jingle();
         }
 
         public void CheckServerFeatures() {
