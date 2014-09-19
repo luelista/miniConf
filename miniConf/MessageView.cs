@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -14,11 +14,8 @@ namespace miniConf {
         public string highlightString = "";
         public string selfNickname = "";
         public bool imagePreview = false;
-        public List<Smiley> smileys = new List<Smiley>();
+        public Dictionary<string,string> smileys = Dictionary<string,string>();
 
-        public class Smiley {
-            public string text, imageFilename;
-        }
 
         public DateTime lastTimeTop=DateTime.MinValue, lastTimeBottom=DateTime.MinValue;
 
@@ -67,7 +64,7 @@ namespace miniConf {
             string dataDir = Program.dataDir,
                    themeName = Program.glob.para("Form1__cmbSmileyTheme", "(none)"),
                    themeDir = dataDir+"Emoticons\\"+themeName;
-            smileys = new List<Smiley>();
+            smileys = new Dictionary<string,string>();
             if (themeName == "(none)" || !Directory.Exists(themeDir)) return;
             string[] themeIni = File.ReadAllLines(themeDir + "\\theme");
             string category = null;
@@ -178,7 +175,7 @@ namespace miniConf {
         }
         protected string prepareInnerHtml(string text) {
             text = text.Replace("<", "&lt;");
-            if (!string.IsNullOrEmpty(highlightString)) text = Regex.Replace(text, highlightString, "<em>$0</em>");
+            if (!String.IsNullOrEmpty(highlightString)) text = Regex.Replace(text, highlightString, "<em>$0</em>");
             text = text.Replace("\n", "\n<br>");
             var imageLink = Regex.Match(text, "https?://[\\w.-]+/[\\w_.,/+?&%$!=)(\\[\\]{}-]*\\.(png|jpg|gif|webp)");
             text = Regex.Replace(text, "(?i)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))",
@@ -190,9 +187,14 @@ namespace miniConf {
 
                 text += "<br><a href=\""+link+"\"><img src=\"" + link + "\" class=\"imprev\" style='max-width:150px;'></a>";
             }
-            foreach (Smiley s in smileys) {
-                text = text.Replace(s.text, "<img src='" + s.imageFilename + "' title='" + s.text + "'>");
+            string[] parts = text.Split(' ');
+            string replacement;
+            for (int i = 0; i < parts.Length; i++) {
+                if (smileys.TryGetValue(parts[i],out replacement)) {
+                    parts[i] = "<img src='"+ replacement+"' title='"+parts[i].Replace("'","&#39;")+"'>";
+                }
             }
+            text = string.Join(" ", parts);
             return text;
         }
         public void addDateToView(string text, HtmlElementInsertionOrientation where) {

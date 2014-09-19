@@ -1,7 +1,7 @@
 !include MUI2.nsh
 !addplugindir .\setups
 
-!define VERSION "1.6.4"
+!define VERSION "1.6.5"
 
 Function LicensePageShow
 
@@ -52,8 +52,11 @@ Section "Program Files" SecProgFiles
   File "miniConf\bin\Release\*.dll"
   File "miniConf\bin\Release\*.txt"
   
-  SetOutPath "$INSTDIR\themes"
+  SetOutPath "$INSTDIR\Themes"
   File "miniConf\themes\*.txt"
+
+  SetOutPath "$INSTDIR\Emoticons\Pidgin"
+  File "Emoticons\Pidgin\*"
 
   CreateShortcut "$DESKTOP\miniConf.lnk" "$INSTDIR\miniConf.exe"
   CreateShortcut "$SMPROGRAMS\miniConf.lnk" "$INSTDIR\miniConf.exe"

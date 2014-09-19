@@ -123,36 +123,42 @@ namespace miniConf {
                 if (subctrl.Name.StartsWith("qq_"))
                     continue;
 
-                if (typ == "System.Windows.Forms.RadioButton") {
-                    string[] paras = Strings.Split(subctrl.Name, "__");
-                    if (this.para(prefix + paras[0]) == paras[1]) {
-                        ((RadioButton)subctrl).Checked = true;
-                    } else {
-                        ((RadioButton)subctrl).Checked = false;
+                try {
+                    if (typ == "System.Windows.Forms.RadioButton") {
+                        string[] paras = Strings.Split(subctrl.Name, "__");
+                        if (this.para(prefix + paras[0]) == paras[1]) {
+                            ((RadioButton)subctrl).Checked = true;
+                        } else {
+                            ((RadioButton)subctrl).Checked = false;
+                        }
                     }
-                }
 
-                if (!this.Contains(prefix + subctrl.Name))
-                    continue;
-                Debug.Print("ja" + Constants.vbTab + subctrl.Name + Constants.vbTab + typ);
+                    if (!this.Contains(prefix + subctrl.Name))
+                        continue;
+                    Debug.Print("ja" + Constants.vbTab + subctrl.Name + Constants.vbTab + typ);
 
-                if (typ == "System.Windows.Forms.TextBox") {
-                    subctrl.Text = this.para(prefix + subctrl.Name);
+                    if (typ == "System.Windows.Forms.TextBox") {
+                        subctrl.Text = this.para(prefix + subctrl.Name);
+                    }
+                    if (typ == "System.Windows.Forms.ComboBox") {
+                        subctrl.Text = this.para(prefix + subctrl.Name);
+                    }
+                    if (typ == "System.Windows.Forms.CheckBox") {
+                        ((CheckBox)subctrl).Checked = (this.para(prefix + subctrl.Name) == "TRUE");
+                    }
+                    if (typ == "System.Windows.Forms.SplitContainer") {
+                        ((SplitContainer)subctrl).SplitterDistance = Convert.ToInt32(this.para(prefix + subctrl.Name));
+                        ((SplitContainer)subctrl).Orientation = (Orientation)Convert.ToInt32(this.para(prefix + subctrl.Name + ".Or"));
+                    }
+                    /*if (typ == "AxCCRPFolderTV6.AxFolderTreeview")
+                    {
+                        subctrl.SelectedFolder.name = this.para(prefix + subctrl.Name);
+                    }*/
+
+                } catch (Exception exx) {
+                    Console.WriteLine("Unable to restore control value: " + subctrl.Name);
+                    Console.WriteLine(exx.ToString());
                 }
-                if (typ == "System.Windows.Forms.ComboBox") {
-                    subctrl.Text = this.para(prefix + subctrl.Name);
-                }
-                if (typ == "System.Windows.Forms.CheckBox") {
-                    ((CheckBox)subctrl).Checked = (this.para(prefix + subctrl.Name) == "TRUE");
-                }
-                if (typ == "System.Windows.Forms.SplitContainer") {
-                    ((SplitContainer)subctrl).SplitterDistance = Convert.ToInt32(this.para(prefix + subctrl.Name));
-                    ((SplitContainer)subctrl).Orientation = (Orientation)Convert.ToInt32(this.para(prefix + subctrl.Name + ".Or"));
-                }
-                /*if (typ == "AxCCRPFolderTV6.AxFolderTreeview")
-                {
-                    subctrl.SelectedFolder.name = this.para(prefix + subctrl.Name);
-                }*/
             }
         }
         public void recursive_saveTuttiFrutti(ContainerControl frm, Control ctrl) {
