@@ -21,7 +21,11 @@ namespace miniConf {
 
         XmppClientConnection conn;
 
-        public Jingle(agsXMPP.XmppClientConnection client) {
+        public Jingle() {
+            
+        }
+
+        public void init(agsXMPP.XmppClientConnection client) {
             this.conn = client;
             client.OnIq += OnJingleIq;
         }

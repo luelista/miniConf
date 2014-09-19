@@ -1,0 +1,17 @@
+GenerationOptions.Language”属性不能为 null 或为空。Logger 属性不能为 null。:使用相对路径时，必须使用 ProjectPath 属性。项目“{0}”不存在。1项目“{0}”包含对以下项的项目引用:3类型“{0}”不包含名为“{1}”的属性。F项目“{0}”与项目“{1}”之间存在 WCF RIA Services Link。j由于存在来自“{1}”的 WCF RIA Services Link，因此不会从“{0}”中复制共享的文件。可扩展性方法定义�Silverlight 项目“{0}”有一个到项目“{1}”的 WCF RIA Services Link，但该项目不存在。
+是否重命名或移动了该项目?
+请修改“{0}”的项目属性并将 WCF RIA Services Link 设置为指向有效项目。1SharedCodeServiceParameters.{0} 不能为 null。e正在跳过“{0}”的代理类生成，因为另一个程序集中已存在它的 DomainContext。'类型“{0}”不是派生自特性。<未指定><“{0}”自定义代码生成器将用于生成代码类。�<summary>
+RIA 应用程序的上下文。
+</summary>
+<remarks>
+此上下文对库进行了扩展，使得应用程序服务和类型
+可供代码和 xaml 使用。
+</remarks>><summary>
+初始化 WebContext 类的新实例。
+</summary>�<summary>
+获取向当前应用程序注册为生存期对象的上下文。
+</summary>
+如果没有当前的应用程序，没有添加上下文或添加了多个上下文，
+则会引发 <exception cref="InvalidOperationException">。
+</exception>
+<seeals
