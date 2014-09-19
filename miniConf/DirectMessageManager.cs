@@ -37,19 +37,22 @@ namespace miniConf
 
         public void OnPrivateMessage(agsXMPP.protocol.client.Message msg)
         {
+            Jid relevantJid = msg.From;
             // XEP-0280, Message Carbons
             var carbonsSent = msg.SelectSingleElement("sent", JabberService.URN_CARBONS);
             var carbonsReceived = msg.SelectSingleElement("received", JabberService.URN_CARBONS);
             if (carbonsSent != null)
             {
                 msg = (agsXMPP.protocol.client.Message)carbonsSent.SelectSingleElement("message", true);
+                relevantJid = msg.To;
             }
             else if (carbonsReceived != null)
             {
                 msg = (agsXMPP.protocol.client.Message)carbonsReceived.SelectSingleElement("message", true);
+                relevantJid = msg.From;
             }
 
-            DirectMessageForm dmfrm = GetWindow(msg.From);
+            DirectMessageForm dmfrm = GetWindow(relevantJid);
             dmfrm.onMessage(msg); dmfrm.Show();
             if (msg.HasTag("body")) dmfrm.Activate();
         }
