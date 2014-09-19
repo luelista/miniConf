@@ -606,20 +606,23 @@ namespace miniConf {
         }
 
         private void updateMemberList() {
+            lvOnlineStatus.BeginUpdate();
             lvOnlineStatus.Items.Clear();
-            if (currentRoom == null) return;
-            var onlines = logs.GetMembers(currentRoom.roomName());
-            foreach (System.Data.Common.DbDataRecord k in onlines) {
-                string nick = k.GetString(0);
-                var item = lvOnlineStatus.Items.Add(nick, k.GetString(2));
-                string statusStr = (k.IsDBNull(5)) ? "" : k.GetString(5);
-                string jid = (k.IsDBNull(6)) ? "" : k.GetString(6);
-                item.ToolTipText = k.GetString(2) +" "+ currentRoom.getChatstate(nick) + " - last seen: " + DateTime.FromBinary(k.GetInt64(1)).ToString() + " - affiliation: " + k.GetString(3) + " - role: " + k.GetString(4) + " - jid: " + jid + " - status: " + statusStr;
-                item.SubItems.Add(statusStr);
-                item.ForeColor = currentRoom.getChatstateColor(nick);
-                item.Tag = jid;
-                item.Group = lvOnlineStatus.Groups[k.GetString(2) == "off" ? 1 : 0];
+            if (currentRoom != null) {
+                var onlines = logs.GetMembers(currentRoom.roomName());
+                foreach (System.Data.Common.DbDataRecord k in onlines) {
+                    string nick = k.GetString(0);
+                    var item = lvOnlineStatus.Items.Add(nick, k.GetString(2));
+                    string statusStr = (k.IsDBNull(5)) ? "" : k.GetString(5);
+                    string jid = (k.IsDBNull(6)) ? "" : k.GetString(6);
+                    item.ToolTipText = k.GetString(2) + " " + currentRoom.getChatstate(nick) + " - last seen: " + DateTime.FromBinary(k.GetInt64(1)).ToString() + " - affiliation: " + k.GetString(3) + " - role: " + k.GetString(4) + " - jid: " + jid + " - status: " + statusStr;
+                    item.SubItems.Add(statusStr);
+                    item.ForeColor = currentRoom.getChatstateColor(nick);
+                    item.Tag = jid;
+                    item.Group = lvOnlineStatus.Groups[k.GetString(2) == "off" ? 1 : 0];
+                }
             }
+            lvOnlineStatus.EndUpdate();
         }
         private void clearMessageView() {
             webBrowser1.clear();
