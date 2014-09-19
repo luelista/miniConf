@@ -87,7 +87,7 @@ namespace miniConf {
                 jabber.conn.OnLogin += conn_OnLogin;
                 jabber.conn.OnIq += conn_OnIq;
                 muc = new agsXMPP.protocol.x.muc.MucManager(jabber.conn);
-                jabber.jingle = new Jingle(jabber.conn);
+                jabber.jingle.init(jabber.conn);
                 jabber.listenToRoster();
 
                 jabber.conn.OnPresence += conn_OnPresence;
