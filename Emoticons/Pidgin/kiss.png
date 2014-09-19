@@ -1,0 +1,13 @@
+��生成代码:
+{2}f请求的代码生成器“{0}”未实现“IDomainServiceClientCodeGenerator”，因此不可用。6无法实例化请求的代码生成器“{0}”:
+{0}�没有名为“{0}”的代码生成器可用于“{1}”。
+如果其他地方存在具有此名称的生成器，请将对其程序集的引用添加到
+“{2}”项目中。
+否则，请手动编辑“{3}”项目，
+以添加 <RiaClientCodeGeneratorName> 属性来命名有效的生成器。
+若要指定默认生成器，请添加此属性:
+  <RiaClientCodeGeneratorName>{4}</RiaClientCodeGeneratorName>
+�<summary>
+一旦初始化完成便从构造函数中调用此方法，
+还可将此方法用于以后的对象设置。
+</summary>C由于未生成客户端代理类，因此正在删除文件 {0}。5要用于此 DomainContext 的 DomainClient 实例。{0} 服务 URI。[用指定的 <paramref name="domainClient"/> 初始化 <see cref="{0}"/> 类的新实例。b获取一个可使用“{1}”查询加载 <see cref="{0}"/> 实体实例的 EntityQuery 实例。E用指定的服务 URI 初始化 <see cref="{0}"/> 类的新实例。}名为“{0}”且与实体类型“{1}”关联的自定义方法在“{2}”和“{3}”DomainService 类中定义多次。a属性“{0}.{1}”被标记为键属性，且类型为“{2}”，键成员不支持该类型。j属性“{0}.{1}”被标记为键属性，但该属性不可序列化。是否缺少 DataMemberAttribute?3正在生成自定义方法保护属性“{0}”...*正在生成保护属性的更新方�
