@@ -67,6 +67,8 @@ namespace miniConf {
             conn.OnPresence += conn_OnPresence;
         }
 
+
+
         void conn_OnPresence(object sender, agsXMPP.protocol.client.Presence pres) {
             if (pres.HasTag(typeof(agsXMPP.protocol.x.muc.User), true) ||
                 (pres.Type == agsXMPP.protocol.client.PresenceType.error && pres.HasTag(typeof(agsXMPP.protocol.x.muc.Muc), true))) {

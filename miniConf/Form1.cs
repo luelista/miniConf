@@ -31,7 +31,7 @@ namespace miniConf {
         Boolean loginError = true;
         string balloonRoom = null;
         UnreadMessageForm popupWindow = new UnreadMessageForm();
-        Dictionary<string, DirectMessageForm> dmSessions = new Dictionary<string, DirectMessageForm>();
+        DirectMessageManager dmManager = new DirectMessageManager();
         HashSet<string> onlineContacts = new HashSet<string>();
         XmppDebugForm debugForm;
         
@@ -134,7 +134,7 @@ namespace miniConf {
         }
 
         void jingle_OnFileReceived(Jid fromJid, string filename, string status) {
-            var frm = MakeDmForm(fromJid);
+            var frm = dmManager.GetWindow(fromJid);
             if (status == "failed") {
                 frm.onNotice("ERROR: " + filename);
 
@@ -216,7 +216,7 @@ namespace miniConf {
             if (msg.HasAttribute("type") && msg.GetAttribute("type") == "groupchat") {
                 this.Invoke(new XmppMessageDelegate(OnMucMessage), msg);
             } else {
-                this.Invoke(new XmppMessageDelegate(OnPrivateMessage), msg);
+                this.Invoke(new XmppMessageDelegate(dmManager.OnPrivateMessage), msg);
             }
         }
 
@@ -361,35 +361,11 @@ namespace miniConf {
             }
         }
 
-        private DirectMessageForm MakeDmForm(Jid from) {
-            DirectMessageForm dmfrm;
-            if (dmSessions.ContainsKey(from.Bare)) {
-                dmfrm = dmSessions[from.Bare];
-            } else {
-                dmfrm = new DirectMessageForm();
-                dmSessions[from.Bare] = dmfrm;
-                dmfrm.Text = from; dmfrm.otherEnd = from;
-                dmfrm.Show(); dmfrm.Activate();
-                dmfrm.FormClosed += dmfrm_FormClosed;
-            }
-            return dmfrm;
-        }
-
-        private void OnPrivateMessage(agsXMPP.protocol.client.Message msg) {
-            DirectMessageForm dmfrm = MakeDmForm(msg.From);
-            dmfrm.onMessage(msg); dmfrm.Show();
-            if(msg.HasTag("body")) dmfrm.Activate();
-        }
-
         private void ShowXmppDebugForm() {
             if (debugForm == null || debugForm.IsDisposed) debugForm = new XmppDebugForm();
             debugForm.Show();
             debugForm.Activate();
             glob.setPara("showXmppDebugOnStartup", "TRUE");
-        }
-
-        void dmfrm_FormClosed(object sender, FormClosedEventArgs e) {
-            dmSessions.Remove(((DirectMessageForm)sender).otherEnd.Bare);
         }
 
         private bool IsMention(string text) {
@@ -853,7 +829,7 @@ namespace miniConf {
                 if (e.X < 16) {
                     string jid = (string)lvOnlineStatus.SelectedItems[0].Tag;
                     if (!String.IsNullOrEmpty(jid)) {
-                        var frm = MakeDmForm(new Jid(jid));
+                        var frm = dmManager.GetWindow(new Jid(jid));
                         frm.Activate(); frm.textBox1.Focus();
                     }
                 } else {
