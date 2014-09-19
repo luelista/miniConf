@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Online", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Not available", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Online", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Not available", System.Windows.Forms.HorizontalAlignment.Left);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.txtPrefServer = new System.Windows.Forms.TextBox();
             this.txtPrefUsername = new System.Windows.Forms.TextBox();
@@ -55,6 +55,10 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.lnkInstallSmiley = new System.Windows.Forms.LinkLabel();
+            this.label8 = new System.Windows.Forms.Label();
+            this.cmbSmileyTheme = new System.Windows.Forms.ComboBox();
             this.btnClosePrefs = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.cmbFileUploadService = new System.Windows.Forms.ComboBox();
@@ -112,11 +116,7 @@
             this.filterBarCloseBtn = new System.Windows.Forms.Button();
             this.filterTextbox = new System.Windows.Forms.TextBox();
             this.tmrChatstatePaused = new System.Windows.Forms.Timer(this.components);
-            this.label8 = new System.Windows.Forms.Label();
-            this.cmbSmileyTheme = new System.Windows.Forms.ComboBox();
             this.webBrowser1 = new miniConf.MessageView();
-            this.lnkInstallSmiley = new System.Windows.Forms.LinkLabel();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.pnlConfig.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
