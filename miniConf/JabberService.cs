@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using agsXMPP.protocol.client;
 
 namespace miniConf {
     class JabberService {
@@ -50,6 +51,19 @@ namespace miniConf {
                 Console.WriteLine("server items: " + queryResult);
 
             });
+        }
+
+        public static string GetMessageDt(Message message) {
+            string dt;
+            agsXMPP.Xml.Dom.Element el;
+            if (message.HasTag("delay")) {
+                dt = message.SelectSingleElement("delay").GetAttribute("stamp");
+            } else if (null != (el = message.SelectSingleElement("x", "jabber:x:tstamp"))) {
+                dt = el.GetAttribute("tstamp");
+            } else {
+                dt = ChatDatabase.GetNowString();
+            }
+            return dt;
         }
 
         /**

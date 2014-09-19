@@ -304,15 +304,7 @@ namespace miniConf {
             Roomdata room = null;
             rooms.TryGetValue(msg.From.Bare, out room);
 
-            string dt;
-            agsXMPP.Xml.Dom.Element el;
-            if (msg.HasTag("delay")) {
-                dt = msg.SelectSingleElement("delay").GetAttribute("stamp");
-            } else if (null != (el = msg.SelectSingleElement("x", "jabber:x:tstamp"))) {
-                dt = el.GetAttribute("tstamp");
-            } else {
-                dt = ChatDatabase.GetNowString();
-            }
+            string dt = JabberService.GetMessageDt(msg);
             if (room != null) {
                 if (room.handleChatstate(msg))
                     if (currentRoom == room) { updateChatstates(); updateMemberList(); }
@@ -635,12 +627,9 @@ namespace miniConf {
             if (histAmount + count > length) {
                 webBrowser1.Document.GetElementById("tb").InnerHtml = "End of local history | <a href='special:load_all'>Try loading server history</a>";
             }
-            var msgs = logs.GetLogs(currentRoom.roomName(), histAmount, count);
-            foreach (System.Data.Common.DbDataRecord k in msgs) {
-                string jid = logs.GetUserJid(currentRoom.roomName(), k.GetString(0));
-                webBrowser1.addMessageToView(k.GetString(ChatDatabase.C_SENDER), k.GetString(ChatDatabase.C_BODY),
-                    DateTime.Parse(k.GetString(ChatDatabase.C_DATE)), logs.StringOrNull(k, ChatDatabase.C_EDIT),
-                    jid, k.GetString(ChatDatabase.C_ID), HtmlElementInsertionOrientation.AfterBegin);
+            var msgs = currentRoom.GetLogs(histAmount, count);
+            foreach (ChatMessage msg in msgs) {
+                webBrowser1.addMessageToView(msg, HtmlElementInsertionOrientation.AfterBegin);
             }
             histAmount += count;
         }
@@ -966,14 +955,12 @@ namespace miniConf {
         private void filterTextbox_KeyDown(object sender, KeyEventArgs e) {
             webBrowser1.highlightString = filterTextbox.Text;
             if (e.KeyCode == Keys.Enter) {
-                var reader = logs.GetFilteredLogs(this.currentRoom.roomName(), filterTextbox.Text, 0, 250);
+                var messages = this.currentRoom.GetFilteredLogs(filterTextbox.Text, 0, 250);
                 clearMessageView();
                 webBrowser1.Document.GetElementById("tb").InnerHtml = "Search results, press ESC to quit filter mode";
 
-                foreach (System.Data.Common.DbDataRecord k in reader) {
-                    webBrowser1.addMessageToView(k.GetString(0), k.GetString(1), DateTime.Parse(k.GetString(2)),  
-                        logs.StringOrNull(k, ChatDatabase.C_EDIT), null, k.GetString(ChatDatabase.C_ID), 
-                        HtmlElementInsertionOrientation.AfterBegin);
+                foreach (ChatMessage msg in messages) {
+                    webBrowser1.addMessageToView(msg, HtmlElementInsertionOrientation.AfterBegin);
                 }
                 e.SuppressKeyPress = true;
             }

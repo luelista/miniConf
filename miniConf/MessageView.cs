@@ -139,6 +139,12 @@ namespace miniConf {
             }
         }
 
+        public void addMessageToView(ChatMessage message, HtmlElementInsertionOrientation where = HtmlElementInsertionOrientation.BeforeEnd) {
+            addMessageToView(message.Sender, message.Body, message.Date, message.Editdt, 
+                message.SenderJid, message.Id, where);
+
+        }
+
         public void addMessageToView(string from, string text, DateTime time, string editDt, string jabberId, string id, HtmlElementInsertionOrientation where = HtmlElementInsertionOrientation.BeforeEnd) {
             updateLastTime(where, time);
             var div = this.Document.CreateElement("p");
