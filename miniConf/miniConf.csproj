@@ -43,8 +43,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\ICSharpCode.TextEditor.dll</HintPath>
     </Reference>
-    <Reference Include="Imazen.WebP">
-      <HintPath>..\packages\Imazen.WebP.3.4.3\lib\Imazen.WebP.dll</HintPath>
+    <Reference Include="Imazen.WebP, Version=0.1.0.17575, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\Imazen.WebP.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.VisualBasic.Compatibility" />
@@ -77,6 +78,7 @@
     <Compile Include="DirectMessageForm.Designer.cs">
       <DependentUpon>DirectMessageForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="DirectMessageManager.cs" />
     <Compile Include="FileUploader.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -171,6 +173,7 @@
     <Content Include="1407193497_18735.ico" />
     <Content Include="AppIcon.ico" />
     <Content Include="ICSharpCode.TextEditor.dll" />
+    <Content Include="Imazen.WebP.dll" />
     <Content Include="libwebp.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
