@@ -14,7 +14,7 @@ namespace miniConf {
         public string highlightString = "";
         public string selfNickname = "";
         public bool imagePreview = false;
-        public Dictionary<string,string> smileys = Dictionary<string,string>();
+        public Dictionary<string,string> smileys = new Dictionary<string,string>();
 
 
         public DateTime lastTimeTop=DateTime.MinValue, lastTimeBottom=DateTime.MinValue;
@@ -75,12 +75,10 @@ namespace miniConf {
 
                 if (category != null) {
                     string[] info = line.Split(' ', '\t');
+                    string fn = themeDir + "\\" + info[0];
                     for (int i = 1; i < info.Length; i++) {
                         if (info[i] == "") continue;
-                        Smiley s = new Smiley();
-                        s.text = info[i];
-                        s.imageFilename = themeDir + "\\" + info[0];
-                        smileys.Add(s);
+                        smileys[info[i]] = fn;
                     }
                 }
             }
