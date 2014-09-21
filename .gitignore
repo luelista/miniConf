@@ -1,5 +1,5 @@
 bin/
 obj/
-
+Setups/config.sh
 *.suo
 
