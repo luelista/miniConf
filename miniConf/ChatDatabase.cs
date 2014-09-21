@@ -10,7 +10,7 @@ using System.Windows.Forms;
 namespace miniConf {
     public class ChatDatabase : SqlDatabase {
 
-        public const long schemaVersion = 8;
+        public const long schemaVersion = 9;
 
         public ChatDatabase(string dbfile)
             : base(dbfile) {
@@ -30,16 +30,13 @@ namespace miniConf {
                 if (currentVersion < 2) {
                     this.ExecSQL("ALTER TABLE roommates ADD COLUMN affiliation TEXT; ");
                     this.ExecSQL("ALTER TABLE roommates ADD COLUMN role TEXT; ");
-
                 }
 
                 if (currentVersion < 3) {
                     this.ExecSQL("ALTER TABLE roommates ADD COLUMN status_str TEXT; ");
-
                 }
                 if (currentVersion < 4) {
                     this.ExecSQL("ALTER TABLE roommates ADD COLUMN user_jid TEXT; ");
-
                 }
 
                 if (currentVersion < 5) {
@@ -57,6 +54,14 @@ namespace miniConf {
                 if (currentVersion < 8) {
                     this.ExecSQL("ALTER TABLE messages ADD COLUMN editdt TEXT; ");
                     this.ExecSQL("ALTER TABLE messages ADD COLUMN override TEXT; ");
+                }
+
+                if (currentVersion < 9) {
+                    this.ExecSQL("ALTER TABLE room ADD COLUMN do_join INT; ");
+                    this.ExecSQL("ALTER TABLE room ADD COLUMN display_name TEXT; ");
+                    this.ExecSQL("ALTER TABLE room ADD COLUMN lastseendt TEXT; ");
+                    this.ExecSQL("ALTER TABLE room ADD COLUMN notify INT; ");
+                    this.ExecSQL("ALTER TABLE room ADD COLUMN display_position INT; ");
 
                     // update db version number
                     this.ExecSQL("PRAGMA user_version = " + ChatDatabase.schemaVersion.ToString());
@@ -123,11 +128,11 @@ namespace miniConf {
         }
 
         public void SetLastmessageDatetime(string room, string lastmessage_dt) {
-            this.ExecSQL("INSERT OR IGNORE INTO room VALUES (?, ?, '') ", room, lastmessage_dt);
+            this.ExecSQL("INSERT OR IGNORE INTO room VALUES (?, ?, '', '', '', '', '', '') ", room, lastmessage_dt);
             this.ExecSQL("UPDATE room SET lastmessagedt = ? WHERE room = ? ", lastmessage_dt, room);
         }
         public void SetSubject(string room, string subject) {
-            this.ExecSQL("INSERT OR IGNORE INTO room VALUES (?, '', '') ", room);
+            this.ExecSQL("INSERT OR IGNORE INTO room VALUES (?, '', '', '', '', '', '', '') ", room);
             this.ExecSQL("UPDATE room SET subject = ? WHERE room = ? ", subject, room);
         }
 
