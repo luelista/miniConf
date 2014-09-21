@@ -84,21 +84,6 @@ namespace miniConf {
             }
         }
 
-        private static uint ReHash(int srcHash) {
-            unchecked {
-                uint h = (uint)srcHash;
-                h += (h << 15) ^ 0xffffcd7d;
-                h ^= (h >> 10);
-                h += (h << 3);
-                h ^= (h >> 6);
-                h += (h << 2) + (h << 14);
-                return (uint)(h ^ (h >> 16));
-            }
-        }
-        public Color getColorForNickname(string nick) {
-            double hue = (ReHash(nick.GetHashCode() >>1) % 720) / 360.0;
-            return WindowHelper.getColorForHSL(hue, 1, 0.4);
-        }
 
         public void updateMessage(string oldId, string newId, string newBody, DateTime editTimestamp) {
             var el = Document.GetElementById("MSGID_" + oldId);
@@ -153,7 +138,7 @@ namespace miniConf {
             var me = Regex.Match(text, "^/me\\s+");
             var timeEl = "<i title=" + time.ToShortDateString() + " " + time.ToLongTimeString() + ">" + (highlightString != "" ? time.ToShortDateString() : "") + " " + time.ToLongTimeString() + "</i>";
             if (!String.IsNullOrEmpty(editDt)) timeEl += "<i class='edited' title='" + editDt + "'>(Edited)</i>";
-            var color = getColorForNickname(from);
+            var color = JabberContact.getColorForNickname(from);
             string cssColor = ColorTranslator.ToHtml(color);
             string classNames = "from_" + from + " ";
             if (from == "self" || (!String.IsNullOrEmpty(jabberId) && jabberId.StartsWith( this.selfNickname))) classNames += "self ";

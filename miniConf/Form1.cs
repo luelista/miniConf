@@ -25,6 +25,7 @@ namespace miniConf {
 
             WindowHelper.SetCueBanner(txtPrefUsername, "jane-doe@example.org");
             CheckForIllegalCrossThreadCalls = false;
+            pnlConfig.Height = 208;
         }
 
 
@@ -34,7 +35,7 @@ namespace miniConf {
         DirectMessageManager dmManager = new DirectMessageManager();
         HashSet<string> onlineContacts = new HashSet<string>();
         XmppDebugForm debugForm;
-        
+
         Icon icon1;
         Icon icon2;
 
@@ -62,7 +63,7 @@ namespace miniConf {
                 return null;
             }
             if (String.IsNullOrEmpty(txtNickname.Text)) txtNickname.Text = username[0];
-            if(!string.IsNullOrEmpty(txtPrefServer.Text)) username[1] = txtPrefServer.Text;
+            if (!string.IsNullOrEmpty(txtPrefServer.Text)) username[1] = txtPrefServer.Text;
             return username;
         }
 
@@ -71,7 +72,7 @@ namespace miniConf {
                 jabber.conn = new XmppClientConnection();
                 jabber.conn.DiscoInfo.AddFeature(new DiscoFeature("urn:xmpp:avatar:metadata+notify"));
                 jabber.conn.DiscoInfo.AddFeature(new DiscoFeature(JabberService.URN_MESSAGE_CORRECT));
-                
+
                 jabber.conn.DiscoInfo.AddIdentity(new DiscoIdentity("pc", "miniConf " + Application.ProductVersion, "client"));
                 jabber.conn.Capabilities.SetVersion(jabber.conn.DiscoInfo);
                 jabber.conn.Capabilities.Node = "http://home.luelista.net/programme/miniconf";
@@ -97,6 +98,7 @@ namespace miniConf {
                     this.Invoke(new Jingle.OnFileReceivedEvent(jingle_OnFileReceived), fromJid, filename, status);
                 };
 
+                jabber.OnContactPresence += jabber_OnContactPresence;
                 jabber.OnServerFeaturesUpdated += jabber_OnServerFeaturesUpdated;
 
                 if (glob.para("showXmppDebugOnStartup", "FALSE") == "TRUE") ShowXmppDebugForm();
@@ -105,23 +107,27 @@ namespace miniConf {
                 jabber.conn.Close(); Application.DoEvents();
                 System.Threading.Thread.Sleep(400); Application.DoEvents();
             }
-            
+
             string[] username = getUsername();
             if (username == null) return;
 
             jabber.conn.Server = username[1];
             int port;
-            if (!Int32.TryParse(txtPrefServerPort.Text,out port)) {
+            if (!Int32.TryParse(txtPrefServerPort.Text, out port)) {
                 port = 5222; txtPrefServerPort.Text = "5222";
             }
             jabber.conn.Port = port;
-            
+
             jabber.conn.UseSSL = false;
             jabber.conn.UseStartTLS = (glob.para("useSSL", "TRUE") != "FALSE");
             //jabber.conn.UseSSL = (glob.para("useSSL", "TRUE") != "FALSE");
             jabber.conn.Open(username[0], txtPrefPassword.Text, "miniConf-" + Environment.MachineName, 0);
             txtConnInfo.Text = "";
             webBrowser1.selfNickname = txtPrefUsername.Text;
+        }
+
+        void jabber_OnContactPresence(object sender, JabberService.JabberEventArgs e) {
+            updateContactList();
         }
 
         void jabber_OnServerFeaturesUpdated(object sender, EventArgs e) {
@@ -228,12 +234,12 @@ namespace miniConf {
             } else if (pres.Type == agsXMPP.protocol.client.PresenceType.error) {
 
             }
-            
+
         }
 
         void conn_OnLogin(object sender) {
             tmrReconnect.Stop();
-            jabber.conn.SendMyPresence(); 
+            jabber.conn.SendMyPresence();
             var rooms = txtChatrooms.Text.Split('\n');
             foreach (var room in rooms) {
                 if (String.IsNullOrEmpty(room) || room.Trim() == "" || room.StartsWith("//") || room.StartsWith("-- ")) continue;
@@ -244,14 +250,14 @@ namespace miniConf {
             loginError = false;
 
             jabber.CheckServerFeatures();
-            
-            
+
+
         }
 
-        private void OnMucSelfPresence(agsXMPP.protocol.client.Presence pres, agsXMPP.Xml.Dom.Element xChild) { 
-        
+        private void OnMucSelfPresence(agsXMPP.protocol.client.Presence pres, agsXMPP.Xml.Dom.Element xChild) {
+
         }
-        
+
         private void OnMucPresence(agsXMPP.protocol.client.Presence pres) {
             // a presence was received regarding a room we didn't join
             var roomname = pres.From.Bare;
@@ -269,7 +275,7 @@ namespace miniConf {
                 if (currentRoom == room) lbChatrooms_Click(null, null);
                 return;
             }
-            
+
             var xChild = pres.SelectSingleElement("x", "http://jabber.org/protocol/muc#user");
             foreach (agsXMPP.Xml.Dom.Element el in xChild.SelectElements("status")) {
                 if (el.GetAttribute("code") == "110") {
@@ -301,55 +307,59 @@ namespace miniConf {
         }
 
         private void OnMucMessage(agsXMPP.protocol.client.Message msg) {
-            Roomdata room = null;
-            rooms.TryGetValue(msg.From.Bare, out room);
+            try {
+                Roomdata room = null;
+                rooms.TryGetValue(msg.From.Bare, out room);
 
-            string dt = JabberService.GetMessageDt(msg);
-            if (room != null) {
-                if (room.handleChatstate(msg))
-                    if (currentRoom == room) { updateChatstates(); updateMemberList(); }
-            }
-            if (msg.HasTag("replace") && msg.HasTag("body")) {
-                Element replace = msg.SelectSingleElement("replace");
-                string replaceId= replace.GetAttribute("id");
-                if (logs.EditMessage(room.roomName(), replaceId, msg.GetAttribute("id"), msg.From.Resource, msg.GetTag("body"), dt)) {
-                    webBrowser1.updateMessage( replaceId, msg.GetAttribute("id"), msg.GetTag("body"), DateTime.Parse(dt));
-                    return;
+                string dt = JabberService.GetMessageDt(msg);
+                if (room != null) {
+                    if (room.handleChatstate(msg))
+                        if (currentRoom == room) { updateChatstates(); updateMemberList(); }
                 }
-            }
-            if (msg.HasTag("subject")) {
-                string subject = msg.GetTag("subject");
-                logs.SetSubject(msg.From.Bare, subject);
-                if (currentRoom != null && msg.From.Bare == currentRoom.jid.Bare) {
-                    webBrowser1.addNoticeToView("The subject was set by " + msg.From.Resource + ": " + subject);
-                    txtSubject.Text = subject;
-                }
-            } else if (msg.HasTag("body")) {
-                string messageBody = msg.GetTag("body");
-                logs.InsertMessage(msg.From.Bare, msg.GetAttribute("id"), msg.From.Resource, messageBody, dt);
-                logs.SetLastmessageDatetime(msg.From.Bare, dt);
-                if (currentRoom != null && msg.From.Bare == currentRoom.jid.Bare) {
-                    string fullJid = logs.GetUserJid(msg.From.Bare, msg.From.Resource);
-                    webBrowser1.addMessageToView(msg.From.Resource, messageBody, DateTime.Parse(dt), null, fullJid, msg.Id);
-                }
-                if (!msg.HasTag("delay") && (glob.para("notifications__" + msg.From.Bare) != "FALSE" || IsMention(messageBody))) {
-                    if (enableSoundToolStripMenuItem.Checked) {
-                        SoundPlayer dingdong = new SoundPlayer("C:\\Windows\\Media\\chimes.wav");
-                        dingdong.Play();
+                if (msg.HasTag("replace") && msg.HasTag("body")) {
+                    Element replace = msg.SelectSingleElement("replace");
+                    string replaceId = replace.GetAttribute("id");
+                    if (logs.EditMessage(room.roomName(), replaceId, msg.GetAttribute("id"), msg.From.Resource, msg.GetTag("body"), dt)) {
+                        webBrowser1.updateMessage(replaceId, msg.GetAttribute("id"), msg.GetTag("body"), DateTime.Parse(dt));
+                        return;
                     }
-                    if (!WindowHelper.IsActive(this) || currentRoom == null || currentRoom.roomName() != msg.From.Bare) {
-                        if (rooms.ContainsKey(msg.From.Bare)) rooms[msg.From.Bare].unreadMsgCount++;
-                        if (enablePopupToolStripMenuItem.Checked) {
-                            popupWindow.Show(); popupWindow.Activate(); popupWindow.updateRooms(rooms);
+                }
+                if (msg.HasTag("subject")) {
+                    string subject = msg.GetTag("subject");
+                    logs.SetSubject(msg.From.Bare, subject);
+                    if (currentRoom != null && msg.From.Bare == currentRoom.jid.Bare) {
+                        webBrowser1.addNoticeToView("The subject was set by " + msg.From.Resource + ": " + subject);
+                        txtSubject.Text = subject;
+                    }
+                } else if (msg.HasTag("body")) {
+                    string messageBody = msg.GetTag("body");
+                    logs.InsertMessage(msg.From.Bare, msg.GetAttribute("id"), msg.From.Resource, messageBody, dt);
+                    logs.SetLastmessageDatetime(msg.From.Bare, dt);
+                    if (currentRoom != null && msg.From.Bare == currentRoom.jid.Bare) {
+                        string fullJid = logs.GetUserJid(msg.From.Bare, msg.From.Resource);
+                        webBrowser1.addMessageToView(msg.From.Resource, messageBody, DateTime.Parse(dt), null, fullJid, msg.Id);
+                    }
+                    if (!msg.HasTag("delay") && (glob.para("notifications__" + msg.From.Bare) != "FALSE" || IsMention(messageBody))) {
+                        if (enableSoundToolStripMenuItem.Checked) {
+                            SoundPlayer dingdong = new SoundPlayer("C:\\Windows\\Media\\chimes.wav");
+                            dingdong.Play();
                         }
-                        if (enableNotificationsToolStripMenuItem.Checked && !String.IsNullOrEmpty(messageBody)) {
-                            balloonRoom = msg.From.Bare;
-                            notifyIcon1.ShowBalloonTip(30000, msg.From.Resource + " in " + msg.From.User + ":", messageBody, ToolTipIcon.Info);
-                        }
+                        if (!WindowHelper.IsActive(this) || currentRoom == null || currentRoom.roomName() != msg.From.Bare) {
+                            if (rooms.ContainsKey(msg.From.Bare)) rooms[msg.From.Bare].unreadMsgCount++;
+                            if (enablePopupToolStripMenuItem.Checked) {
+                                popupWindow.Show(); popupWindow.Activate(); popupWindow.updateRooms(rooms);
+                            }
+                            if (enableNotificationsToolStripMenuItem.Checked && !String.IsNullOrEmpty(messageBody)) {
+                                balloonRoom = msg.From.Bare;
+                                notifyIcon1.ShowBalloonTip(30000, msg.From.Resource + " in " + msg.From.User + ":", messageBody, ToolTipIcon.Info);
+                            }
 
+                        }
+                        if (!WindowHelper.IsActive(this)) tmrBlinky.Start();
                     }
-                    if (!WindowHelper.IsActive(this)) tmrBlinky.Start();
                 }
+            } catch (Exception ex) {
+                MessageBox.Show( ex.ToString());
             }
         }
 
@@ -419,7 +429,7 @@ namespace miniConf {
             }
             msg.Chatstate = agsXMPP.protocol.extensions.chatstates.Chatstate.active;
             currentRoom.chatstate = agsXMPP.protocol.extensions.chatstates.Chatstate.active;
-            
+
             jabber.conn.Send(msg);
         }
 
@@ -561,7 +571,7 @@ namespace miniConf {
         private void lbChatrooms_Click(object sender, EventArgs e) {
             tmrChatstatePaused.Stop();
             if (currentRoom != null) currentRoom.sendChatstate(agsXMPP.protocol.extensions.chatstates.Chatstate.inactive);
-            
+
             try {
                 currentRoom = rooms[(string)lbChatrooms.SelectedItem];
             } catch (Exception ex) {
@@ -590,11 +600,26 @@ namespace miniConf {
             webBrowser1.scrollDown();
         }
 
+        private void updateContactList() {
+            lvContacts.BeginUpdate(); lvContacts.Items.Clear();
+            foreach (JabberContact contact in jabber.contacts.Values) {
+                if (contactsImageList.Images.ContainsKey(contact.jid) == false) {
+                    var image = jabber.avatar.GetAvatarIfAvailabe(contact.jid);
+                    if (image != null)
+                        contactsImageList.Images.Add(contact.jid, Image.FromFile( image));
+                    else
+                        contactsImageList.Images.Add(contact.jid, JabberContact.getColoredImage(contact.getColor(), 32));
+                }
+                lvContacts.Items.Add(contact.jid, contact.jid);
+            }
+            lvContacts.EndUpdate();
+        }
+
         private void updateChatstates() {
             if (currentRoom == null) return;
             string typing = currentRoom.getTypingNotice();
             labChatstates.Visible = typing != null;
-            labChatstates.Text ="             "+ typing;
+            labChatstates.Text = "             " + typing;
         }
 
         private void updateMemberList() {
@@ -637,7 +662,7 @@ namespace miniConf {
 
         private void txtSendmessage_KeyUp(object sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.Enter && !e.Control && !e.Shift && !e.Alt) {
-                if (currentRoom==null || String.IsNullOrEmpty(txtSendmessage.Text.Trim())) return;
+                if (currentRoom == null || String.IsNullOrEmpty(txtSendmessage.Text.Trim())) return;
                 sendMessage(txtSendmessage.Text.TrimEnd());
                 txtSendmessage.Text = "";
             }
@@ -678,8 +703,8 @@ namespace miniConf {
             editingMessageId = id;
             webBrowser1.setMessageEditing(id, true);
             txtSendmessage.Text = message["messagebody"];
-            txtSendmessage.BackColor = Color.FromArgb(0xFA,0xFA,0xA0);
-            
+            txtSendmessage.BackColor = Color.FromArgb(0xFA, 0xFA, 0xA0);
+
         }
 
         public void stopEditingMessage() {
@@ -692,7 +717,14 @@ namespace miniConf {
         #endregion
 
         private void chkToggleSidebar_CheckedChanged(object sender, EventArgs e) {
-            splitContainer1.Panel2Collapsed = chkToggleSidebar.Checked;
+            naviBar1.Visible = !chkToggleSidebar.Checked;
+            chkToggleSidebar.Text = chkToggleSidebar.Checked ? ">" : "<";
+            chkToggleSidebar.Left = chkToggleSidebar.Checked ? 5 : 107;
+            button4.Left = chkToggleSidebar.Checked ? 30 : 5;
+            labChatstates.Left = button4.Bounds.Right + 3;
+            txtSubject.Left = button4.Bounds.Right + 6;
+            labChatstates.Width = pnlToolbar.Width - labChatstates.Left - 80;
+            txtSubject.Width = pnlToolbar.Width - txtSubject.Left - 85;
             //chkToggleSidebar.Text = splitContainer1.Panel2Collapsed ? "<" : ">";
         }
 
@@ -1115,7 +1147,7 @@ namespace miniConf {
         }
 
         private void cmbSmileyTheme_DropDown(object sender, EventArgs e) {
-            
+
         }
 
         private void updateSmileyThemeList() {
@@ -1140,6 +1172,42 @@ namespace miniConf {
         }
 
 
+        private void resizeSidebar() {
+            if (naviGroup2.Expanded) naviGroup1.ExpandedHeight = 180;
+            else naviGroup1.ExpandedHeight = naviBand1.Height - 25;
+
+            if (naviGroup1.Expanded) naviGroup1.Height = naviGroup1.ExpandedHeight;
+
+            naviGroup2.ExpandedHeight = Math.Max(100, naviBand1.Height - naviGroup1.Height);
+
+            if (naviGroup2.Expanded) naviGroup2.Height = naviGroup2.ExpandedHeight;
+        }
+
+        private void naviGroup2_MouseDown(object sender, MouseEventArgs e) {
+
+        }
+
+        private void Form1_Resize(object sender, EventArgs e) {
+            resizeSidebar();
+        }
+
+        private void naviGroup1_HeaderMouseClick(object sender, MouseEventArgs e) {
+            resizeSidebar();
+        }
+
+        private void naviBar1_SizeChanged(object sender, EventArgs e) {
+            if (naviBar1.Collapsed) naviBar1.Hide();
+        }
+
+        private void naviBand3_Click(object sender, EventArgs e) {
+
+        }
+
+        private void lvContacts_MouseDoubleClick(object sender, MouseEventArgs e) {
+            if (lvContacts.SelectedItems.Count == 1) {
+                dmManager.GetWindow(lvContacts.SelectedItems[0].Text);
+            }
+        }
 
 
 
