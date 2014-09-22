@@ -15,21 +15,27 @@ namespace miniConf {
     public partial class RoomListForm : Form {
 
         DiscoManager discoManager;
-        HashSet<string> rooms = new HashSet<string>();
+        //HashSet<string> rooms = new HashSet<string>();
 
-        public RoomListForm(string[] roomList) {
+        public RoomListForm() {
             InitializeComponent();
             CheckForIllegalCrossThreadCalls = false;
-            foreach (string room in roomList) {
+            /*foreach (string room in roomList) {
                 Jid r = new Jid(room);
                 rooms.Add(r.Bare);
-            }
+            }*/
         }
 
         private void RoomListForm_Load(object sender, EventArgs e) {
-            discoManager = new DiscoManager(Program.Jabber.conn);
-            discoManager.DiscoverItems(new Jid(Program.Jabber.conn.Server), new IqCB(OnDiscoServerResult), null);
-
+            this.Show();
+            try {
+                discoManager = new DiscoManager(Program.Jabber.conn);
+                discoManager.DiscoverItems(new Jid(Program.Jabber.conn.Server), new IqCB(OnDiscoServerResult), null);
+            } catch (Exception ex) {
+                MessageBox.Show(ex.ToString(), "Error loading chat room list", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+                this.Hide();
+            }
 
         }
 
@@ -85,13 +91,18 @@ namespace miniConf {
                             var lvi = listView1.Items.Add(itm.Jid.Bare, itm.Jid.User, -1);
                             try { lvi.Group = listView1.Groups[itm.Jid.Server]; } catch (Exception e) { }
                             lvi.SubItems.Add(itm.Name); lvi.Tag = itm.Jid.Bare;
-                            if (rooms.Contains(itm.Jid.Bare)) lvi.Checked = true;
+                            //if (rooms.Contains(itm.Jid.Bare)) lvi.Checked = true;
                         }
                         
                     }
                     listView1.Sort();
+                    UseWaitCursor = false;
                 }
             }
+        }
+
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e) {
+            button1.Enabled = (listView1.SelectedItems.Count == 1);
         }
        
     }

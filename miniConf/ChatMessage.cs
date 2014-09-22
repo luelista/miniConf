@@ -27,7 +27,7 @@ namespace miniConf {
         public static ChatMessage FromDbDataRecord(DbDataRecord record) {
             ChatMessage msg = new ChatMessage(record.GetString(C_SENDER), 
                 record.GetString(C_BODY), DateTime.Parse(record.GetString(C_DATE)), 
-                record.GetString(C_ID), Program.db.StringOrNull(record,C_EDIT));
+                record.GetString(C_ID), SqlDatabase.StringOrNull(record,C_EDIT));
             return msg;
         }
 

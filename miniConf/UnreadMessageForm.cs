@@ -29,9 +29,9 @@ namespace miniConf
         {
             listView1.Items.Clear();
             foreach(var r in rooms.Values) {
-                if (r.unreadMsgCount > 0)
+                if (r.unreadNotifyCount > 0)
                 {
-                    listView1.Items.Add(r.roomName()).SubItems.Add(r.unreadMsgCount.ToString() + " unread message" + (r.unreadMsgCount > 1 ? "s" : ""));
+                    listView1.Items.Add(r.RoomName).SubItems.Add(r.unreadNotifyCount.ToString() + " unread message" + (r.unreadNotifyCount > 1 ? "s" : ""));
                 }
             }
             this.Height = listView1.Items.Count * 50 + 35;

@@ -14,6 +14,7 @@ namespace miniConf {
 
         public XmppClientConnection conn;
         public Jingle jingle;
+        public MucService muc;
         public JabberAvatars avatar;
 
         public HashSet<string> serverFeatures = new HashSet<string>();
@@ -31,6 +32,7 @@ namespace miniConf {
         public JabberService() {
             this.avatar = new JabberAvatars();
             this.jingle = new Jingle();
+            this.muc = new MucService();
         }
 
         public void CheckServerFeatures() {
@@ -66,9 +68,9 @@ namespace miniConf {
             return dt;
         }
 
-        /**
-         * XEP-0280, Message Carbons
-         **/
+        /// <summary>
+        /// XEP-0280, Message Carbons
+        /// </summary>
         private void SendCarbonsEnableIq() {
             if (serverFeatures.Contains(JabberService.URN_CARBONS)) {
                 var iq = new agsXMPP.protocol.client.IQ(agsXMPP.protocol.client.IqType.set);

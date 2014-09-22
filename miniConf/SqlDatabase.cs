@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
@@ -46,6 +47,25 @@ namespace miniConf {
         }
 
 
-        
+        #region DbNull Helpers
+
+        protected static string ScalarStringOrNull(SQLiteCommand cmd) {
+            object result = cmd.ExecuteScalar();
+            if (result is DBNull) return null; else return (string)result;
+        }
+        public static string StringOrNull(object Object) {
+            if (Object is DBNull) return null; else return (string)Object;
+        }
+        public static string StringOrNull(SQLiteDataReader reader, int column) {
+            if (reader.IsDBNull(column)) return null; else return reader.GetString(column);
+        }
+        public static string StringOrNull(DbDataRecord reader, int column) {
+            if (reader.IsDBNull(column)) return null; else return reader.GetString(column);
+        }
+        public static Int32 Int32OrDefault(DbDataRecord reader, int column, int defValue = 0) {
+            if (reader.IsDBNull(column)) return defValue; else return reader.GetInt32(column);
+        }
+        #endregion
+
     }
 }

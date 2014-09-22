@@ -149,9 +149,11 @@ namespace miniConf {
 
             public string localFilespec;
 
-            /**
-             * make incoming Jingle session
-             */
+            /// <summary>
+            /// make incoming Jingle session
+            /// </summary>
+            /// <param name="xmppClient"></param>
+            /// <param name="initIq"></param>
             public JingleSession(XmppClientConnection xmppClient, agsXMPP.protocol.client.IQ initIq) {
                 selfInitiated = false;
                 this.conn = xmppClient;
@@ -172,9 +174,14 @@ namespace miniConf {
 
             }
 
-            /*
-             * make outgoing Jingle Session
-             */
+            /// <summary>
+            /// make outgoing Jingle Session
+            /// </summary>
+            /// <param name="xmppClient"></param>
+            /// <param name="to"></param>
+            /// <param name="fileName"></param>
+            /// <param name="proxy"></param>
+            /// <param name="proxyPort"></param>
             public JingleSession(XmppClientConnection xmppClient, string to, string fileName, string proxy, string proxyPort) {
                 selfInitiated = true;
                 localFilespec = fileName;
@@ -202,7 +209,11 @@ namespace miniConf {
 
             }
 
-            // initiate: first step for sending
+            /// <summary>
+            /// initiate: first step for sending
+            /// </summary>
+            /// <param name="fileName"></param>
+            /// <returns></returns>
             public agsXMPP.protocol.client.IQ BuildSessionInitiate(string fileName) {
                 var ack = BuildJingleIQPacket("session-initiate");
                 ack.SelectSingleElement("jingle").SetAttribute("action", "session-initiate");
@@ -218,7 +229,10 @@ namespace miniConf {
                 return ack;
             }
 
-            // accept: first step for receiving
+            /// <summary>
+            /// accept: first step for receiving
+            /// </summary>
+            /// <returns></returns>
             public agsXMPP.protocol.client.IQ BuildSessionAccept() {
                 if (OnFileReceived != null) OnFileReceived(initiateIq.From, "", "starting");
 

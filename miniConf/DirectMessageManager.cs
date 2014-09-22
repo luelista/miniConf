@@ -58,6 +58,11 @@ namespace miniConf
             DirectMessageForm dmfrm = GetWindow(relevantJid);
             dmfrm.onMessage(msg); dmfrm.Show();
             if (msg.HasTag("body")) dmfrm.Activate();
+            if (!msg.HasTag("body")) {
+                if (!String.IsNullOrEmpty(msg.Subject)) dmfrm.onNotice("Subject set: " + msg.Subject.Replace("<", "&lt;"));
+                else if (msg.Error != null) dmfrm.onNotice("An error occured: " + msg.Error.ToString().Replace("<", "&lt;"));
+                else dmfrm.onNotice("Unknown message stanza: " + msg.ToString().Replace("<", "&lt;"));
+            }
         }
 
     }

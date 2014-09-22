@@ -57,11 +57,11 @@ namespace miniConf {
                 }
 
                 if (currentVersion < 9) {
-                    this.ExecSQL("ALTER TABLE room ADD COLUMN do_join INT; ");
-                    this.ExecSQL("ALTER TABLE room ADD COLUMN display_name TEXT; ");
-                    this.ExecSQL("ALTER TABLE room ADD COLUMN lastseendt TEXT; ");
-                    this.ExecSQL("ALTER TABLE room ADD COLUMN notify INT; ");
-                    this.ExecSQL("ALTER TABLE room ADD COLUMN display_position INT; ");
+                    this.ExecSQL("ALTER TABLE room ADD COLUMN do_join INT DEFAULT 0; ");
+                    this.ExecSQL("ALTER TABLE room ADD COLUMN display_name TEXT DEFAULT ''; ");
+                    this.ExecSQL("ALTER TABLE room ADD COLUMN lastseendt TEXT DEFAULT ''; ");
+                    this.ExecSQL("ALTER TABLE room ADD COLUMN notify INT DEFAULT 0; ");
+                    this.ExecSQL("ALTER TABLE room ADD COLUMN display_position INT DEFAULT 0; ");
 
                     // update db version number
                     this.ExecSQL("PRAGMA user_version = " + ChatDatabase.schemaVersion.ToString());
@@ -109,24 +109,11 @@ namespace miniConf {
             var ok1= cmd.ExecuteNonQuery();
 
             InsertMessage(room, newXmppid, oldMessage["sender"], newbody, oldMessage["datedt"], edit_dt);
-            SetLastmessageDatetime(room, edit_dt);
+            
             return true;
         }
 
-        private string ScalarStringOrNull(SQLiteCommand cmd) {
-            object result = cmd.ExecuteScalar();
-            if (result is DBNull) return null; else return (string)result;
-        }
-        public string StringOrNull(object Object) {
-            if (Object is DBNull) return null; else return (string)Object;
-        }
-        public string StringOrNull(SQLiteDataReader reader, int column) {
-            if (reader.IsDBNull(column)) return null; else return reader.GetString(column);
-        }
-        public string StringOrNull(DbDataRecord reader, int column) {
-            if (reader.IsDBNull(column)) return null; else return reader.GetString(column);
-        }
-
+        /*
         public void SetLastmessageDatetime(string room, string lastmessage_dt) {
             this.ExecSQL("INSERT OR IGNORE INTO room VALUES (?, ?, '', '', '', '', '', '') ", room, lastmessage_dt);
             this.ExecSQL("UPDATE room SET lastmessagedt = ? WHERE room = ? ", lastmessage_dt, room);
@@ -134,6 +121,19 @@ namespace miniConf {
         public void SetSubject(string room, string subject) {
             this.ExecSQL("INSERT OR IGNORE INTO room VALUES (?, '', '', '', '', '', '', '') ", room);
             this.ExecSQL("UPDATE room SET subject = ? WHERE room = ? ", subject, room);
+        }*/
+        public int StoreRoom(Roomdata room) {
+            var cmd = dataBase.CreateCommand();
+            cmd.CommandText = "INSERT OR REPLACE INTO room VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7)";
+            cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_SUBJECT, String.IsNullOrEmpty(room.Subject) ? "" : room.Subject));
+            cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_ROOM, room.jid.Bare));
+            cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_NOTIFY, (int)room.Notify));
+            cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_DO_JOIN, (int)room.DoJoin));
+            cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_DISPLAY_POSITION, (int)room.DisplayPosition));
+            cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_LASTMESSAGEDT, room.LastMessageDt));
+            cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_LASTSEENDT, room.LastSeenDt));
+            cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_DISPLAY_NAME, room.DisplayName));
+            return cmd.ExecuteNonQuery();
         }
 
         public NameValueCollection GetMessageById(string room, string xmppid) {
@@ -171,7 +171,7 @@ namespace miniConf {
             cmd.CommandText = "SELECT user_jid FROM roommates WHERE room = @room AND nickname = @nick;";
             cmd.Parameters.AddWithValue("@room", room);
             cmd.Parameters.AddWithValue("@nick", nick);
-            return ScalarStringOrNull(cmd);
+            return SqlDatabase.ScalarStringOrNull(cmd);
         }
 
         public SQLiteDataReader GetMembers(string room) {
@@ -186,6 +186,17 @@ namespace miniConf {
             cmd.CommandText = "SELECT count(*) FROM messages WHERE room = @name ;";
             cmd.Parameters.AddWithValue("@name", room);
             return (int)(long)cmd.ExecuteScalar();
+        }
+
+        public List<Roomdata> GetRooms(bool joinOnly) {
+            var cmd = dataBase.CreateCommand();
+            cmd.CommandText = "SELECT * FROM room " + (joinOnly ? " WHERE join = 1" : "") + " ORDER BY display_position ; ";
+            var reader = cmd.ExecuteReader();
+            List<Roomdata> list = new List<Roomdata>();
+            foreach (DbDataRecord rec in reader) {
+                list.Add(Roomdata.FromDbDataRecord(rec));
+            }
+            return list;
         }
 
 
