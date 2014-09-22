@@ -13,6 +13,9 @@ namespace miniConf {
         public Jid jid;
         public HashSet<String> users = new HashSet<string>();
         public int unreadMsgCount = 0;
+        public int unreadNotifyCount = 0;
+
+        public bool online = false;
 
         public ErrorCondition errorCondition = (ErrorCondition)(999);
 
@@ -20,25 +23,79 @@ namespace miniConf {
         public Dictionary<string, Chatstate> users_states = new Dictionary<string, Chatstate>();
         public Dictionary<string, string> users_jid = new Dictionary<string, string>();
 
+        public const int COL_ROOM=0;
+        public const int COL_LASTMESSAGEDT  =1;
+        public const int COL_SUBJECT =2;
+        public const int COL_DO_JOIN=3;
+        public const int COL_DISPLAY_NAME=4;
+        public const int COL_LASTSEENDT =5;
+        public const int COL_NOTIFY =6;
+        public const int COL_DISPLAY_POSITION = 7;
+
         public RoomType roomType = RoomType.Multi;
         public enum RoomType {
             Single,
             Multi
         }
 
-        public Roomdata(Jid myjid) {
-            jid = myjid;
+        public enum JoinMode {
+            Off = 0,
+            AutoJoin = 1
+        }
+        [Flags()]
+        public enum NotifyMode {
+            Never,
+            OnMention,
+            Always
         }
 
-        public string roomName() {
-            return jid.Bare;
+        public String LastMessageDt { get; set; }
+        public String Subject { get; set; }
+        public JoinMode DoJoin { get; set; }
+        public String DisplayName { get; set; }
+        public String LastSeenDt { get; set; }
+        public NotifyMode Notify { get; set; }
+        public int DisplayPosition { get; set; }
+
+
+        public Roomdata(Jid myjid) {
+            jid = myjid;
+            this.LastMessageDt = "";
+            this.LastSeenDt = "";
+            this.DisplayName = myjid;
+            this.Notify = NotifyMode.OnMention;
+            this.Subject = "";
+        }
+        public static Roomdata FromDbDataRecord(DbDataRecord record) {
+            Roomdata r = new Roomdata(record.GetString(COL_ROOM));
+            r.LastMessageDt = SqlDatabase.StringOrNull(record, COL_LASTMESSAGEDT);
+            r.Subject = SqlDatabase.StringOrNull(record, COL_SUBJECT);
+            r.DoJoin = (JoinMode)record.GetInt32(COL_DO_JOIN);
+            r.DisplayName = SqlDatabase.StringOrNull(record, COL_DISPLAY_NAME);
+            r.LastSeenDt = SqlDatabase.StringOrNull(record, COL_LASTSEENDT);
+            r.Notify = (NotifyMode)record.GetInt32(COL_NOTIFY);
+            r.DisplayPosition = record.GetInt32(COL_DISPLAY_POSITION);
+            return r;
+        }
+
+
+
+        public string RoomName {
+            get {
+                return jid.Bare;
+            }
+        }
+
+        public void ResetUnread() {
+            unreadMsgCount = 0;
+            unreadNotifyCount = 0;
         }
 
 
         public void sendChatstate(agsXMPP.protocol.extensions.chatstates.Chatstate state) {
             if (chatstate == state) return;
             chatstate = state;
-            var msg = new agsXMPP.protocol.client.Message(new Jid(roomName()), Program.Jabber.conn.MyJID);
+            var msg = new agsXMPP.protocol.client.Message(new Jid(RoomName), Program.Jabber.conn.MyJID);
             msg.Type = MessageType.groupchat;
             msg.Chatstate = state;
             Program.Jabber.conn.Send(msg);
@@ -111,7 +168,7 @@ namespace miniConf {
         public List<ChatMessage> GetLogs(int startingfrom, int maxcount) {
             var cmd = Program.db.dataBase.CreateCommand();
             cmd.CommandText = "SELECT sender,messagebody,datedt,xmppid,editdt FROM messages WHERE room = @name AND (override IS NULL OR override = '') ORDER BY datedt DESC LIMIT @from, @count;";
-            cmd.Parameters.AddWithValue("@name", roomName());
+            cmd.Parameters.AddWithValue("@name", RoomName);
             cmd.Parameters.AddWithValue("@count", maxcount);
             cmd.Parameters.AddWithValue("@from", startingfrom);
             return readChatMessages(cmd.ExecuteReader());
@@ -119,7 +176,7 @@ namespace miniConf {
         public List<ChatMessage> GetFilteredLogs(string filterStr, int startingfrom, int maxcount) {
             var cmd = Program.db.dataBase.CreateCommand();
             cmd.CommandText = "SELECT sender,messagebody,datedt,xmppid,editdt FROM messages WHERE room = @name AND messagebody LIKE @filterStr ORDER BY datedt DESC LIMIT @from, @count;";
-            cmd.Parameters.AddWithValue("@name", roomName());
+            cmd.Parameters.AddWithValue("@name", RoomName);
             cmd.Parameters.AddWithValue("@filterStr", "%" + filterStr + "%");
             cmd.Parameters.AddWithValue("@count", maxcount);
             cmd.Parameters.AddWithValue("@from", startingfrom);
@@ -131,12 +188,18 @@ namespace miniConf {
             foreach (DbDataRecord record in reader) {
                 ChatMessage msg = ChatMessage.FromDbDataRecord(record);
                 if (roomType == RoomType.Multi)
-                    msg.SenderJid = Program.db.GetUserJid(roomName(), msg.Sender);
+                    msg.SenderJid = Program.db.GetUserJid(RoomName, msg.Sender);
                 list.Add(msg);
             }
             return list;
         }
 
+
+        public static Dictionary<string, Roomdata> MakeDict(List<Roomdata> list) {
+            Dictionary<string, Roomdata> dict = new Dictionary<string, Roomdata>();
+            foreach (var r in list) dict[r.RoomName] = r;
+            return dict;
+        }
 
     }
 }

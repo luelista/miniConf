@@ -52,12 +52,17 @@ namespace miniConf {
                 cmbResources.Items.Add(otherEnd.Bare + "/" + res);
         }
 
+        private List<string> noticeStack = new List<string>();
         public void onNotice(string text) {
             try {
+                if(!loaded) { noticeStack.Add(text); return;}
+
                 messageView1.addNoticeToView(text);
 
             } catch (NullReferenceException nu) { }
         }
+
+
 
         public void onMessage(agsXMPP.protocol.client.Message msg) {
             if (loaded == false) return;
@@ -77,7 +82,7 @@ namespace miniConf {
             msg.Chatstate = agsXMPP.protocol.extensions.chatstates.Chatstate.active;
             Program.Jabber.conn.Send(msg);
 
-            Program.db.InsertMessage(room.roomName(), msg.Id, msg.From, msg.Body, ChatDatabase.GetNowString());
+            Program.db.InsertMessage(room.RoomName, msg.Id, msg.From, msg.Body, ChatDatabase.GetNowString());
             messageView1.addMessageToView(msg.From, msg.Body, DateTime.Now, null, msg.From, msg.Id);
             return msg.Id;
         }
@@ -110,6 +115,8 @@ namespace miniConf {
                 msg.SenderJid = msg.Sender;
                 messageView1.addMessageToView(msg, HtmlElementInsertionOrientation.AfterBegin);
             }
+            foreach (string note in noticeStack) onNotice(note);
+
             messageView1.scrollDown();
 
             updateResources();

@@ -46,14 +46,6 @@
             this.btnConnect = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.btnRegister = new System.Windows.Forms.Button();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.btnConnect2 = new System.Windows.Forms.Button();
-            this.txtChatrooms = new System.Windows.Forms.TextBox();
-            this.btnRoomList = new System.Windows.Forms.Button();
-            this.lvPrefChatrooms = new System.Windows.Forms.ListView();
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.lnkInstallSmiley = new System.Windows.Forms.LinkLabel();
@@ -85,7 +77,6 @@
             this.txtSendmessage = new System.Windows.Forms.TextBox();
             this.txtNickname = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.lbChatrooms = new System.Windows.Forms.CheckedListBox();
             this.pnlErrMes = new System.Windows.Forms.Panel();
             this.btnCancelReconnect = new System.Windows.Forms.Button();
             this.labErrMes = new System.Windows.Forms.Label();
@@ -118,12 +109,15 @@
             this.naviBand1 = new Guifreaks.NavigationBar.NaviBand(this.components);
             this.naviGroup2 = new Guifreaks.NavigationBar.NaviGroup(this.components);
             this.naviGroup1 = new Guifreaks.NavigationBar.NaviGroup(this.components);
-            this.naviBand3 = new Guifreaks.NavigationBar.NaviBand(this.components);
-            this.naviBand2 = new Guifreaks.NavigationBar.NaviBand(this.components);
-            this.chkToggleSidebar = new System.Windows.Forms.CheckBox();
+            this.lbChatrooms = new System.Windows.Forms.ListBox();
             this.ctxMenuConversationHeader = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.joinConversationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createNewRoomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.naviBand3 = new Guifreaks.NavigationBar.NaviBand(this.components);
+            this.lvContacts = new System.Windows.Forms.ListView();
+            this.contactsImageList = new System.Windows.Forms.ImageList(this.components);
+            this.naviBand2 = new Guifreaks.NavigationBar.NaviBand(this.components);
+            this.chkToggleSidebar = new System.Windows.Forms.CheckBox();
             this.ctxMenuConversation = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.changeNickToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -131,6 +125,8 @@
             this.alwaysNotifyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.notifyOnMentionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableNotificationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripSeparator();
+            this.showFullHistoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxMenuParticipant = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -138,17 +134,15 @@
             this.privateMessageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openDirectChatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.infoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.showFullHistoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripSeparator();
-            this.lvContacts = new System.Windows.Forms.ListView();
-            this.contactsImageList = new System.Windows.Forms.ImageList(this.components);
+            this.conversationImageList = new System.Windows.Forms.ImageList(this.components);
+            this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripSeparator();
+            this.showAllRoomsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rejoinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.webBrowser1 = new miniConf.MessageView();
             this.pnlConfig.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.pnlPrefConnectAdvanced.SuspendLayout();
-            this.tabPage3.SuspendLayout();
-            this.tabPage2.SuspendLayout();
             this.pnlToolbar.SuspendLayout();
             this.panel3.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -164,11 +158,11 @@
             this.naviGroup2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.naviGroup1)).BeginInit();
             this.naviGroup1.SuspendLayout();
+            this.ctxMenuConversationHeader.SuspendLayout();
             this.naviBand3.ClientArea.SuspendLayout();
             this.naviBand3.SuspendLayout();
             this.naviBand2.ClientArea.SuspendLayout();
             this.naviBand2.SuspendLayout();
-            this.ctxMenuConversationHeader.SuspendLayout();
             this.ctxMenuConversation.SuspendLayout();
             this.ctxMenuParticipant.SuspendLayout();
             this.SuspendLayout();
@@ -213,7 +207,6 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Location = new System.Drawing.Point(6, 4);
             this.tabControl1.Name = "tabControl1";
@@ -321,104 +314,8 @@
             this.btnRegister.UseVisualStyleBackColor = true;
             this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
             // 
-            // tabPage3
-            // 
-            this.tabPage3.Controls.Add(this.btnConnect2);
-            this.tabPage3.Controls.Add(this.txtChatrooms);
-            this.tabPage3.Controls.Add(this.btnRoomList);
-            this.tabPage3.Controls.Add(this.lvPrefChatrooms);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(457, 179);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Conferences";
-            this.tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // btnConnect2
-            // 
-            this.btnConnect2.BackColor = System.Drawing.SystemColors.Control;
-            this.btnConnect2.Location = new System.Drawing.Point(10, 147);
-            this.btnConnect2.Name = "btnConnect2";
-            this.btnConnect2.Size = new System.Drawing.Size(105, 22);
-            this.btnConnect2.TabIndex = 17;
-            this.btnConnect2.Text = "OK";
-            this.btnConnect2.UseVisualStyleBackColor = true;
-            this.btnConnect2.Click += new System.EventHandler(this.btnConnect2_Click);
-            // 
-            // txtChatrooms
-            // 
-            this.txtChatrooms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtChatrooms.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtChatrooms.Location = new System.Drawing.Point(10, 9);
-            this.txtChatrooms.Multiline = true;
-            this.txtChatrooms.Name = "txtChatrooms";
-            this.txtChatrooms.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtChatrooms.Size = new System.Drawing.Size(441, 138);
-            this.txtChatrooms.TabIndex = 7;
-            this.txtChatrooms.Text = "feedback@chat.teamwiki.de\r\nlounge@chat.teamwiki.de";
-            this.txtChatrooms.WordWrap = false;
-            // 
-            // btnRoomList
-            // 
-            this.btnRoomList.BackColor = System.Drawing.SystemColors.Control;
-            this.btnRoomList.Location = new System.Drawing.Point(121, 147);
-            this.btnRoomList.Name = "btnRoomList";
-            this.btnRoomList.Size = new System.Drawing.Size(74, 22);
-            this.btnRoomList.TabIndex = 15;
-            this.btnRoomList.Text = "List ...";
-            this.btnRoomList.UseVisualStyleBackColor = true;
-            this.btnRoomList.Click += new System.EventHandler(this.btnRoomList_Click);
-            // 
-            // lvPrefChatrooms
-            // 
-            this.lvPrefChatrooms.CheckBoxes = true;
-            this.lvPrefChatrooms.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader3,
-            this.columnHeader4,
-            this.columnHeader5});
-            this.lvPrefChatrooms.FullRowSelect = true;
-            this.lvPrefChatrooms.Location = new System.Drawing.Point(10, 9);
-            this.lvPrefChatrooms.MultiSelect = false;
-            this.lvPrefChatrooms.Name = "lvPrefChatrooms";
-            this.lvPrefChatrooms.Size = new System.Drawing.Size(578, 158);
-            this.lvPrefChatrooms.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.lvPrefChatrooms.TabIndex = 16;
-            this.lvPrefChatrooms.UseCompatibleStateImageBehavior = false;
-            this.lvPrefChatrooms.View = System.Windows.Forms.View.Details;
-            this.lvPrefChatrooms.Visible = false;
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "Name";
-            this.columnHeader3.Width = 127;
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "Topic";
-            this.columnHeader4.Width = 306;
-            // 
-            // columnHeader5
-            // 
-            this.columnHeader5.Text = "Nickname";
-            this.columnHeader5.Width = 102;
-            // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.linkLabel1);
-            this.tabPage2.Controls.Add(this.lnkInstallSmiley);
-            this.tabPage2.Controls.Add(this.label8);
-            this.tabPage2.Controls.Add(this.cmbSmileyTheme);
-            this.tabPage2.Controls.Add(this.btnClosePrefs);
-            this.tabPage2.Controls.Add(this.label7);
-            this.tabPage2.Controls.Add(this.cmbFileUploadService);
-            this.tabPage2.Controls.Add(this.label6);
-            this.tabPage2.Controls.Add(this.chkEnableImagePreview);
-            this.tabPage2.Controls.Add(this.chkSternchen);
-            this.tabPage2.Controls.Add(this.comboMessageTheme);
-            this.tabPage2.Controls.Add(this.chkFiletransferAutoAccept);
-            this.tabPage2.Controls.Add(this.chkDisplayOccupantStatus);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
@@ -430,7 +327,8 @@
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(364, 88);
+            this.linkLabel1.BackColor = System.Drawing.Color.Transparent;
+            this.linkLabel1.Location = new System.Drawing.Point(53, 237);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(33, 13);
             this.linkLabel1.TabIndex = 23;
@@ -441,7 +339,8 @@
             // lnkInstallSmiley
             // 
             this.lnkInstallSmiley.AutoSize = true;
-            this.lnkInstallSmiley.Location = new System.Drawing.Point(315, 88);
+            this.lnkInstallSmiley.BackColor = System.Drawing.Color.Transparent;
+            this.lnkInstallSmiley.Location = new System.Drawing.Point(4, 237);
             this.lnkInstallSmiley.Name = "lnkInstallSmiley";
             this.lnkInstallSmiley.Size = new System.Drawing.Size(43, 13);
             this.lnkInstallSmiley.TabIndex = 22;
@@ -452,7 +351,8 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(204, 67);
+            this.label8.BackColor = System.Drawing.Color.Transparent;
+            this.label8.Location = new System.Drawing.Point(4, 196);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(72, 13);
             this.label8.TabIndex = 21;
@@ -469,16 +369,17 @@
             "Conversations",
             "Terminal",
             "Custom"});
-            this.cmbSmileyTheme.Location = new System.Drawing.Point(318, 64);
+            this.cmbSmileyTheme.Location = new System.Drawing.Point(7, 212);
             this.cmbSmileyTheme.Name = "cmbSmileyTheme";
-            this.cmbSmileyTheme.Size = new System.Drawing.Size(138, 21);
+            this.cmbSmileyTheme.Size = new System.Drawing.Size(121, 21);
             this.cmbSmileyTheme.TabIndex = 20;
             this.cmbSmileyTheme.DropDown += new System.EventHandler(this.cmbSmileyTheme_DropDown);
             // 
             // btnClosePrefs
             // 
+            this.btnClosePrefs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnClosePrefs.BackColor = System.Drawing.SystemColors.Control;
-            this.btnClosePrefs.Location = new System.Drawing.Point(26, 147);
+            this.btnClosePrefs.Location = new System.Drawing.Point(7, 455);
             this.btnClosePrefs.Name = "btnClosePrefs";
             this.btnClosePrefs.Size = new System.Drawing.Size(105, 22);
             this.btnClosePrefs.TabIndex = 19;
@@ -489,7 +390,8 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(204, 40);
+            this.label7.BackColor = System.Drawing.Color.Transparent;
+            this.label7.Location = new System.Drawing.Point(4, 152);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(64, 13);
             this.label7.TabIndex = 18;
@@ -500,16 +402,17 @@
             this.cmbFileUploadService.FormattingEnabled = true;
             this.cmbFileUploadService.Items.AddRange(new object[] {
             "https://mediacru.sh"});
-            this.cmbFileUploadService.Location = new System.Drawing.Point(318, 9);
+            this.cmbFileUploadService.Location = new System.Drawing.Point(7, 124);
             this.cmbFileUploadService.Name = "cmbFileUploadService";
-            this.cmbFileUploadService.Size = new System.Drawing.Size(177, 21);
+            this.cmbFileUploadService.Size = new System.Drawing.Size(121, 21);
             this.cmbFileUploadService.TabIndex = 17;
             this.cmbFileUploadService.Text = "https://mediacru.sh";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(204, 12);
+            this.label6.BackColor = System.Drawing.Color.Transparent;
+            this.label6.Location = new System.Drawing.Point(4, 108);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(98, 13);
             this.label6.TabIndex = 16;
@@ -518,25 +421,27 @@
             // chkEnableImagePreview
             // 
             this.chkEnableImagePreview.AutoSize = true;
+            this.chkEnableImagePreview.BackColor = System.Drawing.Color.Transparent;
             this.chkEnableImagePreview.Checked = true;
             this.chkEnableImagePreview.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkEnableImagePreview.Location = new System.Drawing.Point(26, 12);
+            this.chkEnableImagePreview.Location = new System.Drawing.Point(7, 38);
             this.chkEnableImagePreview.Name = "chkEnableImagePreview";
             this.chkEnableImagePreview.Size = new System.Drawing.Size(100, 17);
             this.chkEnableImagePreview.TabIndex = 10;
             this.chkEnableImagePreview.Text = "Preview images";
-            this.chkEnableImagePreview.UseVisualStyleBackColor = true;
+            this.chkEnableImagePreview.UseVisualStyleBackColor = false;
             this.chkEnableImagePreview.CheckedChanged += new System.EventHandler(this.chkEnableImagePreview_CheckedChanged);
             // 
             // chkSternchen
             // 
             this.chkSternchen.AutoSize = true;
-            this.chkSternchen.Location = new System.Drawing.Point(26, 104);
+            this.chkSternchen.BackColor = System.Drawing.Color.Transparent;
+            this.chkSternchen.Location = new System.Drawing.Point(94, 84);
             this.chkSternchen.Name = "chkSternchen";
             this.chkSternchen.Size = new System.Drawing.Size(30, 17);
             this.chkSternchen.TabIndex = 11;
             this.chkSternchen.Text = "*";
-            this.chkSternchen.UseVisualStyleBackColor = true;
+            this.chkSternchen.UseVisualStyleBackColor = false;
             this.chkSternchen.CheckedChanged += new System.EventHandler(this.chkSternchen_CheckedChanged);
             // 
             // comboMessageTheme
@@ -550,41 +455,43 @@
             "Conversations",
             "Terminal",
             "Custom"});
-            this.comboMessageTheme.Location = new System.Drawing.Point(318, 37);
+            this.comboMessageTheme.Location = new System.Drawing.Point(7, 168);
             this.comboMessageTheme.Name = "comboMessageTheme";
-            this.comboMessageTheme.Size = new System.Drawing.Size(138, 21);
+            this.comboMessageTheme.Size = new System.Drawing.Size(121, 21);
             this.comboMessageTheme.TabIndex = 13;
             this.comboMessageTheme.SelectedIndexChanged += new System.EventHandler(this.comboMessageTheme_SelectedIndexChanged);
             // 
             // chkFiletransferAutoAccept
             // 
             this.chkFiletransferAutoAccept.AutoSize = true;
+            this.chkFiletransferAutoAccept.BackColor = System.Drawing.Color.Transparent;
             this.chkFiletransferAutoAccept.Checked = true;
             this.chkFiletransferAutoAccept.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkFiletransferAutoAccept.Location = new System.Drawing.Point(26, 58);
+            this.chkFiletransferAutoAccept.Location = new System.Drawing.Point(7, 84);
             this.chkFiletransferAutoAccept.Name = "chkFiletransferAutoAccept";
             this.chkFiletransferAutoAccept.Size = new System.Drawing.Size(81, 17);
             this.chkFiletransferAutoAccept.TabIndex = 14;
             this.chkFiletransferAutoAccept.Text = "Accept files";
-            this.chkFiletransferAutoAccept.UseVisualStyleBackColor = true;
+            this.chkFiletransferAutoAccept.UseVisualStyleBackColor = false;
             this.chkFiletransferAutoAccept.CheckedChanged += new System.EventHandler(this.chkFiletransferAutoAccept_CheckedChanged);
             // 
             // chkDisplayOccupantStatus
             // 
             this.chkDisplayOccupantStatus.AutoSize = true;
-            this.chkDisplayOccupantStatus.Location = new System.Drawing.Point(26, 35);
+            this.chkDisplayOccupantStatus.BackColor = System.Drawing.Color.Transparent;
+            this.chkDisplayOccupantStatus.Location = new System.Drawing.Point(7, 61);
             this.chkDisplayOccupantStatus.Name = "chkDisplayOccupantStatus";
             this.chkDisplayOccupantStatus.Size = new System.Drawing.Size(116, 17);
             this.chkDisplayOccupantStatus.TabIndex = 12;
             this.chkDisplayOccupantStatus.Text = "Display status texts";
-            this.chkDisplayOccupantStatus.UseVisualStyleBackColor = true;
+            this.chkDisplayOccupantStatus.UseVisualStyleBackColor = false;
             this.chkDisplayOccupantStatus.CheckedChanged += new System.EventHandler(this.chkDisplayOccupantStatus_CheckedChanged);
             // 
             // label4
             // 
             this.label4.AutoSize = true;
             this.label4.BackColor = System.Drawing.Color.Transparent;
-            this.label4.Location = new System.Drawing.Point(6, 34);
+            this.label4.Location = new System.Drawing.Point(4, 258);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(82, 13);
             this.label4.TabIndex = 2;
@@ -592,18 +499,22 @@
             // 
             // listServerFeatures
             // 
+            this.listServerFeatures.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.listServerFeatures.FormattingEnabled = true;
-            this.listServerFeatures.Location = new System.Drawing.Point(7, 53);
+            this.listServerFeatures.IntegralHeight = false;
+            this.listServerFeatures.Location = new System.Drawing.Point(7, 274);
             this.listServerFeatures.Name = "listServerFeatures";
-            this.listServerFeatures.Size = new System.Drawing.Size(124, 147);
+            this.listServerFeatures.Size = new System.Drawing.Size(124, 175);
             this.listServerFeatures.TabIndex = 1;
             // 
             // txtConnInfo
             // 
-            this.txtConnInfo.Location = new System.Drawing.Point(7, 206);
+            this.txtConnInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtConnInfo.Location = new System.Drawing.Point(7, 421);
             this.txtConnInfo.Multiline = true;
             this.txtConnInfo.Name = "txtConnInfo";
-            this.txtConnInfo.Size = new System.Drawing.Size(124, 73);
+            this.txtConnInfo.Size = new System.Drawing.Size(124, 28);
             this.txtConnInfo.TabIndex = 0;
             this.txtConnInfo.Visible = false;
             // 
@@ -689,7 +600,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(47, 28);
             this.button1.TabIndex = 2;
-            this.button1.Text = "config";
+            this.button1.Text = "Info...";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -787,19 +698,6 @@
             this.label5.Size = new System.Drawing.Size(32, 13);
             this.label5.TabIndex = 1;
             this.label5.Text = "Nick:";
-            // 
-            // lbChatrooms
-            // 
-            this.lbChatrooms.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.lbChatrooms.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lbChatrooms.FormattingEnabled = true;
-            this.lbChatrooms.IntegralHeight = false;
-            this.lbChatrooms.Location = new System.Drawing.Point(1, 22);
-            this.lbChatrooms.Name = "lbChatrooms";
-            this.lbChatrooms.Size = new System.Drawing.Size(134, 183);
-            this.lbChatrooms.TabIndex = 3;
-            this.lbChatrooms.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lbChatrooms_ItemCheck);
-            this.lbChatrooms.Click += new System.EventHandler(this.lbChatrooms_Click);
             // 
             // pnlErrMes
             // 
@@ -1044,10 +942,10 @@
             // 
             // naviBar1
             // 
-            this.naviBar1.ActiveBand = this.naviBand3;
-            this.naviBar1.Controls.Add(this.naviBand3);
+            this.naviBar1.ActiveBand = this.naviBand1;
             this.naviBar1.Controls.Add(this.naviBand1);
             this.naviBar1.Controls.Add(this.naviBand2);
+            this.naviBar1.Controls.Add(this.naviBand3);
             this.naviBar1.Dock = System.Windows.Forms.DockStyle.Left;
             this.naviBar1.HeaderHeight = 39;
             this.naviBar1.LayoutStyle = Guifreaks.NavigationBar.NaviLayoutStyle.Office2007Silver;
@@ -1113,6 +1011,46 @@
             this.naviGroup1.Text = "Conversations";
             this.naviGroup1.HeaderMouseClick += new System.Windows.Forms.MouseEventHandler(this.naviGroup1_HeaderMouseClick);
             // 
+            // lbChatrooms
+            // 
+            this.lbChatrooms.DisplayMember = "RoomName";
+            this.lbChatrooms.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbChatrooms.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.lbChatrooms.FormattingEnabled = true;
+            this.lbChatrooms.IntegralHeight = false;
+            this.lbChatrooms.ItemHeight = 20;
+            this.lbChatrooms.Location = new System.Drawing.Point(1, 22);
+            this.lbChatrooms.Name = "lbChatrooms";
+            this.lbChatrooms.Size = new System.Drawing.Size(134, 183);
+            this.lbChatrooms.TabIndex = 0;
+            this.lbChatrooms.ValueMember = "RoomName";
+            this.lbChatrooms.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lbChatrooms_DrawItem);
+            this.lbChatrooms.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lbChatrooms_MouseClick);
+            // 
+            // ctxMenuConversationHeader
+            // 
+            this.ctxMenuConversationHeader.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.joinConversationToolStripMenuItem,
+            this.createNewRoomToolStripMenuItem,
+            this.toolStripMenuItem7,
+            this.showAllRoomsToolStripMenuItem});
+            this.ctxMenuConversationHeader.Name = "ctxMenuConversationHeader";
+            this.ctxMenuConversationHeader.Size = new System.Drawing.Size(178, 76);
+            // 
+            // joinConversationToolStripMenuItem
+            // 
+            this.joinConversationToolStripMenuItem.Name = "joinConversationToolStripMenuItem";
+            this.joinConversationToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.joinConversationToolStripMenuItem.Text = "Join conversation";
+            this.joinConversationToolStripMenuItem.Click += new System.EventHandler(this.joinConversationToolStripMenuItem_Click);
+            // 
+            // createNewRoomToolStripMenuItem
+            // 
+            this.createNewRoomToolStripMenuItem.Name = "createNewRoomToolStripMenuItem";
+            this.createNewRoomToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.createNewRoomToolStripMenuItem.Text = "Create new room ...";
+            this.createNewRoomToolStripMenuItem.Click += new System.EventHandler(this.createNewRoomToolStripMenuItem_Click);
+            // 
             // naviBand3
             // 
             // 
@@ -1133,16 +1071,48 @@
             this.naviBand3.Text = "Contacts";
             this.naviBand3.Click += new System.EventHandler(this.naviBand3_Click);
             // 
+            // lvContacts
+            // 
+            this.lvContacts.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvContacts.LargeImageList = this.contactsImageList;
+            this.lvContacts.Location = new System.Drawing.Point(0, 0);
+            this.lvContacts.Name = "lvContacts";
+            this.lvContacts.Size = new System.Drawing.Size(136, 483);
+            this.lvContacts.SmallImageList = this.contactsImageList;
+            this.lvContacts.TabIndex = 0;
+            this.lvContacts.UseCompatibleStateImageBehavior = false;
+            this.lvContacts.View = System.Windows.Forms.View.Tile;
+            this.lvContacts.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvContacts_MouseDoubleClick);
+            // 
+            // contactsImageList
+            // 
+            this.contactsImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+            this.contactsImageList.ImageSize = new System.Drawing.Size(32, 32);
+            this.contactsImageList.TransparentColor = System.Drawing.Color.Transparent;
+            // 
             // naviBand2
             // 
             // 
             // naviBand2.ClientArea
             // 
-            this.naviBand2.ClientArea.Controls.Add(this.txtConnInfo);
-            this.naviBand2.ClientArea.Controls.Add(this.label4);
-            this.naviBand2.ClientArea.Controls.Add(this.txtNickname);
             this.naviBand2.ClientArea.Controls.Add(this.listServerFeatures);
+            this.naviBand2.ClientArea.Controls.Add(this.btnClosePrefs);
+            this.naviBand2.ClientArea.Controls.Add(this.linkLabel1);
+            this.naviBand2.ClientArea.Controls.Add(this.txtConnInfo);
+            this.naviBand2.ClientArea.Controls.Add(this.lnkInstallSmiley);
+            this.naviBand2.ClientArea.Controls.Add(this.label4);
+            this.naviBand2.ClientArea.Controls.Add(this.cmbSmileyTheme);
+            this.naviBand2.ClientArea.Controls.Add(this.label8);
+            this.naviBand2.ClientArea.Controls.Add(this.txtNickname);
+            this.naviBand2.ClientArea.Controls.Add(this.cmbFileUploadService);
+            this.naviBand2.ClientArea.Controls.Add(this.comboMessageTheme);
             this.naviBand2.ClientArea.Controls.Add(this.label5);
+            this.naviBand2.ClientArea.Controls.Add(this.label7);
+            this.naviBand2.ClientArea.Controls.Add(this.chkEnableImagePreview);
+            this.naviBand2.ClientArea.Controls.Add(this.chkDisplayOccupantStatus);
+            this.naviBand2.ClientArea.Controls.Add(this.label6);
+            this.naviBand2.ClientArea.Controls.Add(this.chkFiletransferAutoAccept);
+            this.naviBand2.ClientArea.Controls.Add(this.chkSternchen);
             this.naviBand2.ClientArea.Location = new System.Drawing.Point(0, 0);
             this.naviBand2.ClientArea.Name = "ClientArea";
             this.naviBand2.ClientArea.Size = new System.Drawing.Size(136, 483);
@@ -1170,26 +1140,6 @@
             this.chkToggleSidebar.UseVisualStyleBackColor = true;
             this.chkToggleSidebar.CheckedChanged += new System.EventHandler(this.chkToggleSidebar_CheckedChanged);
             // 
-            // ctxMenuConversationHeader
-            // 
-            this.ctxMenuConversationHeader.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.joinConversationToolStripMenuItem,
-            this.createNewRoomToolStripMenuItem});
-            this.ctxMenuConversationHeader.Name = "ctxMenuConversationHeader";
-            this.ctxMenuConversationHeader.Size = new System.Drawing.Size(178, 48);
-            // 
-            // joinConversationToolStripMenuItem
-            // 
-            this.joinConversationToolStripMenuItem.Name = "joinConversationToolStripMenuItem";
-            this.joinConversationToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
-            this.joinConversationToolStripMenuItem.Text = "Join conversation";
-            // 
-            // createNewRoomToolStripMenuItem
-            // 
-            this.createNewRoomToolStripMenuItem.Name = "createNewRoomToolStripMenuItem";
-            this.createNewRoomToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
-            this.createNewRoomToolStripMenuItem.Text = "Create new room ...";
-            // 
             // ctxMenuConversation
             // 
             this.ctxMenuConversation.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1202,21 +1152,25 @@
             this.toolStripMenuItem6,
             this.showFullHistoryToolStripMenuItem,
             this.toolStripMenuItem5,
-            this.closeToolStripMenuItem});
+            this.closeToolStripMenuItem,
+            this.rejoinToolStripMenuItem});
             this.ctxMenuConversation.Name = "ctxMenuConversation";
-            this.ctxMenuConversation.Size = new System.Drawing.Size(186, 176);
+            this.ctxMenuConversation.Size = new System.Drawing.Size(186, 198);
             // 
             // renameToolStripMenuItem
             // 
             this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
             this.renameToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.renameToolStripMenuItem.Text = "Rename";
+            this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
             // 
             // changeNickToolStripMenuItem
             // 
             this.changeNickToolStripMenuItem.Name = "changeNickToolStripMenuItem";
             this.changeNickToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.changeNickToolStripMenuItem.Text = "Change nick name ...";
+            this.changeNickToolStripMenuItem.Visible = false;
+            this.changeNickToolStripMenuItem.Click += new System.EventHandler(this.changeNickToolStripMenuItem_Click);
             // 
             // toolStripMenuItem4
             // 
@@ -1229,19 +1183,37 @@
             this.alwaysNotifyToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.alwaysNotifyToolStripMenuItem.Name = "alwaysNotifyToolStripMenuItem";
             this.alwaysNotifyToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.alwaysNotifyToolStripMenuItem.Tag = "2";
             this.alwaysNotifyToolStripMenuItem.Text = "Always notify";
+            this.alwaysNotifyToolStripMenuItem.Click += new System.EventHandler(this.alwaysNotifyToolStripMenuItem_Click);
             // 
             // notifyOnMentionToolStripMenuItem
             // 
             this.notifyOnMentionToolStripMenuItem.Name = "notifyOnMentionToolStripMenuItem";
             this.notifyOnMentionToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.notifyOnMentionToolStripMenuItem.Tag = "1";
             this.notifyOnMentionToolStripMenuItem.Text = "Notify on mention";
+            this.notifyOnMentionToolStripMenuItem.Click += new System.EventHandler(this.alwaysNotifyToolStripMenuItem_Click);
             // 
             // disableNotificationToolStripMenuItem
             // 
             this.disableNotificationToolStripMenuItem.Name = "disableNotificationToolStripMenuItem";
             this.disableNotificationToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.disableNotificationToolStripMenuItem.Tag = "0";
             this.disableNotificationToolStripMenuItem.Text = "Disable notification";
+            this.disableNotificationToolStripMenuItem.Click += new System.EventHandler(this.alwaysNotifyToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem6
+            // 
+            this.toolStripMenuItem6.Name = "toolStripMenuItem6";
+            this.toolStripMenuItem6.Size = new System.Drawing.Size(182, 6);
+            // 
+            // showFullHistoryToolStripMenuItem
+            // 
+            this.showFullHistoryToolStripMenuItem.Name = "showFullHistoryToolStripMenuItem";
+            this.showFullHistoryToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.showFullHistoryToolStripMenuItem.Text = "Show full history";
+            this.showFullHistoryToolStripMenuItem.Click += new System.EventHandler(this.showFullHistoryToolStripMenuItem_Click);
             // 
             // toolStripMenuItem5
             // 
@@ -1253,6 +1225,7 @@
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
             this.closeToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.closeToolStripMenuItem.Text = "Close conversation";
+            this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
             // ctxMenuParticipant
             // 
@@ -1288,35 +1261,37 @@
             this.infoToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.infoToolStripMenuItem.Text = "Info";
             // 
-            // showFullHistoryToolStripMenuItem
+            // conversationImageList
             // 
-            this.showFullHistoryToolStripMenuItem.Name = "showFullHistoryToolStripMenuItem";
-            this.showFullHistoryToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
-            this.showFullHistoryToolStripMenuItem.Text = "Show full history";
+            this.conversationImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("conversationImageList.ImageStream")));
+            this.conversationImageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.conversationImageList.Images.SetKeyName(0, "notify1");
+            this.conversationImageList.Images.SetKeyName(1, "error");
+            this.conversationImageList.Images.SetKeyName(2, "history");
+            this.conversationImageList.Images.SetKeyName(3, "notify0");
+            this.conversationImageList.Images.SetKeyName(4, "group");
+            this.conversationImageList.Images.SetKeyName(5, "user");
             // 
-            // toolStripMenuItem6
+            // toolStripMenuItem7
             // 
-            this.toolStripMenuItem6.Name = "toolStripMenuItem6";
-            this.toolStripMenuItem6.Size = new System.Drawing.Size(182, 6);
+            this.toolStripMenuItem7.Name = "toolStripMenuItem7";
+            this.toolStripMenuItem7.Size = new System.Drawing.Size(174, 6);
             // 
-            // lvContacts
+            // showAllRoomsToolStripMenuItem
             // 
-            this.lvContacts.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lvContacts.LargeImageList = this.contactsImageList;
-            this.lvContacts.Location = new System.Drawing.Point(0, 0);
-            this.lvContacts.Name = "lvContacts";
-            this.lvContacts.Size = new System.Drawing.Size(136, 483);
-            this.lvContacts.SmallImageList = this.contactsImageList;
-            this.lvContacts.TabIndex = 0;
-            this.lvContacts.UseCompatibleStateImageBehavior = false;
-            this.lvContacts.View = System.Windows.Forms.View.Tile;
-            this.lvContacts.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvContacts_MouseDoubleClick);
+            this.showAllRoomsToolStripMenuItem.CheckOnClick = true;
+            this.showAllRoomsToolStripMenuItem.Name = "showAllRoomsToolStripMenuItem";
+            this.showAllRoomsToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.showAllRoomsToolStripMenuItem.Text = "Show all rooms";
+            this.showAllRoomsToolStripMenuItem.Click += new System.EventHandler(this.showAllRoomsToolStripMenuItem_Click);
             // 
-            // contactsImageList
+            // rejoinToolStripMenuItem
             // 
-            this.contactsImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            this.contactsImageList.ImageSize = new System.Drawing.Size(32, 32);
-            this.contactsImageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.rejoinToolStripMenuItem.Name = "rejoinToolStripMenuItem";
+            this.rejoinToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.rejoinToolStripMenuItem.Text = "Rejoin";
+            this.rejoinToolStripMenuItem.Visible = false;
+            this.rejoinToolStripMenuItem.Click += new System.EventHandler(this.rejoinToolStripMenuItem_Click);
             // 
             // webBrowser1
             // 
@@ -1364,10 +1339,6 @@
             this.tabPage1.PerformLayout();
             this.pnlPrefConnectAdvanced.ResumeLayout(false);
             this.pnlPrefConnectAdvanced.PerformLayout();
-            this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
             this.pnlToolbar.ResumeLayout(false);
             this.pnlToolbar.PerformLayout();
             this.panel3.ResumeLayout(false);
@@ -1386,12 +1357,12 @@
             this.naviGroup2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.naviGroup1)).EndInit();
             this.naviGroup1.ResumeLayout(false);
+            this.ctxMenuConversationHeader.ResumeLayout(false);
             this.naviBand3.ClientArea.ResumeLayout(false);
             this.naviBand3.ResumeLayout(false);
             this.naviBand2.ClientArea.ResumeLayout(false);
             this.naviBand2.ClientArea.PerformLayout();
             this.naviBand2.ResumeLayout(false);
-            this.ctxMenuConversationHeader.ResumeLayout(false);
             this.ctxMenuConversation.ResumeLayout(false);
             this.ctxMenuParticipant.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -1428,7 +1399,6 @@
         private System.Windows.Forms.ToolStripMenuItem enableSoundToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.CheckedListBox lbChatrooms;
         private System.Windows.Forms.CheckBox chkEnableImagePreview;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.Timer tmrReconnect;
@@ -1463,16 +1433,8 @@
         private System.Windows.Forms.Panel pnlPrefConnectAdvanced;
         private System.Windows.Forms.ComboBox txtPrefServerPort;
         private System.Windows.Forms.LinkLabel lnkConnectAdvanced;
-        private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.TextBox txtChatrooms;
-        private System.Windows.Forms.Button btnRoomList;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Label label7;
-        public System.Windows.Forms.ListView lvPrefChatrooms;
-        private System.Windows.Forms.ColumnHeader columnHeader3;
-        private System.Windows.Forms.ColumnHeader columnHeader4;
-        private System.Windows.Forms.ColumnHeader columnHeader5;
-        private System.Windows.Forms.Button btnConnect2;
         private System.Windows.Forms.TextBox txtConnInfo;
         private System.Windows.Forms.Label labChatstates;
         private System.Windows.Forms.Timer tmrChatstatePaused;
@@ -1511,6 +1473,11 @@
         private System.Windows.Forms.ToolStripMenuItem infoToolStripMenuItem;
         private System.Windows.Forms.ListView lvContacts;
         private System.Windows.Forms.ImageList contactsImageList;
+        private System.Windows.Forms.ListBox lbChatrooms;
+        private System.Windows.Forms.ImageList conversationImageList;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem7;
+        private System.Windows.Forms.ToolStripMenuItem showAllRoomsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem rejoinToolStripMenuItem;
     }
 }
 
