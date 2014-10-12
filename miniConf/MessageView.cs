@@ -70,7 +70,7 @@ namespace miniConf {
             string category = null;
             foreach (string lineIter in themeIni) {
                 string line = lineIter.Trim();
-                if (String.IsNullOrEmpty(line) || line.StartsWith(";")) continue;
+                if (String.IsNullOrEmpty(line) || line.StartsWith(";") || line.StartsWith("#") || line.StartsWith("//")) continue;
                 if (line.StartsWith("[") && line.EndsWith("]")) { category = line; continue; }
 
                 if (category != null) {

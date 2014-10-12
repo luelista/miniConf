@@ -32,21 +32,17 @@
             System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Online", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Not available", System.Windows.Forms.HorizontalAlignment.Left);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.txtPrefServer = new System.Windows.Forms.TextBox();
-            this.txtPrefUsername = new System.Windows.Forms.TextBox();
-            this.txtPrefPassword = new System.Windows.Forms.TextBox();
-            this.pnlConfig = new System.Windows.Forms.Panel();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.qq_txtPrefServer = new System.Windows.Forms.TextBox();
+            this.qq_txtPrefUsername = new System.Windows.Forms.TextBox();
+            this.qq_txtPrefPassword = new System.Windows.Forms.TextBox();
             this.pnlPrefConnectAdvanced = new System.Windows.Forms.Panel();
-            this.txtPrefServerPort = new System.Windows.Forms.ComboBox();
+            this.qq_txtPrefServerPort = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.lnkConnectAdvanced = new System.Windows.Forms.LinkLabel();
             this.label2 = new System.Windows.Forms.Label();
             this.btnConnect = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.btnRegister = new System.Windows.Forms.Button();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.lnkInstallSmiley = new System.Windows.Forms.LinkLabel();
             this.label8 = new System.Windows.Forms.Label();
@@ -69,8 +65,8 @@
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.pnlToolbar = new System.Windows.Forms.Panel();
             this.button4 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
             this.labChatstates = new System.Windows.Forms.Label();
+            this.chkToggleSidebar = new System.Windows.Forms.CheckBox();
             this.txtSubject = new System.Windows.Forms.TextBox();
             this.panel3 = new System.Windows.Forms.Panel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -98,6 +94,7 @@
             this.enablePopupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.enableSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.logoutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.beendenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tmrReconnect = new System.Windows.Forms.Timer(this.components);
             this.tmrBlinky = new System.Windows.Forms.Timer(this.components);
@@ -107,17 +104,16 @@
             this.tmrChatstatePaused = new System.Windows.Forms.Timer(this.components);
             this.naviBar1 = new Guifreaks.NavigationBar.NaviBar(this.components);
             this.naviBand1 = new Guifreaks.NavigationBar.NaviBand(this.components);
-            this.naviGroup2 = new Guifreaks.NavigationBar.NaviGroup(this.components);
-            this.naviGroup1 = new Guifreaks.NavigationBar.NaviGroup(this.components);
             this.lbChatrooms = new System.Windows.Forms.ListBox();
             this.ctxMenuConversationHeader = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.joinConversationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createNewRoomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripSeparator();
+            this.showAllRoomsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.naviBand2 = new Guifreaks.NavigationBar.NaviBand(this.components);
             this.naviBand3 = new Guifreaks.NavigationBar.NaviBand(this.components);
             this.lvContacts = new System.Windows.Forms.ListView();
             this.contactsImageList = new System.Windows.Forms.ImageList(this.components);
-            this.naviBand2 = new Guifreaks.NavigationBar.NaviBand(this.components);
-            this.chkToggleSidebar = new System.Windows.Forms.CheckBox();
             this.ctxMenuConversation = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.changeNickToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -129,19 +125,23 @@
             this.showFullHistoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rejoinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxMenuParticipant = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.mentionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.privateMessageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openDirectChatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.infoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.conversationImageList = new System.Windows.Forms.ImageList(this.components);
-            this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripSeparator();
-            this.showAllRoomsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.rejoinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.pnlLoginErrMes = new System.Windows.Forms.Panel();
+            this.labLoginErrMes = new System.Windows.Forms.Label();
+            this.btnLoginExit = new System.Windows.Forms.Button();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.pnlLoginWrapper = new System.Windows.Forms.Panel();
             this.webBrowser1 = new miniConf.MessageView();
-            this.pnlConfig.SuspendLayout();
-            this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
             this.pnlPrefConnectAdvanced.SuspendLayout();
             this.pnlToolbar.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -154,105 +154,65 @@
             this.naviBar1.SuspendLayout();
             this.naviBand1.ClientArea.SuspendLayout();
             this.naviBand1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.naviGroup2)).BeginInit();
-            this.naviGroup2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.naviGroup1)).BeginInit();
-            this.naviGroup1.SuspendLayout();
             this.ctxMenuConversationHeader.SuspendLayout();
-            this.naviBand3.ClientArea.SuspendLayout();
-            this.naviBand3.SuspendLayout();
             this.naviBand2.ClientArea.SuspendLayout();
             this.naviBand2.SuspendLayout();
+            this.naviBand3.ClientArea.SuspendLayout();
+            this.naviBand3.SuspendLayout();
             this.ctxMenuConversation.SuspendLayout();
             this.ctxMenuParticipant.SuspendLayout();
+            this.panel1.SuspendLayout();
+            this.pnlLoginErrMes.SuspendLayout();
+            this.panel4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.pnlLoginWrapper.SuspendLayout();
             this.SuspendLayout();
             // 
-            // txtPrefServer
+            // qq_txtPrefServer
             // 
-            this.txtPrefServer.Location = new System.Drawing.Point(86, 7);
-            this.txtPrefServer.Name = "txtPrefServer";
-            this.txtPrefServer.Size = new System.Drawing.Size(140, 20);
-            this.txtPrefServer.TabIndex = 1;
+            this.qq_txtPrefServer.Location = new System.Drawing.Point(86, 7);
+            this.qq_txtPrefServer.Name = "qq_txtPrefServer";
+            this.qq_txtPrefServer.Size = new System.Drawing.Size(140, 20);
+            this.qq_txtPrefServer.TabIndex = 1;
             // 
-            // txtPrefUsername
+            // qq_txtPrefUsername
             // 
-            this.txtPrefUsername.Location = new System.Drawing.Point(88, 21);
-            this.txtPrefUsername.Name = "txtPrefUsername";
-            this.txtPrefUsername.Size = new System.Drawing.Size(200, 20);
-            this.txtPrefUsername.TabIndex = 3;
-            this.txtPrefUsername.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPrefUsername_KeyPress);
+            this.qq_txtPrefUsername.Location = new System.Drawing.Point(106, 107);
+            this.qq_txtPrefUsername.Name = "qq_txtPrefUsername";
+            this.qq_txtPrefUsername.Size = new System.Drawing.Size(200, 20);
+            this.qq_txtPrefUsername.TabIndex = 3;
+            this.qq_txtPrefUsername.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPrefUsername_KeyPress);
             // 
-            // txtPrefPassword
+            // qq_txtPrefPassword
             // 
-            this.txtPrefPassword.Location = new System.Drawing.Point(88, 47);
-            this.txtPrefPassword.Name = "txtPrefPassword";
-            this.txtPrefPassword.PasswordChar = '*';
-            this.txtPrefPassword.Size = new System.Drawing.Size(200, 20);
-            this.txtPrefPassword.TabIndex = 5;
-            // 
-            // pnlConfig
-            // 
-            this.pnlConfig.BackColor = System.Drawing.Color.Gold;
-            this.pnlConfig.Controls.Add(this.tabControl1);
-            this.pnlConfig.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlConfig.Location = new System.Drawing.Point(138, 78);
-            this.pnlConfig.Name = "pnlConfig";
-            this.pnlConfig.Size = new System.Drawing.Size(478, 212);
-            this.pnlConfig.TabIndex = 5;
-            this.pnlConfig.Visible = false;
-            // 
-            // tabControl1
-            // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(6, 4);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(465, 205);
-            this.tabControl1.TabIndex = 18;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.pnlPrefConnectAdvanced);
-            this.tabPage1.Controls.Add(this.lnkConnectAdvanced);
-            this.tabPage1.Controls.Add(this.txtPrefUsername);
-            this.tabPage1.Controls.Add(this.txtPrefPassword);
-            this.tabPage1.Controls.Add(this.label2);
-            this.tabPage1.Controls.Add(this.btnConnect);
-            this.tabPage1.Controls.Add(this.label3);
-            this.tabPage1.Controls.Add(this.btnRegister);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(457, 179);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Login";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.qq_txtPrefPassword.Location = new System.Drawing.Point(106, 133);
+            this.qq_txtPrefPassword.Name = "qq_txtPrefPassword";
+            this.qq_txtPrefPassword.PasswordChar = '*';
+            this.qq_txtPrefPassword.Size = new System.Drawing.Size(200, 20);
+            this.qq_txtPrefPassword.TabIndex = 5;
+            this.qq_txtPrefPassword.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.qq_txtPrefPassword_KeyPress);
             // 
             // pnlPrefConnectAdvanced
             // 
-            this.pnlPrefConnectAdvanced.Controls.Add(this.txtPrefServerPort);
-            this.pnlPrefConnectAdvanced.Controls.Add(this.txtPrefServer);
+            this.pnlPrefConnectAdvanced.Controls.Add(this.qq_txtPrefServerPort);
+            this.pnlPrefConnectAdvanced.Controls.Add(this.qq_txtPrefServer);
             this.pnlPrefConnectAdvanced.Controls.Add(this.label1);
-            this.pnlPrefConnectAdvanced.Location = new System.Drawing.Point(2, 108);
+            this.pnlPrefConnectAdvanced.Location = new System.Drawing.Point(20, 174);
             this.pnlPrefConnectAdvanced.Name = "pnlPrefConnectAdvanced";
             this.pnlPrefConnectAdvanced.Size = new System.Drawing.Size(310, 61);
             this.pnlPrefConnectAdvanced.TabIndex = 13;
             this.pnlPrefConnectAdvanced.Visible = false;
             // 
-            // txtPrefServerPort
+            // qq_txtPrefServerPort
             // 
-            this.txtPrefServerPort.FormattingEnabled = true;
-            this.txtPrefServerPort.Items.AddRange(new object[] {
+            this.qq_txtPrefServerPort.FormattingEnabled = true;
+            this.qq_txtPrefServerPort.Items.AddRange(new object[] {
             "5222"});
-            this.txtPrefServerPort.Location = new System.Drawing.Point(232, 7);
-            this.txtPrefServerPort.Name = "txtPrefServerPort";
-            this.txtPrefServerPort.Size = new System.Drawing.Size(54, 21);
-            this.txtPrefServerPort.TabIndex = 11;
-            this.txtPrefServerPort.Text = "5222";
+            this.qq_txtPrefServerPort.Location = new System.Drawing.Point(232, 7);
+            this.qq_txtPrefServerPort.Name = "qq_txtPrefServerPort";
+            this.qq_txtPrefServerPort.Size = new System.Drawing.Size(54, 21);
+            this.qq_txtPrefServerPort.TabIndex = 11;
+            this.qq_txtPrefServerPort.Text = "5222";
             // 
             // label1
             // 
@@ -266,7 +226,7 @@
             // lnkConnectAdvanced
             // 
             this.lnkConnectAdvanced.AutoSize = true;
-            this.lnkConnectAdvanced.Location = new System.Drawing.Point(9, 106);
+            this.lnkConnectAdvanced.Location = new System.Drawing.Point(27, 172);
             this.lnkConnectAdvanced.Name = "lnkConnectAdvanced";
             this.lnkConnectAdvanced.Size = new System.Drawing.Size(65, 13);
             this.lnkConnectAdvanced.TabIndex = 12;
@@ -277,7 +237,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(9, 24);
+            this.label2.Location = new System.Drawing.Point(27, 110);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(56, 13);
             this.label2.TabIndex = 2;
@@ -286,7 +246,7 @@
             // btnConnect
             // 
             this.btnConnect.BackColor = System.Drawing.SystemColors.Control;
-            this.btnConnect.Location = new System.Drawing.Point(88, 73);
+            this.btnConnect.Location = new System.Drawing.Point(237, 262);
             this.btnConnect.Name = "btnConnect";
             this.btnConnect.Size = new System.Drawing.Size(105, 22);
             this.btnConnect.TabIndex = 8;
@@ -297,7 +257,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(9, 50);
+            this.label3.Location = new System.Drawing.Point(27, 136);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(56, 13);
             this.label3.TabIndex = 4;
@@ -306,23 +266,13 @@
             // btnRegister
             // 
             this.btnRegister.BackColor = System.Drawing.SystemColors.Control;
-            this.btnRegister.Location = new System.Drawing.Point(199, 73);
+            this.btnRegister.Location = new System.Drawing.Point(20, 262);
             this.btnRegister.Name = "btnRegister";
             this.btnRegister.Size = new System.Drawing.Size(89, 22);
             this.btnRegister.TabIndex = 9;
             this.btnRegister.Text = "New Account";
             this.btnRegister.UseVisualStyleBackColor = true;
             this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(457, 179);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Appearance";
-            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // linkLabel1
             // 
@@ -379,7 +329,7 @@
             // 
             this.btnClosePrefs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnClosePrefs.BackColor = System.Drawing.SystemColors.Control;
-            this.btnClosePrefs.Location = new System.Drawing.Point(7, 455);
+            this.btnClosePrefs.Location = new System.Drawing.Point(7, 518);
             this.btnClosePrefs.Name = "btnClosePrefs";
             this.btnClosePrefs.Size = new System.Drawing.Size(105, 22);
             this.btnClosePrefs.TabIndex = 19;
@@ -505,13 +455,13 @@
             this.listServerFeatures.IntegralHeight = false;
             this.listServerFeatures.Location = new System.Drawing.Point(7, 274);
             this.listServerFeatures.Name = "listServerFeatures";
-            this.listServerFeatures.Size = new System.Drawing.Size(124, 175);
+            this.listServerFeatures.Size = new System.Drawing.Size(124, 238);
             this.listServerFeatures.TabIndex = 1;
             // 
             // txtConnInfo
             // 
             this.txtConnInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtConnInfo.Location = new System.Drawing.Point(7, 421);
+            this.txtConnInfo.Location = new System.Drawing.Point(7, 484);
             this.txtConnInfo.Multiline = true;
             this.txtConnInfo.Name = "txtConnInfo";
             this.txtConnInfo.Size = new System.Drawing.Size(124, 28);
@@ -520,11 +470,12 @@
             // 
             // lvOnlineStatus
             // 
-            this.lvOnlineStatus.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.lvOnlineStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lvOnlineStatus.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2});
-            this.lvOnlineStatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvOnlineStatus.FullRowSelect = true;
             listViewGroup1.Header = "Online";
             listViewGroup1.Name = "online";
@@ -534,10 +485,10 @@
             listViewGroup1,
             listViewGroup2});
             this.lvOnlineStatus.LargeImageList = this.imageList1;
-            this.lvOnlineStatus.Location = new System.Drawing.Point(1, 22);
+            this.lvOnlineStatus.Location = new System.Drawing.Point(1, 213);
             this.lvOnlineStatus.Name = "lvOnlineStatus";
             this.lvOnlineStatus.ShowItemToolTips = true;
-            this.lvOnlineStatus.Size = new System.Drawing.Size(134, 213);
+            this.lvOnlineStatus.Size = new System.Drawing.Size(134, 332);
             this.lvOnlineStatus.SmallImageList = this.imageList1;
             this.lvOnlineStatus.TabIndex = 0;
             this.lvOnlineStatus.UseCompatibleStateImageBehavior = false;
@@ -572,37 +523,25 @@
             this.pnlToolbar.BackColor = System.Drawing.Color.Silver;
             this.pnlToolbar.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pnlToolbar.BackgroundImage")));
             this.pnlToolbar.Controls.Add(this.button4);
-            this.pnlToolbar.Controls.Add(this.button1);
             this.pnlToolbar.Controls.Add(this.labChatstates);
+            this.pnlToolbar.Controls.Add(this.chkToggleSidebar);
             this.pnlToolbar.Controls.Add(this.txtSubject);
             this.pnlToolbar.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlToolbar.Location = new System.Drawing.Point(138, 0);
+            this.pnlToolbar.Location = new System.Drawing.Point(0, 0);
             this.pnlToolbar.Name = "pnlToolbar";
-            this.pnlToolbar.Size = new System.Drawing.Size(478, 40);
+            this.pnlToolbar.Size = new System.Drawing.Size(616, 40);
             this.pnlToolbar.TabIndex = 6;
             // 
             // button4
             // 
             this.button4.BackColor = System.Drawing.SystemColors.Control;
             this.button4.Image = ((System.Drawing.Image)(resources.GetObject("button4.Image")));
-            this.button4.Location = new System.Drawing.Point(5, 6);
+            this.button4.Location = new System.Drawing.Point(33, 6);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(28, 28);
+            this.button4.Size = new System.Drawing.Size(31, 28);
             this.button4.TabIndex = 0;
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
-            // 
-            // button1
-            // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.BackColor = System.Drawing.SystemColors.Control;
-            this.button1.Location = new System.Drawing.Point(425, 6);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(47, 28);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Info...";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // labChatstates
             // 
@@ -611,14 +550,28 @@
             this.labChatstates.BackColor = System.Drawing.Color.Cyan;
             this.labChatstates.Image = ((System.Drawing.Image)(resources.GetObject("labChatstates.Image")));
             this.labChatstates.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.labChatstates.Location = new System.Drawing.Point(34, 6);
+            this.labChatstates.Location = new System.Drawing.Point(65, 6);
             this.labChatstates.Name = "labChatstates";
             this.labChatstates.Padding = new System.Windows.Forms.Padding(10, 0, 0, 0);
-            this.labChatstates.Size = new System.Drawing.Size(388, 28);
+            this.labChatstates.Size = new System.Drawing.Size(544, 28);
             this.labChatstates.TabIndex = 4;
             this.labChatstates.Text = "             label4";
             this.labChatstates.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.labChatstates.Visible = false;
+            // 
+            // chkToggleSidebar
+            // 
+            this.chkToggleSidebar.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chkToggleSidebar.BackColor = System.Drawing.SystemColors.Control;
+            this.chkToggleSidebar.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkToggleSidebar.Location = new System.Drawing.Point(5, 6);
+            this.chkToggleSidebar.Name = "chkToggleSidebar";
+            this.chkToggleSidebar.Size = new System.Drawing.Size(28, 28);
+            this.chkToggleSidebar.TabIndex = 11;
+            this.chkToggleSidebar.Text = "<";
+            this.chkToggleSidebar.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.chkToggleSidebar.UseVisualStyleBackColor = true;
+            this.chkToggleSidebar.CheckedChanged += new System.EventHandler(this.chkToggleSidebar_CheckedChanged);
             // 
             // txtSubject
             // 
@@ -627,18 +580,18 @@
             this.txtSubject.BackColor = System.Drawing.SystemColors.Window;
             this.txtSubject.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtSubject.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.txtSubject.Location = new System.Drawing.Point(36, 9);
+            this.txtSubject.Location = new System.Drawing.Point(67, 9);
             this.txtSubject.Name = "txtSubject";
-            this.txtSubject.Size = new System.Drawing.Size(381, 21);
+            this.txtSubject.Size = new System.Drawing.Size(537, 21);
             this.txtSubject.TabIndex = 1;
             // 
             // panel3
             // 
             this.panel3.Controls.Add(this.splitContainer1);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(138, 290);
+            this.panel3.Location = new System.Drawing.Point(138, 78);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(478, 310);
+            this.panel3.Size = new System.Drawing.Size(478, 522);
             this.panel3.TabIndex = 7;
             // 
             // splitContainer1
@@ -655,7 +608,7 @@
             this.splitContainer1.Panel1MinSize = 200;
             this.splitContainer1.Panel2Collapsed = true;
             this.splitContainer1.Panel2MinSize = 50;
-            this.splitContainer1.Size = new System.Drawing.Size(478, 310);
+            this.splitContainer1.Size = new System.Drawing.Size(478, 522);
             this.splitContainer1.SplitterDistance = 368;
             this.splitContainer1.TabIndex = 9;
             // 
@@ -667,7 +620,7 @@
             this.txtSendmessage.BackColor = System.Drawing.SystemColors.Window;
             this.txtSendmessage.Enabled = false;
             this.txtSendmessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-            this.txtSendmessage.Location = new System.Drawing.Point(0, 249);
+            this.txtSendmessage.Location = new System.Drawing.Point(0, 461);
             this.txtSendmessage.Multiline = true;
             this.txtSendmessage.Name = "txtSendmessage";
             this.txtSendmessage.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -759,9 +712,10 @@
             this.enablePopupToolStripMenuItem,
             this.enableSoundToolStripMenuItem,
             this.toolStripMenuItem1,
+            this.logoutToolStripMenuItem,
             this.beendenToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(175, 242);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(175, 264);
             // 
             // openMiniConfToolStripMenuItem
             // 
@@ -886,6 +840,13 @@
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(171, 6);
             // 
+            // logoutToolStripMenuItem
+            // 
+            this.logoutToolStripMenuItem.Name = "logoutToolStripMenuItem";
+            this.logoutToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.logoutToolStripMenuItem.Text = "Logout";
+            this.logoutToolStripMenuItem.Click += new System.EventHandler(this.logoutToolStripMenuItem_Click);
+            // 
             // beendenToolStripMenuItem
             // 
             this.beendenToolStripMenuItem.Name = "beendenToolStripMenuItem";
@@ -942,20 +903,19 @@
             // 
             // naviBar1
             // 
-            this.naviBar1.ActiveBand = this.naviBand1;
-            this.naviBar1.Controls.Add(this.naviBand1);
+            this.naviBar1.ActiveBand = this.naviBand2;
             this.naviBar1.Controls.Add(this.naviBand2);
+            this.naviBar1.Controls.Add(this.naviBand1);
             this.naviBar1.Controls.Add(this.naviBand3);
             this.naviBar1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.naviBar1.HeaderHeight = 39;
+            this.naviBar1.HeaderHeight = 0;
             this.naviBar1.LayoutStyle = Guifreaks.NavigationBar.NaviLayoutStyle.Office2007Silver;
-            this.naviBar1.Location = new System.Drawing.Point(0, 0);
+            this.naviBar1.Location = new System.Drawing.Point(0, 40);
             this.naviBar1.Name = "naviBar1";
             this.naviBar1.ShowCollapseButton = false;
-            this.naviBar1.Size = new System.Drawing.Size(138, 626);
+            this.naviBar1.Size = new System.Drawing.Size(138, 586);
             this.naviBar1.TabIndex = 10;
             this.naviBar1.Text = "naviBar1";
-            this.naviBar1.VisibleLargeButtons = 2;
             this.naviBar1.SizeChanged += new System.EventHandler(this.naviBar1_SizeChanged);
             // 
             // naviBand1
@@ -963,65 +923,33 @@
             // 
             // naviBand1.ClientArea
             // 
-            this.naviBand1.ClientArea.Controls.Add(this.naviGroup2);
-            this.naviBand1.ClientArea.Controls.Add(this.naviGroup1);
+            this.naviBand1.ClientArea.Controls.Add(this.lvOnlineStatus);
+            this.naviBand1.ClientArea.Controls.Add(this.lbChatrooms);
             this.naviBand1.ClientArea.Location = new System.Drawing.Point(0, 0);
             this.naviBand1.ClientArea.Name = "ClientArea";
-            this.naviBand1.ClientArea.Size = new System.Drawing.Size(136, 483);
+            this.naviBand1.ClientArea.Size = new System.Drawing.Size(136, 546);
             this.naviBand1.ClientArea.TabIndex = 0;
             this.naviBand1.LargeImage = ((System.Drawing.Image)(resources.GetObject("naviBand1.LargeImage")));
             this.naviBand1.LayoutStyle = Guifreaks.NavigationBar.NaviLayoutStyle.Office2007Silver;
-            this.naviBand1.Location = new System.Drawing.Point(1, 39);
+            this.naviBand1.Location = new System.Drawing.Point(1, 0);
             this.naviBand1.Name = "naviBand1";
-            this.naviBand1.Size = new System.Drawing.Size(136, 483);
+            this.naviBand1.Size = new System.Drawing.Size(136, 546);
             this.naviBand1.SmallImage = ((System.Drawing.Image)(resources.GetObject("naviBand1.SmallImage")));
             this.naviBand1.TabIndex = 3;
             this.naviBand1.Text = "Groups";
             // 
-            // naviGroup2
-            // 
-            this.naviGroup2.Caption = "Participants";
-            this.naviGroup2.Controls.Add(this.lvOnlineStatus);
-            this.naviGroup2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.naviGroup2.ExpandedHeight = 236;
-            this.naviGroup2.HeaderContextMenuStrip = null;
-            this.naviGroup2.LayoutStyle = Guifreaks.NavigationBar.NaviLayoutStyle.Office2007Silver;
-            this.naviGroup2.Location = new System.Drawing.Point(0, 206);
-            this.naviGroup2.Name = "naviGroup2";
-            this.naviGroup2.Padding = new System.Windows.Forms.Padding(1, 22, 1, 1);
-            this.naviGroup2.Size = new System.Drawing.Size(136, 236);
-            this.naviGroup2.TabIndex = 1;
-            this.naviGroup2.Text = "naviGroup2";
-            this.naviGroup2.HeaderMouseClick += new System.Windows.Forms.MouseEventHandler(this.naviGroup1_HeaderMouseClick);
-            this.naviGroup2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.naviGroup2_MouseDown);
-            // 
-            // naviGroup1
-            // 
-            this.naviGroup1.Caption = "Conversations";
-            this.naviGroup1.Controls.Add(this.lbChatrooms);
-            this.naviGroup1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.naviGroup1.ExpandedHeight = 206;
-            this.naviGroup1.HeaderContextMenuStrip = this.ctxMenuConversationHeader;
-            this.naviGroup1.LayoutStyle = Guifreaks.NavigationBar.NaviLayoutStyle.Office2007Silver;
-            this.naviGroup1.Location = new System.Drawing.Point(0, 0);
-            this.naviGroup1.Name = "naviGroup1";
-            this.naviGroup1.Padding = new System.Windows.Forms.Padding(1, 22, 1, 1);
-            this.naviGroup1.Size = new System.Drawing.Size(136, 206);
-            this.naviGroup1.TabIndex = 0;
-            this.naviGroup1.Text = "Conversations";
-            this.naviGroup1.HeaderMouseClick += new System.Windows.Forms.MouseEventHandler(this.naviGroup1_HeaderMouseClick);
-            // 
             // lbChatrooms
             // 
+            this.lbChatrooms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lbChatrooms.DisplayMember = "RoomName";
-            this.lbChatrooms.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lbChatrooms.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.lbChatrooms.FormattingEnabled = true;
             this.lbChatrooms.IntegralHeight = false;
             this.lbChatrooms.ItemHeight = 20;
-            this.lbChatrooms.Location = new System.Drawing.Point(1, 22);
+            this.lbChatrooms.Location = new System.Drawing.Point(1, 1);
             this.lbChatrooms.Name = "lbChatrooms";
-            this.lbChatrooms.Size = new System.Drawing.Size(134, 183);
+            this.lbChatrooms.Size = new System.Drawing.Size(134, 210);
             this.lbChatrooms.TabIndex = 0;
             this.lbChatrooms.ValueMember = "RoomName";
             this.lbChatrooms.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lbChatrooms_DrawItem);
@@ -1051,44 +979,18 @@
             this.createNewRoomToolStripMenuItem.Text = "Create new room ...";
             this.createNewRoomToolStripMenuItem.Click += new System.EventHandler(this.createNewRoomToolStripMenuItem_Click);
             // 
-            // naviBand3
+            // toolStripMenuItem7
             // 
+            this.toolStripMenuItem7.Name = "toolStripMenuItem7";
+            this.toolStripMenuItem7.Size = new System.Drawing.Size(174, 6);
             // 
-            // naviBand3.ClientArea
+            // showAllRoomsToolStripMenuItem
             // 
-            this.naviBand3.ClientArea.Controls.Add(this.lvContacts);
-            this.naviBand3.ClientArea.Location = new System.Drawing.Point(0, 0);
-            this.naviBand3.ClientArea.Name = "ClientArea";
-            this.naviBand3.ClientArea.Size = new System.Drawing.Size(136, 483);
-            this.naviBand3.ClientArea.TabIndex = 0;
-            this.naviBand3.LargeImage = ((System.Drawing.Image)(resources.GetObject("naviBand3.LargeImage")));
-            this.naviBand3.LayoutStyle = Guifreaks.NavigationBar.NaviLayoutStyle.Office2007Silver;
-            this.naviBand3.Location = new System.Drawing.Point(1, 39);
-            this.naviBand3.Name = "naviBand3";
-            this.naviBand3.Size = new System.Drawing.Size(136, 483);
-            this.naviBand3.SmallImage = ((System.Drawing.Image)(resources.GetObject("naviBand3.SmallImage")));
-            this.naviBand3.TabIndex = 7;
-            this.naviBand3.Text = "Contacts";
-            this.naviBand3.Click += new System.EventHandler(this.naviBand3_Click);
-            // 
-            // lvContacts
-            // 
-            this.lvContacts.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lvContacts.LargeImageList = this.contactsImageList;
-            this.lvContacts.Location = new System.Drawing.Point(0, 0);
-            this.lvContacts.Name = "lvContacts";
-            this.lvContacts.Size = new System.Drawing.Size(136, 483);
-            this.lvContacts.SmallImageList = this.contactsImageList;
-            this.lvContacts.TabIndex = 0;
-            this.lvContacts.UseCompatibleStateImageBehavior = false;
-            this.lvContacts.View = System.Windows.Forms.View.Tile;
-            this.lvContacts.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvContacts_MouseDoubleClick);
-            // 
-            // contactsImageList
-            // 
-            this.contactsImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            this.contactsImageList.ImageSize = new System.Drawing.Size(32, 32);
-            this.contactsImageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.showAllRoomsToolStripMenuItem.CheckOnClick = true;
+            this.showAllRoomsToolStripMenuItem.Name = "showAllRoomsToolStripMenuItem";
+            this.showAllRoomsToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.showAllRoomsToolStripMenuItem.Text = "Show all rooms";
+            this.showAllRoomsToolStripMenuItem.Click += new System.EventHandler(this.showAllRoomsToolStripMenuItem_Click);
             // 
             // naviBand2
             // 
@@ -1115,30 +1017,55 @@
             this.naviBand2.ClientArea.Controls.Add(this.chkSternchen);
             this.naviBand2.ClientArea.Location = new System.Drawing.Point(0, 0);
             this.naviBand2.ClientArea.Name = "ClientArea";
-            this.naviBand2.ClientArea.Size = new System.Drawing.Size(136, 483);
+            this.naviBand2.ClientArea.Size = new System.Drawing.Size(136, 546);
             this.naviBand2.ClientArea.TabIndex = 0;
             this.naviBand2.LargeImage = ((System.Drawing.Image)(resources.GetObject("naviBand2.LargeImage")));
             this.naviBand2.LayoutStyle = Guifreaks.NavigationBar.NaviLayoutStyle.Office2007Silver;
-            this.naviBand2.Location = new System.Drawing.Point(1, 39);
+            this.naviBand2.Location = new System.Drawing.Point(1, 0);
             this.naviBand2.Name = "naviBand2";
-            this.naviBand2.Size = new System.Drawing.Size(136, 483);
+            this.naviBand2.Size = new System.Drawing.Size(136, 546);
             this.naviBand2.SmallImage = ((System.Drawing.Image)(resources.GetObject("naviBand2.SmallImage")));
             this.naviBand2.TabIndex = 5;
             this.naviBand2.Text = "Preferences";
             // 
-            // chkToggleSidebar
+            // naviBand3
             // 
-            this.chkToggleSidebar.Appearance = System.Windows.Forms.Appearance.Button;
-            this.chkToggleSidebar.BackColor = System.Drawing.SystemColors.Control;
-            this.chkToggleSidebar.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkToggleSidebar.Location = new System.Drawing.Point(107, 6);
-            this.chkToggleSidebar.Name = "chkToggleSidebar";
-            this.chkToggleSidebar.Size = new System.Drawing.Size(25, 28);
-            this.chkToggleSidebar.TabIndex = 11;
-            this.chkToggleSidebar.Text = "<";
-            this.chkToggleSidebar.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.chkToggleSidebar.UseVisualStyleBackColor = true;
-            this.chkToggleSidebar.CheckedChanged += new System.EventHandler(this.chkToggleSidebar_CheckedChanged);
+            // 
+            // naviBand3.ClientArea
+            // 
+            this.naviBand3.ClientArea.Controls.Add(this.lvContacts);
+            this.naviBand3.ClientArea.Location = new System.Drawing.Point(0, 0);
+            this.naviBand3.ClientArea.Name = "ClientArea";
+            this.naviBand3.ClientArea.Size = new System.Drawing.Size(136, 546);
+            this.naviBand3.ClientArea.TabIndex = 0;
+            this.naviBand3.LargeImage = ((System.Drawing.Image)(resources.GetObject("naviBand3.LargeImage")));
+            this.naviBand3.LayoutStyle = Guifreaks.NavigationBar.NaviLayoutStyle.Office2007Silver;
+            this.naviBand3.Location = new System.Drawing.Point(1, 0);
+            this.naviBand3.Name = "naviBand3";
+            this.naviBand3.Size = new System.Drawing.Size(136, 546);
+            this.naviBand3.SmallImage = ((System.Drawing.Image)(resources.GetObject("naviBand3.SmallImage")));
+            this.naviBand3.TabIndex = 7;
+            this.naviBand3.Text = "Contacts";
+            this.naviBand3.Click += new System.EventHandler(this.naviBand3_Click);
+            // 
+            // lvContacts
+            // 
+            this.lvContacts.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvContacts.LargeImageList = this.contactsImageList;
+            this.lvContacts.Location = new System.Drawing.Point(0, 0);
+            this.lvContacts.Name = "lvContacts";
+            this.lvContacts.Size = new System.Drawing.Size(136, 546);
+            this.lvContacts.SmallImageList = this.contactsImageList;
+            this.lvContacts.TabIndex = 0;
+            this.lvContacts.UseCompatibleStateImageBehavior = false;
+            this.lvContacts.View = System.Windows.Forms.View.Tile;
+            this.lvContacts.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvContacts_MouseDoubleClick);
+            // 
+            // contactsImageList
+            // 
+            this.contactsImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+            this.contactsImageList.ImageSize = new System.Drawing.Size(32, 32);
+            this.contactsImageList.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // ctxMenuConversation
             // 
@@ -1227,6 +1154,14 @@
             this.closeToolStripMenuItem.Text = "Close conversation";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
+            // rejoinToolStripMenuItem
+            // 
+            this.rejoinToolStripMenuItem.Name = "rejoinToolStripMenuItem";
+            this.rejoinToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.rejoinToolStripMenuItem.Text = "Rejoin";
+            this.rejoinToolStripMenuItem.Visible = false;
+            this.rejoinToolStripMenuItem.Click += new System.EventHandler(this.rejoinToolStripMenuItem_Click);
+            // 
             // ctxMenuParticipant
             // 
             this.ctxMenuParticipant.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1272,26 +1207,111 @@
             this.conversationImageList.Images.SetKeyName(4, "group");
             this.conversationImageList.Images.SetKeyName(5, "user");
             // 
-            // toolStripMenuItem7
+            // panel1
             // 
-            this.toolStripMenuItem7.Name = "toolStripMenuItem7";
-            this.toolStripMenuItem7.Size = new System.Drawing.Size(174, 6);
+            this.panel1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.panel1.BackColor = System.Drawing.SystemColors.Control;
+            this.panel1.Controls.Add(this.pnlLoginErrMes);
+            this.panel1.Controls.Add(this.btnLoginExit);
+            this.panel1.Controls.Add(this.panel4);
+            this.panel1.Controls.Add(this.pnlPrefConnectAdvanced);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.lnkConnectAdvanced);
+            this.panel1.Controls.Add(this.btnRegister);
+            this.panel1.Controls.Add(this.qq_txtPrefUsername);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.qq_txtPrefPassword);
+            this.panel1.Controls.Add(this.btnConnect);
+            this.panel1.Location = new System.Drawing.Point(-179, 29);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(451, 296);
+            this.panel1.TabIndex = 11;
             // 
-            // showAllRoomsToolStripMenuItem
+            // pnlLoginErrMes
             // 
-            this.showAllRoomsToolStripMenuItem.CheckOnClick = true;
-            this.showAllRoomsToolStripMenuItem.Name = "showAllRoomsToolStripMenuItem";
-            this.showAllRoomsToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
-            this.showAllRoomsToolStripMenuItem.Text = "Show all rooms";
-            this.showAllRoomsToolStripMenuItem.Click += new System.EventHandler(this.showAllRoomsToolStripMenuItem_Click);
+            this.pnlLoginErrMes.BackColor = System.Drawing.Color.Firebrick;
+            this.pnlLoginErrMes.Controls.Add(this.labLoginErrMes);
+            this.pnlLoginErrMes.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pnlLoginErrMes.Location = new System.Drawing.Point(0, 58);
+            this.pnlLoginErrMes.Name = "pnlLoginErrMes";
+            this.pnlLoginErrMes.Size = new System.Drawing.Size(451, 35);
+            this.pnlLoginErrMes.TabIndex = 27;
+            this.pnlLoginErrMes.Visible = false;
             // 
-            // rejoinToolStripMenuItem
+            // labLoginErrMes
             // 
-            this.rejoinToolStripMenuItem.Name = "rejoinToolStripMenuItem";
-            this.rejoinToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
-            this.rejoinToolStripMenuItem.Text = "Rejoin";
-            this.rejoinToolStripMenuItem.Visible = false;
-            this.rejoinToolStripMenuItem.Click += new System.EventHandler(this.rejoinToolStripMenuItem_Click);
+            this.labLoginErrMes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.labLoginErrMes.ForeColor = System.Drawing.Color.White;
+            this.labLoginErrMes.Location = new System.Drawing.Point(9, 5);
+            this.labLoginErrMes.Name = "labLoginErrMes";
+            this.labLoginErrMes.Size = new System.Drawing.Size(434, 37);
+            this.labLoginErrMes.TabIndex = 0;
+            this.labLoginErrMes.Text = "label5";
+            // 
+            // btnLoginExit
+            // 
+            this.btnLoginExit.BackColor = System.Drawing.SystemColors.Control;
+            this.btnLoginExit.Location = new System.Drawing.Point(348, 262);
+            this.btnLoginExit.Name = "btnLoginExit";
+            this.btnLoginExit.Size = new System.Drawing.Size(89, 22);
+            this.btnLoginExit.TabIndex = 26;
+            this.btnLoginExit.Text = "Exit";
+            this.btnLoginExit.UseVisualStyleBackColor = true;
+            this.btnLoginExit.Click += new System.EventHandler(this.btnLoginExit_Click);
+            // 
+            // panel4
+            // 
+            this.panel4.BackColor = System.Drawing.Color.White;
+            this.panel4.Controls.Add(this.label9);
+            this.panel4.Controls.Add(this.label10);
+            this.panel4.Controls.Add(this.pictureBox1);
+            this.panel4.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel4.Location = new System.Drawing.Point(0, 0);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(451, 58);
+            this.panel4.TabIndex = 25;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(17, 32);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(270, 13);
+            this.label9.TabIndex = 2;
+            this.label9.Text = "Log in with your XMPP account or register a new one ...";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label10.Location = new System.Drawing.Point(17, 13);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(126, 13);
+            this.label10.TabIndex = 1;
+            this.label10.Text = "Welcome to miniConf";
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(373, -3);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(64, 64);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
+            // 
+            // pnlLoginWrapper
+            // 
+            this.pnlLoginWrapper.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlLoginWrapper.BackColor = System.Drawing.Color.DimGray;
+            this.pnlLoginWrapper.Controls.Add(this.panel1);
+            this.pnlLoginWrapper.Location = new System.Drawing.Point(412, 124);
+            this.pnlLoginWrapper.Name = "pnlLoginWrapper";
+            this.pnlLoginWrapper.Size = new System.Drawing.Size(93, 354);
+            this.pnlLoginWrapper.TabIndex = 12;
             // 
             // webBrowser1
             // 
@@ -1303,7 +1323,7 @@
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
             this.webBrowser1.ScriptErrorsSuppressed = true;
-            this.webBrowser1.Size = new System.Drawing.Size(476, 246);
+            this.webBrowser1.Size = new System.Drawing.Size(476, 458);
             this.webBrowser1.TabIndex = 0;
             this.webBrowser1.Url = new System.Uri("about:blank", System.UriKind.Absolute);
             this.webBrowser1.OnRealKeyDown += new System.Windows.Forms.HtmlElementEventHandler(this.webBrowser1_OnRealKeyDown);
@@ -1314,13 +1334,12 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(616, 626);
-            this.Controls.Add(this.chkToggleSidebar);
+            this.Controls.Add(this.pnlLoginWrapper);
             this.Controls.Add(this.panel3);
-            this.Controls.Add(this.pnlConfig);
             this.Controls.Add(this.pnlErrMes);
             this.Controls.Add(this.filterBarPanel);
-            this.Controls.Add(this.pnlToolbar);
             this.Controls.Add(this.naviBar1);
+            this.Controls.Add(this.pnlToolbar);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(360, 450);
@@ -1333,10 +1352,6 @@
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseClick);
             this.Resize += new System.EventHandler(this.Form1_Resize);
-            this.pnlConfig.ResumeLayout(false);
-            this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
             this.pnlPrefConnectAdvanced.ResumeLayout(false);
             this.pnlPrefConnectAdvanced.PerformLayout();
             this.pnlToolbar.ResumeLayout(false);
@@ -1353,30 +1368,31 @@
             this.naviBar1.ResumeLayout(false);
             this.naviBand1.ClientArea.ResumeLayout(false);
             this.naviBand1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.naviGroup2)).EndInit();
-            this.naviGroup2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.naviGroup1)).EndInit();
-            this.naviGroup1.ResumeLayout(false);
             this.ctxMenuConversationHeader.ResumeLayout(false);
-            this.naviBand3.ClientArea.ResumeLayout(false);
-            this.naviBand3.ResumeLayout(false);
             this.naviBand2.ClientArea.ResumeLayout(false);
             this.naviBand2.ClientArea.PerformLayout();
             this.naviBand2.ResumeLayout(false);
+            this.naviBand3.ClientArea.ResumeLayout(false);
+            this.naviBand3.ResumeLayout(false);
             this.ctxMenuConversation.ResumeLayout(false);
             this.ctxMenuParticipant.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.pnlLoginErrMes.ResumeLayout(false);
+            this.panel4.ResumeLayout(false);
+            this.panel4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.pnlLoginWrapper.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.TextBox txtPrefServer;
-        private System.Windows.Forms.TextBox txtPrefUsername;
-        private System.Windows.Forms.TextBox txtPrefPassword;
-        private System.Windows.Forms.Panel pnlConfig;
+        private System.Windows.Forms.TextBox qq_txtPrefServer;
+        private System.Windows.Forms.TextBox qq_txtPrefUsername;
+        private System.Windows.Forms.TextBox qq_txtPrefPassword;
         private System.Windows.Forms.Panel pnlToolbar;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.TextBox txtSendmessage;
         private MessageView webBrowser1;
@@ -1428,12 +1444,9 @@
         private System.Windows.Forms.ToolStripMenuItem searchForUpdatesToolStripMenuItem;
         private System.Windows.Forms.ComboBox cmbFileUploadService;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.Panel pnlPrefConnectAdvanced;
-        private System.Windows.Forms.ComboBox txtPrefServerPort;
+        private System.Windows.Forms.ComboBox qq_txtPrefServerPort;
         private System.Windows.Forms.LinkLabel lnkConnectAdvanced;
-        private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox txtConnInfo;
         private System.Windows.Forms.Label labChatstates;
@@ -1447,8 +1460,6 @@
         private System.Windows.Forms.LinkLabel linkLabel1;
         private Guifreaks.NavigationBar.NaviBar naviBar1;
         private Guifreaks.NavigationBar.NaviBand naviBand1;
-        private Guifreaks.NavigationBar.NaviGroup naviGroup2;
-        private Guifreaks.NavigationBar.NaviGroup naviGroup1;
         private Guifreaks.NavigationBar.NaviBand naviBand2;
         private System.Windows.Forms.CheckBox chkToggleSidebar;
         private Guifreaks.NavigationBar.NaviBand naviBand3;
@@ -1478,6 +1489,16 @@
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem7;
         private System.Windows.Forms.ToolStripMenuItem showAllRoomsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem rejoinToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem logoutToolStripMenuItem;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel pnlLoginWrapper;
+        private System.Windows.Forms.Button btnLoginExit;
+        private System.Windows.Forms.Panel panel4;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Panel pnlLoginErrMes;
+        private System.Windows.Forms.Label labLoginErrMes;
     }
 }
 

@@ -23,9 +23,10 @@ namespace miniConf {
             popupWindow.OnItemClick += popupWindow_OnItemClick;
             icon1 = this.Icon; icon2 = Icon.FromHandle(new Bitmap(imageList1.Images[2]).GetHicon());
 
-            WindowHelper.SetCueBanner(txtPrefUsername, "jane-doe@example.org");
+            WindowHelper.SetCueBanner(qq_txtPrefUsername, "jane-doe@example.org");
             CheckForIllegalCrossThreadCalls = false;
-            pnlConfig.Height = 208;
+            pnlLoginWrapper.Location = new Point(0, 0);
+            pnlLoginWrapper.Size = this.ClientSize;
         }
 
 
@@ -53,21 +54,19 @@ namespace miniConf {
         private delegate void XmppPresenceDelegate(agsXMPP.protocol.client.Presence msg);
 
         private string[] getUsername() {
-            string[] username = txtPrefUsername.Text.Split('@');
-            if (username.Length == 1 && txtPrefServer.Text != "") {
-                txtPrefUsername.Text += "@" + txtPrefServer.Text; txtPrefServer.Text = "";
-                username = txtPrefUsername.Text.Split('@');
-            }
+            string[] username = glob.para("account__JID").Split('@');
             if (username.Length != 2) {
-                showConfigPanel("Please enter your full jabber ID in the form of username@example.com");
+                labLoginErrMes.Text = "Please enter your full jabber ID in the form of username@example.com";
+                pnlLoginErrMes.Show();
                 return null;
             }
             if (String.IsNullOrEmpty(txtNickname.Text)) txtNickname.Text = username[0];
-            if (!string.IsNullOrEmpty(txtPrefServer.Text)) username[1] = txtPrefServer.Text;
+            if (!string.IsNullOrEmpty(glob.para("account__Server"))) username[1] = glob.para("account__Server");
             return username;
         }
 
         private void jabberConnect() {
+            pnlLoginWrapper.Enabled = false; UseWaitCursor = true;
             if (jabber.conn == null) {
                 jabber.conn = new XmppClientConnection();
                 jabber.conn.DiscoInfo.AddFeature(new DiscoFeature("urn:xmpp:avatar:metadata+notify"));
@@ -112,18 +111,19 @@ namespace miniConf {
             if (username == null) return;
 
             jabber.conn.Server = username[1];
+            //if (glob.para("account__Server") != "") jabber.conn.Server = glob.para("account__Server");
             int port;
-            if (!Int32.TryParse(txtPrefServerPort.Text, out port)) {
-                port = 5222; txtPrefServerPort.Text = "5222";
+            if (!Int32.TryParse(glob.para("account__Port","5222"), out port)) {
+                port = 5222; glob.setPara("account__Port", "5222");
             }
             jabber.conn.Port = port;
 
             jabber.conn.UseSSL = false;
             jabber.conn.UseStartTLS = (glob.para("useSSL", "TRUE") != "FALSE");
             //jabber.conn.UseSSL = (glob.para("useSSL", "TRUE") != "FALSE");
-            jabber.conn.Open(username[0], txtPrefPassword.Text, "miniConf-" + Environment.MachineName, 0);
+            jabber.conn.Open(username[0], glob.para("account__Password"), "miniConf-" + Environment.MachineName, 0);
             txtConnInfo.Text = "";
-            webBrowser1.selfNickname = txtPrefUsername.Text;
+            webBrowser1.selfNickname = qq_txtPrefUsername.Text;
         }
 
         void jabber_OnContactPresence(object sender, JabberService.JabberEventArgs e) {
@@ -181,7 +181,7 @@ namespace miniConf {
 
         void conn_OnSocketError(object sender, Exception ex) {
             //MessageBox.Show("SOCKET ERR: " + ex.Message);
-            this.Invoke(new ParameterizedThreadStart(showConfigPanel),
+            this.Invoke(new ParameterizedThreadStart(showNetworkError),
                 "Network error:\n" + ex.Message);
             this.Invoke(new ThreadStart(checkReconnect));
         }
@@ -195,7 +195,7 @@ namespace miniConf {
         }
 
         private void checkReconnect() {
-            if (!String.IsNullOrEmpty(txtPrefUsername.Text) && !loginError) {
+            if (!String.IsNullOrEmpty(qq_txtPrefUsername.Text) && !loginError) {
                 pnlErrMes.Show(); labErrMes.Text += "\nConnection was closed. Trying to reconnect in 10 sec...";
                 tmrReconnect.Stop(); tmrReconnect.Start();
             }
@@ -205,15 +205,22 @@ namespace miniConf {
             tmrReconnect.Stop(); labErrMes.Text = "Connection closed. Trying to reconnect now ...";
             jabberConnect();
         }
+        
+        void conn_OnError(object sender, Exception ex) {
+            //MessageBox.Show("ERROR: " + ex.Message);
+            if (loginError) this.Invoke(new ParameterizedThreadStart(showAuthError), ex.Message);
+            
+            Console.WriteLine("conn_OnError:" + ex.Message);
+        }
 
         void conn_OnAuthError(object sender, agsXMPP.Xml.Dom.Element e) {
             //MessageBox.Show("AUTH ERROR: " + e.ToString());
             string errMes = "Error while logging in to the server: " + e.ToString();
             if (e.HasTag("not-authorized")) {
-                errMes = "The provided username and password were not accepted by the server. Did you mistype your password? Otherwise, you could create a new acocunt by clicking \"Create Account\".";
+                errMes = "Incorrect username or password. \n If you don't have an account yet, click on \"New Account\".";
 
             }
-            this.Invoke(new ParameterizedThreadStart(showConfigPanel), errMes);
+            this.Invoke(new ParameterizedThreadStart(showAuthError), errMes);
             tmrReconnect.Stop();
         }
 
@@ -249,7 +256,7 @@ namespace miniConf {
                 jabber.muc.joinRoom(room);
             }
             this.Invoke(new ThreadStart(updateRoomList));
-            this.Invoke(new ThreadStart(hideConfigPanel));
+            this.Invoke(new ThreadStart(hideLoginPanel));
             loginError = false;
 
             jabber.CheckServerFeatures();
@@ -417,11 +424,6 @@ namespace miniConf {
             jabber.conn.Send(msg);
         }
 
-        void conn_OnError(object sender, Exception ex) {
-            //MessageBox.Show("ERROR: " + ex.Message);
-            Console.WriteLine("conn_OnError:" + ex.Message);
-        }
-
 
         #endregion
 
@@ -442,6 +444,7 @@ namespace miniConf {
 
             glob = new cls_globPara(logs); Program.glob = glob;
             if (logs.databaseVersion < 6) glob.legacyImport(Program.dataDir + "miniConf.ini");
+            if (logs.databaseVersion < 9) Roomdata.legacyImport();
 
             updateSmileyThemeList();
 
@@ -457,10 +460,10 @@ namespace miniConf {
 
             rooms = Roomdata.MakeDict( logs.GetRooms(false) );
 
-            if (txtPrefUsername.Text != "") {
+            if (glob.para("account__JID" , "") != "" && glob.para("account__Password", "") != "") {
                 jabberConnect();
             } else {
-                pnlConfig.Visible = true;
+                showAuthError(null);
             }
         }
 
@@ -818,12 +821,12 @@ namespace miniConf {
         private void chkToggleSidebar_CheckedChanged(object sender, EventArgs e) {
             naviBar1.Visible = !chkToggleSidebar.Checked;
             chkToggleSidebar.Text = chkToggleSidebar.Checked ? ">" : "<";
-            chkToggleSidebar.Left = chkToggleSidebar.Checked ? 5 : 107;
-            button4.Left = chkToggleSidebar.Checked ? 30 : 5;
-            labChatstates.Left = button4.Bounds.Right + 3;
-            txtSubject.Left = button4.Bounds.Right + 6;
-            labChatstates.Width = pnlToolbar.Width - labChatstates.Left - 80;
-            txtSubject.Width = pnlToolbar.Width - txtSubject.Left - 85;
+            //chkToggleSidebar.Left = chkToggleSidebar.Checked ? 5 : 107;
+            //button4.Left = chkToggleSidebar.Checked ? 30 : 5;
+            //labChatstates.Left = button4.Bounds.Right + 3;
+            //txtSubject.Left = button4.Bounds.Right + 6;
+            //labChatstates.Width = pnlToolbar.Width - labChatstates.Left - 80;
+            //txtSubject.Width = pnlToolbar.Width - txtSubject.Left - 85;
             //chkToggleSidebar.Text = splitContainer1.Panel2Collapsed ? "<" : ">";
         }
 
@@ -903,9 +906,10 @@ namespace miniConf {
                 case Keys.Control | Keys.B:
                 case Keys.F4:
                     chkToggleSidebar.Checked = !chkToggleSidebar.Checked;
+                    naviBar1.SetActiveBand(naviBand1);
                     break;
                 case Keys.Control | Keys.Oemcomma:
-                    pnlConfig.Visible = !pnlConfig.Visible;
+                    naviBar1.SetActiveBand(naviBand2);
                     break;
                 case Keys.Control | Keys.Shift | Keys.R:
                     reloadStylesToolStripMenuItem_Click(null, null);
@@ -977,29 +981,54 @@ namespace miniConf {
 
         #region Preferences
 
-        private void button1_Click(object sender, EventArgs e) {
-            pnlConfig.Visible = !pnlConfig.Visible;
-            LoginForm f = new LoginForm();
-            f.ShowDialog();
-        }
 
-        private void hideConfigPanel() {
-            //pnlConfig.Visible = false;
+        private void hideLoginPanel() {
+            pnlLoginWrapper.Enabled = true; UseWaitCursor = false;
             pnlErrMes.Visible = false;
-            tabControl1.SelectedIndex = 1;
+            pnlLoginErrMes.Visible = false;
+            pnlLoginWrapper.Visible = false;
             glob.saveTuttiFrutti(this);
         }
-        private void showConfigPanel(object errmes) {
-            pnlConfig.Visible = true;
-            if (!String.IsNullOrEmpty((string)errmes)) {
-                pnlErrMes.Show();
-                labErrMes.Text = (string)errmes;
-                tabControl1.SelectedIndex = 0;
+
+        private void showNetworkError(object errmes) {
+            pnlLoginWrapper.Enabled = true; UseWaitCursor = false;
+            pnlErrMes.Show();
+            labErrMes.Text = (string)errmes;
+        }
+
+        private void showAuthError(object errmes) {
+            pnlLoginWrapper.Enabled = true; UseWaitCursor = false;
+            if (errmes != null) {
+                pnlLoginErrMes.Show();
+                labLoginErrMes.Text = (string)errmes;
             }
+            pnlLoginWrapper.Show();
+            qq_txtPrefUsername.Text = glob.para("account__JID");
+            qq_txtPrefPassword.Text = glob.para("account__Password");
+            qq_txtPrefServer.Text = glob.para("account__Server");
+            qq_txtPrefServerPort.Text = glob.para("account__Port", "5222");
+            pnlPrefConnectAdvanced.Visible = qq_txtPrefServer.Text != "" || qq_txtPrefServerPort.Text != "5222";
+            qq_txtPrefUsername.Focus(); qq_txtPrefUsername.SelectAll();
         }
 
         #region Login Page
         private void button2_Click(object sender, EventArgs e) {
+            if (String.IsNullOrEmpty(qq_txtPrefUsername.Text) 
+                || qq_txtPrefUsername.Text.Length < 4 || qq_txtPrefUsername.Text.Contains("@") == false) {
+                    qq_txtPrefUsername.Focus();
+                MessageBox.Show("Please enter your jabber ID.", "Login", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+            if (String.IsNullOrEmpty(qq_txtPrefPassword.Text)) {
+                qq_txtPrefPassword.Focus();
+                MessageBox.Show("Please enter your password.", "Login", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+            glob.setPara("account__JID", qq_txtPrefUsername.Text);
+            glob.setPara("account__Password", qq_txtPrefPassword.Text);
+            glob.setPara("account__Server", qq_txtPrefServer.Text);
+            glob.setPara("account__Port", qq_txtPrefServerPort.Text);
+
             loginError = true;
             jabberConnect();
 
@@ -1031,17 +1060,10 @@ namespace miniConf {
                 MessageBox.Show("Error while registering account: \n" + e2.ToString(), "Create Jabber account", MessageBoxButtons.OK, MessageBoxIcon.Error);
             };
 
-            cn.Open(username[0], txtPrefPassword.Text);
+            cn.Open(username[0], qq_txtPrefPassword.Text);
 
         }
         #endregion
-
-        private void btnConnect2_Click(object sender, EventArgs e) {
-            loginError = true;
-            jabberConnect();
-
-            pnlConfig.Visible = false;
-        }
 
         private void chkSternchen_CheckedChanged(object sender, EventArgs e) {
             updateWinTitle();
@@ -1073,7 +1095,7 @@ namespace miniConf {
         }
 
         private void txtPrefUsername_KeyPress(object sender, KeyPressEventArgs e) {
-            txtNickname.Text = "";
+            txtNickname.Text = ""; if (e.KeyChar == '\r') qq_txtPrefPassword.Focus();
         }
 
         private void comboMessageTheme_SelectedIndexChanged(object sender, EventArgs e) {
@@ -1091,7 +1113,6 @@ namespace miniConf {
         }
 
         private void btnClosePrefs_Click(object sender, EventArgs e) {
-            pnlConfig.Visible = false;
             glob.saveTuttiFrutti(this);
             webBrowser1.loadSmileyTheme();
             onChatroomSelect();
@@ -1288,7 +1309,7 @@ namespace miniConf {
 
         #region Navigation Band Resizer
         private void resizeSidebar() {
-            if (naviGroup2.Expanded) naviGroup1.ExpandedHeight = 180;
+            /*if (naviGroup2.Expanded) naviGroup1.ExpandedHeight = 180;
             else naviGroup1.ExpandedHeight = naviBand1.Height - 25;
 
             if (naviGroup1.Expanded) naviGroup1.Height = naviGroup1.ExpandedHeight;
@@ -1296,6 +1317,7 @@ namespace miniConf {
             naviGroup2.ExpandedHeight = Math.Max(100, naviBand1.Height - naviGroup1.Height);
 
             if (naviGroup2.Expanded) naviGroup2.Height = naviGroup2.ExpandedHeight;
+            */
         }
 
         private void naviGroup2_MouseDown(object sender, MouseEventArgs e) {
@@ -1324,6 +1346,19 @@ namespace miniConf {
             if (lvContacts.SelectedItems.Count == 1) {
                 dmManager.GetWindow(lvContacts.SelectedItems[0].Text);
             }
+        }
+
+        private void logoutToolStripMenuItem_Click(object sender, EventArgs e) {
+            glob.setPara("account__Password", "");
+            showAuthError(null);
+        }
+
+        private void btnLoginExit_Click(object sender, EventArgs e) {
+            Application.Exit();
+        }
+
+        private void qq_txtPrefPassword_KeyPress(object sender, KeyPressEventArgs e) {
+            if (e.KeyChar == '\r') button2_Click(null, null);
         }
 
 

@@ -74,6 +74,12 @@
     <Compile Include="ChatDatabase.cs" />
     <Compile Include="ChatMessage.cs" />
     <Compile Include="cls_globPara.cs" />
+    <Compile Include="ConfigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConfigForm.Designer.cs">
+      <DependentUpon>ConfigForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="DatabaseDebugForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -101,12 +107,6 @@
     <Compile Include="JabberService.cs" />
     <Compile Include="Jingle.cs" />
     <Compile Include="JTimer.cs" />
-    <Compile Include="LoginForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LoginForm.Designer.cs">
-      <DependentUpon>LoginForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="MediaUploadForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -142,6 +142,9 @@
     <Compile Include="XmppDebugForm.Designer.cs">
       <DependentUpon>XmppDebugForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="ConfigForm.resx">
+      <DependentUpon>ConfigForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DatabaseDebugForm.resx">
       <DependentUpon>DatabaseDebugForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -150,9 +153,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LoginForm.resx">
-      <DependentUpon>LoginForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaUploadForm.resx">
       <DependentUpon>MediaUploadForm.cs</DependentUpon>
