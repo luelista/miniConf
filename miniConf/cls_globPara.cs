@@ -39,8 +39,8 @@ namespace miniConf {
             return para(key, "");
         }
         public string para(string key, string defaultValue) {
-            string result = defaultValue;
-            m_content.TryGetValue(key, out result);
+            string result;
+            if (!m_content.TryGetValue(key, out result)) result = defaultValue;
             return result;
         }
 

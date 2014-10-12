@@ -47,8 +47,9 @@
             // 
             // cmbResources
             // 
+            this.cmbResources.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbResources.FormattingEnabled = true;
-            this.cmbResources.Location = new System.Drawing.Point(279, 69);
+            this.cmbResources.Location = new System.Drawing.Point(255, 69);
             this.cmbResources.Name = "cmbResources";
             this.cmbResources.Size = new System.Drawing.Size(206, 21);
             this.cmbResources.TabIndex = 2;

@@ -8,8 +8,8 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace miniConf {
-    public partial class LoginForm : Form {
-        public LoginForm() {
+    public partial class ConfigForm : Form {
+        public ConfigForm() {
             InitializeComponent();
         }
     }
