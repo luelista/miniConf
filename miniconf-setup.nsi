@@ -1,7 +1,7 @@
 !include MUI2.nsh
 !addplugindir .\setups
 
-!define VERSION "1.6.5"
+!define VERSION "1.7.1"
 
 Function LicensePageShow
 
@@ -55,6 +55,9 @@ Section "Program Files" SecProgFiles
   SetOutPath "$INSTDIR\Themes"
   File "miniConf\themes\*.txt"
 
+  SetOutPath "$INSTDIR\Sounds"
+  File "miniConf\Sounds\*.wav"
+
   SetOutPath "$INSTDIR\Emoticons\Pidgin"
   File "Emoticons\Pidgin\*"
 
@@ -62,7 +65,11 @@ Section "Program Files" SecProgFiles
   CreateShortcut "$SMPROGRAMS\miniConf.lnk" "$INSTDIR\miniConf.exe"
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   
-  WriteRegStr HKEY_CURRENT_USER "Software\Microsoft\Windows\CurrentVersion\Run" "miniConf" "$INSTDIR\miniConf.exe /autostart"
+  ; delete old autorun keys
+  DeleteRegKey HKCU "Software\miniConf"
+  DeleteRegValue HKEY_CURRENT_USER "Software\Microsoft\Windows\CurrentVersion\Run" "miniConf"
+
+  WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Run" "miniConf" "$INSTDIR\miniConf.exe /autostart"
 
   DetailPrint "Starting miniConf ..."
   ShellExecAsUser::ShellExecAsUser "open" '$INSTDIR\miniConf.exe' 
@@ -77,6 +84,9 @@ Section "Uninstall"
   Delete "$DESKTOP\miniConf.lnk"
   Delete "$SMPROGRAMS\miniConf.lnk"
   
+  DeleteRegKey HKLM "Software\miniConf"
+  DeleteRegValue HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Run" "miniConf"
+
   DeleteRegKey HKCU "Software\miniConf"
   DeleteRegValue HKEY_CURRENT_USER "Software\Microsoft\Windows\CurrentVersion\Run" "miniConf"
 
