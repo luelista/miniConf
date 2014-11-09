@@ -55,5 +55,9 @@ namespace miniConf {
             progressBar1.Style = (FileUploader.uploadProgress < FileUploader.uploadMax && FileUploader.uploadProgress > 0)
                 ? ProgressBarStyle.Continuous : ProgressBarStyle.Marquee;
         }
+
+        private void button1_Click(object sender, EventArgs e) {
+            backgroundWorker1.CancelAsync();
+        }
     }
 }

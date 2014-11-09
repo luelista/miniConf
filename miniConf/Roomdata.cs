@@ -202,17 +202,19 @@ namespace miniConf {
         }
 
         public static void legacyImport() {
-            Program.glob.setPara("account_JID", Program.glob.para("Form1__txtPrefUsername"));
-            Program.glob.setPara("account_Password", Program.glob.para("Form1__txtPrefPassword"));
-            Program.glob.setPara("account_Server", Program.glob.para("Form1__txtPrefServer"));
+            Program.glob.setPara("account__JID", Program.glob.para("Form1__txtPrefUsername"));
+            Program.glob.setPara("account__Password", Program.glob.para("Form1__txtPrefPassword"));
+            Program.glob.setPara("account__Server", Program.glob.para("Form1__txtPrefServer"));
 
             var rooms = Program.glob.para("Form1__txtChatrooms", "").Split('\n');
             foreach (var room in rooms) {
                 if (String.IsNullOrEmpty(room) || room.Trim() == "" || room.StartsWith("//") || room.StartsWith("-- ")) continue;
                 Jid jid = new Jid(room.Trim());
                 var cmd = Program.db.dataBase.CreateCommand();
-                cmd.CommandText = "UPDATE room set do_join=1 WHERE room=@room;";
-                cmd.Parameters.AddWithValue("@name", jid.Bare);
+                cmd.CommandText = "UPDATE room set do_join=1,display_name=@dispName,notify=@notifyMode WHERE room=@roomName;";
+                cmd.Parameters.AddWithValue("@roomName", jid.Bare);
+                cmd.Parameters.AddWithValue("@dispName", jid.User);
+                cmd.Parameters.AddWithValue("@notifyMode", Roomdata.NotifyMode.Always);
                 cmd.ExecuteNonQuery();
             }
         }

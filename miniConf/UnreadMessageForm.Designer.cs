@@ -65,6 +65,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "miniConf - unread messages:";
             this.TopMost = true;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.UnreadMessageForm_FormClosing);
             this.Load += new System.EventHandler(this.UnreadMessageForm_Load);
             this.ResumeLayout(false);
 

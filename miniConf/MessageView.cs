@@ -1,3 +1,4 @@
+using MSHTML;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -53,8 +54,8 @@ namespace miniConf {
                 Console.WriteLine("Error loading stylesheet: " + e.Message);
             }
             try {
-                mshtml.IHTMLDocument3 doc = (mshtml.IHTMLDocument3)this.Document.DomDocument;
-                mshtml.IHTMLStyleElement styleEl = (mshtml.IHTMLStyleElement)doc.getElementById("st");
+                IHTMLDocument3 doc = (IHTMLDocument3)this.Document.DomDocument;
+                IHTMLStyleElement styleEl = (IHTMLStyleElement)doc.getElementById("st");
                 styleEl.styleSheet.cssText = style + "\n" + style2;
             } catch (Exception e) {
                 Console.WriteLine("Error applying stylesheet: " + e.Message);
@@ -65,7 +66,7 @@ namespace miniConf {
                    themeName = Program.glob.para("Form1__cmbSmileyTheme", "(none)"),
                    themeDir = dataDir+"Emoticons\\"+themeName;
             smileys = new Dictionary<string,string>();
-            if (themeName == "(none)" || !Directory.Exists(themeDir)) return;
+            if (themeName == "(none)" || themeName == "" || !Directory.Exists(themeDir)) return;
             string[] themeIni = File.ReadAllLines(themeDir + "\\theme");
             string category = null;
             foreach (string lineIter in themeIni) {
@@ -85,12 +86,13 @@ namespace miniConf {
         }
 
 
-        public void updateMessage(string oldId, string newId, string newBody, DateTime editTimestamp) {
+        public bool updateMessage(string oldId, string newId, string newBody, DateTime editTimestamp) {
             var el = Document.GetElementById("MSGID_" + oldId);
+            if (el == null) return false;
             var spans = el.GetElementsByTagName("SPAN");
             spans[0].InnerHtml = prepareInnerHtml(newBody) + "<br><small> (Edited) </small>"; 
             el.Id = "MSGID_" + newId;
-
+            return true;
         }
 
         public void clear() {

@@ -52,5 +52,11 @@ namespace miniConf
             }
         }
 
+        private void UnreadMessageForm_FormClosing(object sender, FormClosingEventArgs e) {
+            if (e.CloseReason == CloseReason.UserClosing) {
+                e.Cancel = true; this.Hide();
+            }
+         }
+
     }
 }

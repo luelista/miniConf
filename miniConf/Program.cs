@@ -17,6 +17,8 @@ namespace miniConf {
         public static cls_globPara glob;
         public static ChatDatabase db;
         public static Form1 MainWnd;
+        
+        public static bool isAutorun;
 
         /// <summary>
         /// Der Haupteinstiegspunkt für die Anwendung.
@@ -39,8 +41,11 @@ namespace miniConf {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 MainWnd = new Form1();
-                if (argv.Length < 1 || argv[0] != "/autostart") MainWnd.Show();
-                Application.Run();
+                isAutorun = ! (argv.Length < 1 || argv[0] != "/autostart");
+                //MainWnd.Show();
+                //MainWnd.onIni(shouldShow);
+                //if (!shouldShow) MainWnd.Hide();
+                Application.Run(MainWnd);
                 singleInstanceMutex.ReleaseMutex();
             } else {
                 WindowHelper.PostMessage((IntPtr)WindowHelper.HWND_BROADCAST,

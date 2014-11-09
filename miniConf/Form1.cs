@@ -208,7 +208,7 @@ namespace miniConf {
         
         void conn_OnError(object sender, Exception ex) {
             //MessageBox.Show("ERROR: " + ex.Message);
-            if (loginError) this.Invoke(new ParameterizedThreadStart(showAuthError), ex.Message);
+            if (loginError) this.Invoke(new ParameterizedThreadStart(showAuthError), "General connection error: \n" + ex.Message);
             
             Console.WriteLine("conn_OnError:" + ex.Message);
         }
@@ -264,11 +264,13 @@ namespace miniConf {
             SoundPlayer dingdong3 = new SoundPlayer(Program.appDir + "\\Sounds\\startup.wav");
             if (enableSoundToolStripMenuItem.Enabled) dingdong3.Play();
 
+            //onChatroomSelect();
         }
 
         private void OnMucSelfPresence(Roomdata room, agsXMPP.protocol.client.Presence pres, agsXMPP.Xml.Dom.Element xChild) {
             room.online = true;
             lbChatrooms.Refresh();
+            if (room == currentRoom) txtSendmessage.Enabled = true;
         }
 
         private void OnMucPresence(agsXMPP.protocol.client.Presence pres) {
@@ -342,8 +344,8 @@ namespace miniConf {
                     string replaceId = replace.GetAttribute("id");
                     if (logs.EditMessage(room.RoomName, replaceId, msg.GetAttribute("id"), msg.From.Resource, msg.GetTag("body"), dt)) {
                         room.LastMessageDt = dt; logs.StoreRoom(room);
-                        webBrowser1.updateMessage(replaceId, msg.GetAttribute("id"), msg.GetTag("body"), DateTime.Parse(dt));
-                        return;
+                        if (webBrowser1.updateMessage(replaceId, msg.GetAttribute("id"), msg.GetTag("body"), DateTime.Parse(dt)))
+                            return;
                     }
                 }
                 if (msg.HasTag("subject")) {
@@ -436,11 +438,19 @@ namespace miniConf {
         #region GUI
 
         private void Form1_Load(object sender, EventArgs e) {
+            onIni(true);
+        }
+
+        public void onIni(bool shouldShow) {
+            // make sure window is created
+            IntPtr handle = this.Handle;
+
             WinSparkle.win_sparkle_set_appcast_url("http://downloads.luelista.net/miniconf/miniconf.xml");
             //WinSparkle.win_sparkle_set_app_details("Company","App", "Version"); // THIS CALL NOT IMPLEMENTED YET
             WinSparkle.win_sparkle_init();
 
             logs = new ChatDatabase(Program.dataDir + "chatlogs.db");
+            Program.db = logs;
 
             glob = new cls_globPara(logs); Program.glob = glob;
             if (logs.databaseVersion < 6) glob.legacyImport(Program.dataDir + "miniConf.ini");
@@ -456,17 +466,16 @@ namespace miniConf {
             enableSoundToolStripMenuItem.Checked = glob.para("enableSound") != "FALSE";
             enablePopupToolStripMenuItem.Checked = glob.para("enablePopup") != "FALSE";
 
-            Program.db = logs;
 
-            rooms = Roomdata.MakeDict( logs.GetRooms(false) );
+            rooms = Roomdata.MakeDict(logs.GetRooms(false));
 
-            if (glob.para("account__JID" , "") != "" && glob.para("account__Password", "") != "") {
+            if (glob.para("account__JID", "") != "" && glob.para("account__Password", "") != "") {
                 jabberConnect();
             } else {
                 showAuthError(null);
             }
+            
         }
-
 
         private void updateWinTitle() {
 
@@ -572,6 +581,10 @@ namespace miniConf {
         }
 
         #region Chatroom LISTBOX/HEADER Context menu
+
+        private void lnkRoomlistContextMenu_Click(object sender, EventArgs e) {
+            ctxMenuConversationHeader.Show((Control)sender, 0, 12);
+        }
 
         private void rejoinChatroom(Roomdata myRoom) {
             myRoom.DoJoin = Roomdata.JoinMode.AutoJoin;
@@ -944,6 +957,8 @@ namespace miniConf {
             contextMenuStrip1.Show((Control)sender, 0, ((Control)sender).Height);
         }
 
+
+        #region Participants / Online Status
         private void prefixSendmessageBox(string prefix) {
             txtSendmessage.Text = prefix + txtSendmessage.Text;
             txtSendmessage.Focus();
@@ -953,16 +968,7 @@ namespace miniConf {
         private void lvOnlineStatus_MouseClick(object sender, MouseEventArgs e) {
             if (e.Button == System.Windows.Forms.MouseButtons.Right) {
                 if (lvOnlineStatus.SelectedItems.Count == 0) return;
-                if (e.X < 16) {
-                    string jid = (string)lvOnlineStatus.SelectedItems[0].Tag;
-                    if (!String.IsNullOrEmpty(jid)) {
-                        var frm = dmManager.GetWindow(new Jid(jid));
-                        frm.Activate(); frm.textBox1.Focus();
-                    }
-                } else {
-                    string prefix = "/msg \"" + lvOnlineStatus.SelectedItems[0].Text + "\" ";
-                    prefixSendmessageBox(prefix);
-                }
+                ctxMenuParticipant.Show((Control)sender, e.X, e.Y);
             }
         }
         private void lvOnlineStatus_MouseDoubleClick(object sender, MouseEventArgs e) {
@@ -970,6 +976,40 @@ namespace miniConf {
             string prefix = lvOnlineStatus.SelectedItems[0].Text + ": ";
             prefixSendmessageBox(prefix);
         }
+
+        private void mentionToolStripMenuItem_Click(object sender, EventArgs e) {
+            string prefix = "" + lvOnlineStatus.SelectedItems[0].Text + ": ";
+            prefixSendmessageBox(prefix);
+        }
+
+        private void privateMessageToolStripMenuItem_Click(object sender, EventArgs e) {
+            string prefix = "/msg \"" + lvOnlineStatus.SelectedItems[0].Text + "\" ";
+            prefixSendmessageBox(prefix);
+        }
+
+        private void openDirectChatToolStripMenuItem_Click(object sender, EventArgs e) {
+            string jid = (string)lvOnlineStatus.SelectedItems[0].Tag;
+            if (!String.IsNullOrEmpty(jid)) {
+                var frm = dmManager.GetWindow(new Jid(jid));
+                frm.Activate(); frm.textBox1.Focus();
+            }
+        }
+
+        private void infoToolStripMenuItem_Click(object sender, EventArgs e) {
+            string ttt = lvOnlineStatus.SelectedItems[0].ToolTipText;
+            MessageBox.Show(ttt, "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        #endregion
+
+
+        private void lvContacts_MouseDoubleClick(object sender, MouseEventArgs e) {
+            if (lvContacts.SelectedItems.Count == 1) {
+                dmManager.GetWindow(lvContacts.SelectedItems[0].Text);
+            }
+        }
+
+
 
         private void helpToolStripMenuItem_Click(object sender, EventArgs e) {
             System.Diagnostics.Process.Start("http://home.luelista.net/programme/miniconf/hilfe/");
@@ -1342,12 +1382,6 @@ namespace miniConf {
 
         #endregion
 
-        private void lvContacts_MouseDoubleClick(object sender, MouseEventArgs e) {
-            if (lvContacts.SelectedItems.Count == 1) {
-                dmManager.GetWindow(lvContacts.SelectedItems[0].Text);
-            }
-        }
-
         private void logoutToolStripMenuItem_Click(object sender, EventArgs e) {
             glob.setPara("account__Password", "");
             showAuthError(null);
@@ -1361,6 +1395,12 @@ namespace miniConf {
             if (e.KeyChar == '\r') button2_Click(null, null);
         }
 
+        private void Form1_Shown(object sender, EventArgs e) {
+            if (Program.isAutorun) {
+                this.Hide();
+                Program.isAutorun = false;
+            }
+        }
 
 
 
