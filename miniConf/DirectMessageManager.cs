@@ -43,10 +43,10 @@ namespace miniConf
                 var carbonsReceived = msg.SelectSingleElement("received", JabberService.URN_CARBONS);
                 if (carbonsSent != null) {
                     msg = (agsXMPP.protocol.client.Message)carbonsSent.SelectSingleElement("message", true);
-                    relevantJid = msg.From;
+                    relevantJid = msg.To;
                 } else if (carbonsReceived != null) {
                     msg = (agsXMPP.protocol.client.Message)carbonsReceived.SelectSingleElement("message", true);
-                    relevantJid = msg.To;
+                    relevantJid = msg.From;
                 }
 
                 string dt = JabberService.GetMessageDt(msg);

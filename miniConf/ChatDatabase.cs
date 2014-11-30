@@ -164,6 +164,9 @@ namespace miniConf {
         public void SetOnlineStatus(string room, string onlinestate) {
             this.ExecSQL("UPDATE roommates SET onlinestate = ? WHERE room = ? ", onlinestate, room);
         }
+        public void RemoveOnlineStatus(string room, string nickname) {
+            this.ExecSQL("DELETE FROM roommates WHERE room = ? AND nickname = ?", room, nickname);
+        }
 
         //private Dictionary<string, string> userJidCache = new Dictionary<string, string>();
         public string GetUserJid(string room, string nick) {

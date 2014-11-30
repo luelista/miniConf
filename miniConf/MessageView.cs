@@ -138,7 +138,7 @@ namespace miniConf {
             div.Id = "MSGID_" + id;
             text = prepareInnerHtml(text);
             var me = Regex.Match(text, "^/me\\s+");
-            var timeEl = "<i title=" + time.ToShortDateString() + " " + time.ToLongTimeString() + ">" + (highlightString != "" ? time.ToShortDateString() : "") + " " + time.ToLongTimeString() + "</i>";
+            var timeEl = "<i title=" + time.ToShortDateString() + " " + time.ToLongTimeString() + "><u>[</u>" + (highlightString != "" ? time.ToShortDateString() : "") + " " + time.ToLongTimeString() + "<u>] </u></i>";
             if (!String.IsNullOrEmpty(editDt)) timeEl += "<i class='edited' title='" + editDt + "'>(Edited)</i>";
             var color = JabberContact.getColorForNickname(from);
             string cssColor = ColorTranslator.ToHtml(color);
