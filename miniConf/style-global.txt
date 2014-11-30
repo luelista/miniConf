@@ -18,3 +18,5 @@ em { background-color: #ffffaa; }
 
 p.msg.editing { background-color: #fAfAa0 !important; }
 
+i u { display: none; }
+

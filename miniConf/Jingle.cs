@@ -15,7 +15,11 @@ namespace miniConf {
         public event OnFileReceivedEvent OnFileReceived;
 
 
-        public bool AutoAccept = true;
+        public bool AutoAccept {
+            get {
+                return ApplicationPreferences.FiletransferAutoAccept;
+            }
+        }
 
         Dictionary<string, JingleSession> ongoingTransports = new Dictionary<string, JingleSession>();
 

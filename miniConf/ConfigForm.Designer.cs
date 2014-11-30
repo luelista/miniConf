@@ -23,11 +23,10 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.listServerFeatures = new System.Windows.Forms.ListBox();
-            this.btnClosePrefs = new System.Windows.Forms.Button();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigForm));
+            this.btnOK = new System.Windows.Forms.Button();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.lnkInstallSmiley = new System.Windows.Forms.LinkLabel();
-            this.label4 = new System.Windows.Forms.Label();
             this.cmbSmileyTheme = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
             this.txtNickname = new System.Windows.Forms.TextBox();
@@ -40,61 +39,61 @@
             this.label6 = new System.Windows.Forms.Label();
             this.chkFiletransferAutoAccept = new System.Windows.Forms.CheckBox();
             this.chkSternchen = new System.Windows.Forms.CheckBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.qq_txtPrefServerPort = new System.Windows.Forms.ComboBox();
+            this.qq_txtPrefServer = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.btnRegister = new System.Windows.Forms.Button();
+            this.qq_txtPrefUsername = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.qq_txtPrefPassword = new System.Windows.Forms.TextBox();
+            this.btnConnect = new System.Windows.Forms.Button();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
-            // listServerFeatures
+            // btnOK
             // 
-            this.listServerFeatures.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.listServerFeatures.FormattingEnabled = true;
-            this.listServerFeatures.IntegralHeight = false;
-            this.listServerFeatures.Location = new System.Drawing.Point(266, 30);
-            this.listServerFeatures.Name = "listServerFeatures";
-            this.listServerFeatures.Size = new System.Drawing.Size(182, 163);
-            this.listServerFeatures.TabIndex = 24;
-            // 
-            // btnClosePrefs
-            // 
-            this.btnClosePrefs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnClosePrefs.BackColor = System.Drawing.SystemColors.Control;
-            this.btnClosePrefs.Location = new System.Drawing.Point(343, 207);
-            this.btnClosePrefs.Name = "btnClosePrefs";
-            this.btnClosePrefs.Size = new System.Drawing.Size(105, 22);
-            this.btnClosePrefs.TabIndex = 36;
-            this.btnClosePrefs.Text = "OK";
-            this.btnClosePrefs.UseVisualStyleBackColor = true;
+            this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnOK.BackColor = System.Drawing.SystemColors.Control;
+            this.btnOK.Location = new System.Drawing.Point(343, 451);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(105, 22);
+            this.btnOK.TabIndex = 4;
+            this.btnOK.Text = "OK";
+            this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
             this.linkLabel1.BackColor = System.Drawing.Color.Transparent;
-            this.linkLabel1.Location = new System.Drawing.Point(164, 118);
+            this.linkLabel1.Location = new System.Drawing.Point(159, 75);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(33, 13);
-            this.linkLabel1.TabIndex = 40;
+            this.linkLabel1.TabIndex = 5;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "Get...";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // lnkInstallSmiley
             // 
             this.lnkInstallSmiley.AutoSize = true;
             this.lnkInstallSmiley.BackColor = System.Drawing.Color.Transparent;
-            this.lnkInstallSmiley.Location = new System.Drawing.Point(115, 118);
+            this.lnkInstallSmiley.Location = new System.Drawing.Point(110, 75);
             this.lnkInstallSmiley.Name = "lnkInstallSmiley";
             this.lnkInstallSmiley.Size = new System.Drawing.Size(43, 13);
-            this.lnkInstallSmiley.TabIndex = 39;
+            this.lnkInstallSmiley.TabIndex = 4;
             this.lnkInstallSmiley.TabStop = true;
             this.lnkInstallSmiley.Text = "Install...";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.BackColor = System.Drawing.Color.Transparent;
-            this.label4.Location = new System.Drawing.Point(262, 13);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(82, 13);
-            this.label4.TabIndex = 27;
-            this.label4.Text = "Server features:";
+            this.lnkInstallSmiley.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkInstallSmiley_LinkClicked);
             // 
             // cmbSmileyTheme
             // 
@@ -107,39 +106,39 @@
             "Conversations",
             "Terminal",
             "Custom"});
-            this.cmbSmileyTheme.Location = new System.Drawing.Point(118, 94);
+            this.cmbSmileyTheme.Location = new System.Drawing.Point(113, 51);
             this.cmbSmileyTheme.Name = "cmbSmileyTheme";
-            this.cmbSmileyTheme.Size = new System.Drawing.Size(121, 21);
-            this.cmbSmileyTheme.TabIndex = 37;
+            this.cmbSmileyTheme.Size = new System.Drawing.Size(181, 21);
+            this.cmbSmileyTheme.TabIndex = 3;
             // 
             // label8
             // 
             this.label8.AutoSize = true;
             this.label8.BackColor = System.Drawing.Color.Transparent;
-            this.label8.Location = new System.Drawing.Point(14, 97);
+            this.label8.Location = new System.Drawing.Point(9, 54);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(72, 13);
-            this.label8.TabIndex = 38;
+            this.label8.TabIndex = 2;
             this.label8.Text = "Smiley theme:";
             // 
             // txtNickname
             // 
             this.txtNickname.BackColor = System.Drawing.SystemColors.Window;
             this.txtNickname.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.txtNickname.Location = new System.Drawing.Point(118, 14);
+            this.txtNickname.Location = new System.Drawing.Point(92, 111);
             this.txtNickname.Name = "txtNickname";
-            this.txtNickname.Size = new System.Drawing.Size(121, 20);
-            this.txtNickname.TabIndex = 26;
+            this.txtNickname.Size = new System.Drawing.Size(200, 20);
+            this.txtNickname.TabIndex = 8;
             // 
             // cmbFileUploadService
             // 
             this.cmbFileUploadService.FormattingEnabled = true;
             this.cmbFileUploadService.Items.AddRange(new object[] {
             "https://mediacru.sh"});
-            this.cmbFileUploadService.Location = new System.Drawing.Point(118, 40);
+            this.cmbFileUploadService.Location = new System.Drawing.Point(111, 22);
             this.cmbFileUploadService.Name = "cmbFileUploadService";
-            this.cmbFileUploadService.Size = new System.Drawing.Size(121, 21);
-            this.cmbFileUploadService.TabIndex = 34;
+            this.cmbFileUploadService.Size = new System.Drawing.Size(181, 21);
+            this.cmbFileUploadService.TabIndex = 1;
             this.cmbFileUploadService.Text = "https://mediacru.sh";
             // 
             // comboMessageTheme
@@ -153,29 +152,29 @@
             "Conversations",
             "Terminal",
             "Custom"});
-            this.comboMessageTheme.Location = new System.Drawing.Point(118, 67);
+            this.comboMessageTheme.Location = new System.Drawing.Point(113, 24);
             this.comboMessageTheme.Name = "comboMessageTheme";
-            this.comboMessageTheme.Size = new System.Drawing.Size(121, 21);
-            this.comboMessageTheme.TabIndex = 31;
+            this.comboMessageTheme.Size = new System.Drawing.Size(181, 21);
+            this.comboMessageTheme.TabIndex = 1;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.BackColor = System.Drawing.Color.Transparent;
-            this.label5.Location = new System.Drawing.Point(14, 17);
+            this.label5.Location = new System.Drawing.Point(13, 114);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(32, 13);
-            this.label5.TabIndex = 25;
+            this.label5.TabIndex = 7;
             this.label5.Text = "Nick:";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
             this.label7.BackColor = System.Drawing.Color.Transparent;
-            this.label7.Location = new System.Drawing.Point(14, 70);
+            this.label7.Location = new System.Drawing.Point(9, 27);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(64, 13);
-            this.label7.TabIndex = 35;
+            this.label7.TabIndex = 0;
             this.label7.Text = "Chat theme:";
             // 
             // chkEnableImagePreview
@@ -184,10 +183,10 @@
             this.chkEnableImagePreview.BackColor = System.Drawing.Color.Transparent;
             this.chkEnableImagePreview.Checked = true;
             this.chkEnableImagePreview.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkEnableImagePreview.Location = new System.Drawing.Point(17, 155);
+            this.chkEnableImagePreview.Location = new System.Drawing.Point(305, 24);
             this.chkEnableImagePreview.Name = "chkEnableImagePreview";
             this.chkEnableImagePreview.Size = new System.Drawing.Size(100, 17);
-            this.chkEnableImagePreview.TabIndex = 28;
+            this.chkEnableImagePreview.TabIndex = 6;
             this.chkEnableImagePreview.Text = "Preview images";
             this.chkEnableImagePreview.UseVisualStyleBackColor = false;
             // 
@@ -195,10 +194,10 @@
             // 
             this.chkDisplayOccupantStatus.AutoSize = true;
             this.chkDisplayOccupantStatus.BackColor = System.Drawing.Color.Transparent;
-            this.chkDisplayOccupantStatus.Location = new System.Drawing.Point(123, 155);
+            this.chkDisplayOccupantStatus.Location = new System.Drawing.Point(305, 47);
             this.chkDisplayOccupantStatus.Name = "chkDisplayOccupantStatus";
             this.chkDisplayOccupantStatus.Size = new System.Drawing.Size(116, 17);
-            this.chkDisplayOccupantStatus.TabIndex = 30;
+            this.chkDisplayOccupantStatus.TabIndex = 7;
             this.chkDisplayOccupantStatus.Text = "Display status texts";
             this.chkDisplayOccupantStatus.UseVisualStyleBackColor = false;
             // 
@@ -206,10 +205,10 @@
             // 
             this.label6.AutoSize = true;
             this.label6.BackColor = System.Drawing.Color.Transparent;
-            this.label6.Location = new System.Drawing.Point(14, 43);
+            this.label6.Location = new System.Drawing.Point(7, 25);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(98, 13);
-            this.label6.TabIndex = 33;
+            this.label6.TabIndex = 0;
             this.label6.Text = "File upload service:";
             // 
             // chkFiletransferAutoAccept
@@ -218,51 +217,201 @@
             this.chkFiletransferAutoAccept.BackColor = System.Drawing.Color.Transparent;
             this.chkFiletransferAutoAccept.Checked = true;
             this.chkFiletransferAutoAccept.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkFiletransferAutoAccept.Location = new System.Drawing.Point(17, 178);
+            this.chkFiletransferAutoAccept.Location = new System.Drawing.Point(12, 53);
             this.chkFiletransferAutoAccept.Name = "chkFiletransferAutoAccept";
-            this.chkFiletransferAutoAccept.Size = new System.Drawing.Size(81, 17);
-            this.chkFiletransferAutoAccept.TabIndex = 32;
-            this.chkFiletransferAutoAccept.Text = "Accept files";
+            this.chkFiletransferAutoAccept.Size = new System.Drawing.Size(219, 17);
+            this.chkFiletransferAutoAccept.TabIndex = 2;
+            this.chkFiletransferAutoAccept.Text = "Accept direct file transfer (recommended)";
             this.chkFiletransferAutoAccept.UseVisualStyleBackColor = false;
             // 
             // chkSternchen
             // 
             this.chkSternchen.AutoSize = true;
             this.chkSternchen.BackColor = System.Drawing.Color.Transparent;
-            this.chkSternchen.Location = new System.Drawing.Point(123, 178);
+            this.chkSternchen.Location = new System.Drawing.Point(305, 70);
             this.chkSternchen.Name = "chkSternchen";
-            this.chkSternchen.Size = new System.Drawing.Size(30, 17);
-            this.chkSternchen.TabIndex = 29;
-            this.chkSternchen.Text = "*";
+            this.chkSternchen.Size = new System.Drawing.Size(104, 17);
+            this.chkSternchen.TabIndex = 8;
+            this.chkSternchen.Text = "Put \"*\" in titlebar";
             this.chkSternchen.UseVisualStyleBackColor = false;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.qq_txtPrefServerPort);
+            this.groupBox1.Controls.Add(this.qq_txtPrefServer);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.txtNickname);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.label5);
+            this.groupBox1.Controls.Add(this.btnRegister);
+            this.groupBox1.Controls.Add(this.qq_txtPrefUsername);
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.qq_txtPrefPassword);
+            this.groupBox1.Controls.Add(this.btnConnect);
+            this.groupBox1.Location = new System.Drawing.Point(18, 79);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(430, 142);
+            this.groupBox1.TabIndex = 1;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Jabber account";
+            // 
+            // qq_txtPrefServerPort
+            // 
+            this.qq_txtPrefServerPort.FormattingEnabled = true;
+            this.qq_txtPrefServerPort.Items.AddRange(new object[] {
+            "5222"});
+            this.qq_txtPrefServerPort.Location = new System.Drawing.Point(238, 85);
+            this.qq_txtPrefServerPort.Name = "qq_txtPrefServerPort";
+            this.qq_txtPrefServerPort.Size = new System.Drawing.Size(54, 21);
+            this.qq_txtPrefServerPort.TabIndex = 6;
+            this.qq_txtPrefServerPort.Text = "5222";
+            // 
+            // qq_txtPrefServer
+            // 
+            this.qq_txtPrefServer.Location = new System.Drawing.Point(92, 85);
+            this.qq_txtPrefServer.Name = "qq_txtPrefServer";
+            this.qq_txtPrefServer.Size = new System.Drawing.Size(140, 20);
+            this.qq_txtPrefServer.TabIndex = 5;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(13, 88);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(65, 13);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "Server/Port:";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(13, 22);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(56, 13);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Jabber ID:";
+            // 
+            // btnRegister
+            // 
+            this.btnRegister.BackColor = System.Drawing.SystemColors.Control;
+            this.btnRegister.Location = new System.Drawing.Point(311, 19);
+            this.btnRegister.Name = "btnRegister";
+            this.btnRegister.Size = new System.Drawing.Size(105, 22);
+            this.btnRegister.TabIndex = 9;
+            this.btnRegister.Text = "New Account";
+            this.btnRegister.UseVisualStyleBackColor = true;
+            this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
+            // 
+            // qq_txtPrefUsername
+            // 
+            this.qq_txtPrefUsername.Location = new System.Drawing.Point(92, 19);
+            this.qq_txtPrefUsername.Name = "qq_txtPrefUsername";
+            this.qq_txtPrefUsername.Size = new System.Drawing.Size(200, 20);
+            this.qq_txtPrefUsername.TabIndex = 1;
+            this.qq_txtPrefUsername.TextChanged += new System.EventHandler(this.qq_txtPrefUsername_TextChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(13, 48);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(56, 13);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Password:";
+            // 
+            // qq_txtPrefPassword
+            // 
+            this.qq_txtPrefPassword.Location = new System.Drawing.Point(92, 45);
+            this.qq_txtPrefPassword.Name = "qq_txtPrefPassword";
+            this.qq_txtPrefPassword.PasswordChar = '*';
+            this.qq_txtPrefPassword.Size = new System.Drawing.Size(200, 20);
+            this.qq_txtPrefPassword.TabIndex = 3;
+            // 
+            // btnConnect
+            // 
+            this.btnConnect.BackColor = System.Drawing.SystemColors.Control;
+            this.btnConnect.Location = new System.Drawing.Point(311, 45);
+            this.btnConnect.Name = "btnConnect";
+            this.btnConnect.Size = new System.Drawing.Size(105, 22);
+            this.btnConnect.TabIndex = 10;
+            this.btnConnect.Text = "Test connection";
+            this.btnConnect.UseVisualStyleBackColor = true;
+            this.btnConnect.Visible = false;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.linkLabel1);
+            this.groupBox2.Controls.Add(this.lnkInstallSmiley);
+            this.groupBox2.Controls.Add(this.cmbSmileyTheme);
+            this.groupBox2.Controls.Add(this.label8);
+            this.groupBox2.Controls.Add(this.comboMessageTheme);
+            this.groupBox2.Controls.Add(this.label7);
+            this.groupBox2.Controls.Add(this.chkEnableImagePreview);
+            this.groupBox2.Controls.Add(this.chkDisplayOccupantStatus);
+            this.groupBox2.Controls.Add(this.chkSternchen);
+            this.groupBox2.Location = new System.Drawing.Point(18, 234);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(431, 108);
+            this.groupBox2.TabIndex = 2;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Appearance";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.cmbFileUploadService);
+            this.groupBox3.Controls.Add(this.chkFiletransferAutoAccept);
+            this.groupBox3.Controls.Add(this.label6);
+            this.groupBox3.Location = new System.Drawing.Point(18, 348);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(431, 82);
+            this.groupBox3.TabIndex = 3;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Media sharing";
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(15, 21);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(349, 52);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "To get started, just fill in the Jabber ID and Password and click on \"OK\".\r\n\r\nYou" +
+    " may come back later through the menu item \"Preferences\".";
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(374, 12);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(64, 64);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox1.TabIndex = 45;
+            this.pictureBox1.TabStop = false;
             // 
             // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(460, 241);
-            this.Controls.Add(this.listServerFeatures);
-            this.Controls.Add(this.btnClosePrefs);
-            this.Controls.Add(this.linkLabel1);
-            this.Controls.Add(this.lnkInstallSmiley);
+            this.ClientSize = new System.Drawing.Size(460, 485);
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.cmbSmileyTheme);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.txtNickname);
-            this.Controls.Add(this.cmbFileUploadService);
-            this.Controls.Add(this.comboMessageTheme);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.chkEnableImagePreview);
-            this.Controls.Add(this.chkDisplayOccupantStatus);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.chkFiletransferAutoAccept);
-            this.Controls.Add(this.chkSternchen);
+            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.btnOK);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ConfigForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Preferences";
+            this.Load += new System.EventHandler(this.ConfigForm_Load);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -270,11 +419,9 @@
 
         #endregion
 
-        private System.Windows.Forms.ListBox listServerFeatures;
-        private System.Windows.Forms.Button btnClosePrefs;
+        private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.LinkLabel lnkInstallSmiley;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox cmbSmileyTheme;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox txtNickname;
@@ -287,5 +434,19 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.CheckBox chkFiletransferAutoAccept;
         private System.Windows.Forms.CheckBox chkSternchen;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.ComboBox qq_txtPrefServerPort;
+        private System.Windows.Forms.TextBox qq_txtPrefServer;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button btnRegister;
+        private System.Windows.Forms.TextBox qq_txtPrefUsername;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox qq_txtPrefPassword;
+        private System.Windows.Forms.Button btnConnect;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }

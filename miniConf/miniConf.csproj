@@ -71,6 +71,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationPreferences.cs" />
     <Compile Include="ChatDatabase.cs" />
     <Compile Include="ChatMessage.cs" />
     <Compile Include="cls_globPara.cs" />
