@@ -5,8 +5,8 @@ die () {
 	exit 1
 }
 
-test -f "config.sh" || die "Create config.sh in this directory with:\nexport GITHUB_CREDS=username:passwd"
-source config.sh
+test -f "./config.sh" || die "Create config.sh in this directory with:\nexport GITHUB_CREDS=username:passwd"
+source ./config.sh
 
 #test $# -ge 2 ||
 #die "Usage: $0 <tag-name> <path>..."
