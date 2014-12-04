@@ -94,7 +94,8 @@ namespace miniConf {
                 cn.Close(); /*button2_Click(null, null);*/
             };
             cn.OnAuthError += (object sender2, agsXMPP.Xml.Dom.Element e2) => {
-                MessageBox.Show("Error while registering account: \n" + e2.ToString(), "Create Jabber account", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                var text = e2.SelectSingleElement("text", true);
+                MessageBox.Show("Error while registering account: \n" + (text != null ? text.Value : e2.ToString()), "Create Jabber account", MessageBoxButtons.OK, MessageBoxIcon.Error);
             };
             cn.OnError += (object sender2, Exception e2) => {
                 MessageBox.Show("Error while registering account: \n" + e2.ToString(), "Create Jabber account", MessageBoxButtons.OK, MessageBoxIcon.Error);

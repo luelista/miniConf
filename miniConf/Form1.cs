@@ -1313,8 +1313,8 @@ namespace miniConf {
 
         void showPreferences() {
             ConfigForm cfg = new ConfigForm();
-            cfg.ShowDialog();
-            applyPreferences();
+            if (cfg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+              applyPreferences();
         }
 
         private void reconnectToolStripMenuItem_Click(object sender, EventArgs e) {
