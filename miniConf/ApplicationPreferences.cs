@@ -66,7 +66,7 @@ namespace miniConf {
         
         
         public static string ChatTheme {
-            get { return Program.glob.para("Form1__comboMessageTheme", ""); }
+            get { return Program.glob.para("Form1__comboMessageTheme", "Default"); }
             set {     Program.glob.setPara("Form1__comboMessageTheme", value); }
         }
 
