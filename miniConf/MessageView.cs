@@ -170,7 +170,7 @@ namespace miniConf {
             text = text.Replace("\n", "\n<br>");
             var imageLink = Regex.Match(text, "https?://[\\w.-]+/[\\w_.,/+?&%$!=)(\\[\\]{}-]*\\.(png|jpg|gif|webp)");
             text = Regex.Replace(text, "(?i)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))",
-                         "<a href=\"$0\">$0</a>");
+                         (match) => ("<a href=\"" + match.Value.Replace("\"", "&quot;") + "\">" + match.Value + "</a>"));
             if (imagePreview && imageLink.Success) {
                 string link = imageLink.Value; 
                 //HACK HACK HACK
