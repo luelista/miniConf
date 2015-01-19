@@ -86,15 +86,23 @@ namespace miniConf {
                 if (query != null && query.GetType() == typeof(DiscoItems)) {
                     DiscoItems items = query as DiscoItems;
                     DiscoItem[] itms = items.GetDiscoItems();
+                    string server = "";
                     foreach (DiscoItem itm in itms) {
                         if (itm.Jid != null) {
                             var lvi = listView1.Items.Add(itm.Jid.Bare, itm.Jid.User, -1);
                             try { lvi.Group = listView1.Groups[itm.Jid.Server]; } catch (Exception e) { }
+                            server = itm.Jid.Server;
                             lvi.SubItems.Add(itm.Name); lvi.Tag = itm.Jid.Bare;
                             //if (rooms.Contains(itm.Jid.Bare)) lvi.Checked = true;
                         }
                         
                     }
+                    if (server != "") {
+                        var lvi2 = listView1.Items.Add("@"+server, "< other room >", -1);
+                        try { lvi2.Group = listView1.Groups[server]; } catch (Exception e) { }
+                        lvi2.Tag = "@" + server;
+                    }
+
                     listView1.Sort();
                     UseWaitCursor = false;
                 }
@@ -103,6 +111,10 @@ namespace miniConf {
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e) {
             button1.Enabled = (listView1.SelectedItems.Count == 1);
+        }
+
+        private void listView1_DoubleClick(object sender, EventArgs e) {
+            if (listView1.SelectedItems.Count == 1) this.DialogResult = DialogResult.OK;
         }
        
     }
