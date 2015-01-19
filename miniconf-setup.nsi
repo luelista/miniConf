@@ -1,7 +1,12 @@
 !include MUI2.nsh
 !addplugindir .\setups
 
-!define VERSION "1.7.2-beta"
+!getdllversion "miniConf\bin\Release\miniConf.exe" progv_
+  !define PROG_NAME "miniConf"
+  !define VERSION "${progv_1}.${progv_2}.${progv_3}"
+
+!define /date DATE "%Y-%m-%d %H:%M:%S"
+!define /date VERDATE "%Y.%m%d.%H%M.%S"
 
 Function LicensePageShow
 
@@ -18,6 +23,18 @@ FunctionEnd
 
 Name "miniConf"
 OutFile "setups\miniconf-${VERSION}.exe"
+
+  VIProductVersion "${VERSION}.0" 
+  VIFileVersion "${VERSION}.0" 
+  VIAddVersionKey "ProductVersion" "${VERSION}.0"
+  VIAddVersionKey "FileVersion" "${VERSION}.0"
+  VIAddVersionKey "ProductName" "${PROG_NAME}"
+  VIAddVersionKey "FileDescription" "Setup für ${PROG_NAME}"
+  VIAddVersionKey "LegalCopyright" "Copyright (c) 2015 Max Weller"
+  VIAddVersionKey "Comments" "${DATE}"
+  VIAddVersionKey "OriginalFilename" "miniconf-${VERSION}.exe"
+  VIAddVersionKey "LegalTrademarks" "Build time: ${DATE}"
+
 InstallDir "$PROGRAMFILES\miniConf"
 InstallDirRegKey HKCU "Software\miniConf" "NSISInstallDir"
 RequestExecutionLevel admin
