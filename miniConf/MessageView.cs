@@ -165,6 +165,7 @@ namespace miniConf {
                 scrollDown();
         }
         protected string prepareInnerHtml(string text) {
+            text = text.Replace("&", "&amp;");
             text = text.Replace("<", "&lt;");
             if (!String.IsNullOrEmpty(highlightString)) text = Regex.Replace(text, highlightString, "<em>$0</em>");
             text = text.Replace("\n", "\n<br>");
