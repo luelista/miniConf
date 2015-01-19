@@ -59,6 +59,8 @@
             this.ClientSize = new System.Drawing.Size(215, 178);
             this.Controls.Add(this.listView1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "UnreadMessageForm";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;

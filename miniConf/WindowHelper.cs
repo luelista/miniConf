@@ -15,6 +15,10 @@ namespace miniConf {
         [DllImport("user32")]
         public static extern int RegisterWindowMessage(string message);
 
+        [DllImport("user32.dll")]
+        public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        public const int SW_SHOWNOACTIVATE = 4;
+
         public const int HWND_BROADCAST = 0xffff;
         public static readonly int WM_SHOWME = RegisterWindowMessage("WM_SHOWME");
 
