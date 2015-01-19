@@ -371,14 +371,15 @@ namespace miniConf {
                     if (room != null && room.Notify == Roomdata.NotifyMode.OnMention && !mention) notify = false;
                     if (notify) {
                         if (enableSoundToolStripMenuItem.Checked) {
-                            string sound = mention ? "notify" : "correct";
+                            string sound = mention ? "popup" : "correct";
                             SoundPlayer dingdong = new SoundPlayer(Program.appDir + "\\Sounds\\"+sound+".wav");
                             dingdong.Play();
                         }
                         if (!WindowHelper.IsActive(this) || currentRoom != room) {
                             room.unreadNotifyCount++;
                             if (enablePopupToolStripMenuItem.Checked) {
-                                popupWindow.Show(); popupWindow.Activate(); popupWindow.updateRooms(rooms);
+                                WindowHelper.ShowWindow(popupWindow.Handle, WindowHelper.SW_SHOWNOACTIVATE); //popupWindow.Show();
+                                popupWindow.updateRooms(rooms);
                             }
                             if (enableNotificationsToolStripMenuItem.Checked && !String.IsNullOrEmpty(messageBody)) {
                                 balloonRoom = msg.From.Bare;
@@ -469,6 +470,7 @@ namespace miniConf {
             if (ApplicationPreferences.AccountJID == "") {
                 showPreferences();
             }
+
         }
 
         private void updateWinTitle() {
@@ -699,6 +701,9 @@ namespace miniConf {
             RoomListForm frm = new RoomListForm();
             if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 string bareJid = (string)frm.listView1.SelectedItems[0].Tag;
+                if (bareJid.StartsWith("@")) {
+                    joinChatroomWithDialog(bareJid); return;
+                }
                 joinChatroom(bareJid);
             }
         }
@@ -709,7 +714,11 @@ namespace miniConf {
         }
 
         private void createNewRoomToolStripMenuItem_Click(object sender, EventArgs e) {
-            string newName = Microsoft.VisualBasic.Interaction.InputBox("Enter jabber id of room to create or join:", "Create / join room");
+            joinChatroomWithDialog("");
+        }
+
+        private void joinChatroomWithDialog(string defValue) {
+            string newName = Microsoft.VisualBasic.Interaction.InputBox("Enter jabber id of room to create or join:", "Create / join room", defValue);
             if (!String.IsNullOrEmpty(newName)) {
                 joinChatroom(newName);
             }

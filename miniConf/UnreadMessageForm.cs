@@ -15,6 +15,22 @@ namespace miniConf
         public delegate void MessageItemClickEventHandler(object sender, MouseEventArgs e, string chatroom);
         public event MessageItemClickEventHandler OnItemClick;
 
+        public const uint WS_CHILD = 0x40000000;
+        public const uint WS_THICKFRAME = 0x00040000;
+        public const uint WS_EX_TOOLWINDOW = 0x00000080;
+        public const uint WS_EX_NOACTIVATE = 0x08000000;
+        protected override bool ShowWithoutActivation {
+            get { return true; }
+        }
+        protected override CreateParams CreateParams {
+            get {
+                CreateParams baseParams = base.CreateParams;
+                baseParams.ExStyle |= (int)WS_EX_NOACTIVATE | (int)WS_EX_TOOLWINDOW;
+
+                return baseParams;
+            }
+        }
+
         public UnreadMessageForm()
         {
             InitializeComponent();
