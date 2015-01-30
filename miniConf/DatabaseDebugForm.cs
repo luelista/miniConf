@@ -25,7 +25,7 @@ namespace miniConf {
 
         private void textEditorControl1_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.Enter && e.Control) {
-                File.WriteAllText(Program.dataDir+"Temporary Data\\lastQuery.sql", textEditorControl1.Text);
+				File.WriteAllText(Program.dataDir+"Temporary Data"+Path.PathSeparator+"lastQuery.sql", textEditorControl1.Text);
                 var selMan = textEditorControl1.ActiveTextAreaControl.SelectionManager;
                 if (!selMan.HasSomethingSelected) {
                     int lineCount=textEditorControl1.Document.TotalNumberOfLines;

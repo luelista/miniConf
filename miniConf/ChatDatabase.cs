@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data.Common;
-using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Mono.Data.Sqlite;
 
 namespace miniConf {
     public class ChatDatabase : SqlDatabase {
@@ -87,12 +87,12 @@ namespace miniConf {
         public int InsertMessage(string room, string id, string sender, string body, string date_dt, string edit_dt = "") {
             var cmd = dataBase.CreateCommand();
             cmd.CommandText = "INSERT INTO messages VALUES (@room, @id, @sender, @body, @ts, NULL, @editts, NULL)";
-            cmd.Parameters.Add(new SQLiteParameter("@room", String.IsNullOrEmpty(room) ? "" : room));
-            cmd.Parameters.Add(new SQLiteParameter("@id", String.IsNullOrEmpty(id) ? "" : id));
-            cmd.Parameters.Add(new SQLiteParameter("@sender", String.IsNullOrEmpty(sender) ? "" : sender));
-            cmd.Parameters.Add(new SQLiteParameter("@body", String.IsNullOrEmpty(body) ? "" : body));
-            cmd.Parameters.Add(new SQLiteParameter("@ts", String.IsNullOrEmpty(date_dt) ? "" : date_dt));
-            cmd.Parameters.Add(new SQLiteParameter("@editts", String.IsNullOrEmpty(edit_dt) ? "" : edit_dt));
+            cmd.Parameters.Add(new SqliteParameter("@room", String.IsNullOrEmpty(room) ? "" : room));
+            cmd.Parameters.Add(new SqliteParameter("@id", String.IsNullOrEmpty(id) ? "" : id));
+            cmd.Parameters.Add(new SqliteParameter("@sender", String.IsNullOrEmpty(sender) ? "" : sender));
+            cmd.Parameters.Add(new SqliteParameter("@body", String.IsNullOrEmpty(body) ? "" : body));
+            cmd.Parameters.Add(new SqliteParameter("@ts", String.IsNullOrEmpty(date_dt) ? "" : date_dt));
+            cmd.Parameters.Add(new SqliteParameter("@editts", String.IsNullOrEmpty(edit_dt) ? "" : edit_dt));
             return cmd.ExecuteNonQuery();
         }
         public bool EditMessage(string room, string xmppid, string newXmppid, string from, string newbody, string edit_dt) {
@@ -103,9 +103,9 @@ namespace miniConf {
 
             var cmd = dataBase.CreateCommand();
             cmd.CommandText = "UPDATE messages SET override=@newid WHERE room=@room AND xmppid= @id";
-            cmd.Parameters.Add(new SQLiteParameter("@room", String.IsNullOrEmpty(room) ? "" : room));
-            cmd.Parameters.Add(new SQLiteParameter("@id", String.IsNullOrEmpty(xmppid) ? "" : xmppid));
-            cmd.Parameters.Add(new SQLiteParameter("@newid", String.IsNullOrEmpty(newXmppid) ? "" : newXmppid));
+            cmd.Parameters.Add(new SqliteParameter("@room", String.IsNullOrEmpty(room) ? "" : room));
+            cmd.Parameters.Add(new SqliteParameter("@id", String.IsNullOrEmpty(xmppid) ? "" : xmppid));
+            cmd.Parameters.Add(new SqliteParameter("@newid", String.IsNullOrEmpty(newXmppid) ? "" : newXmppid));
             var ok1= cmd.ExecuteNonQuery();
 
             InsertMessage(room, newXmppid, oldMessage["sender"], newbody, oldMessage["datedt"], edit_dt);
@@ -125,14 +125,14 @@ namespace miniConf {
         public int StoreRoom(Roomdata room) {
             var cmd = dataBase.CreateCommand();
             cmd.CommandText = "INSERT OR REPLACE INTO room VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7)";
-            cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_SUBJECT, String.IsNullOrEmpty(room.Subject) ? "" : room.Subject));
-            cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_ROOM, room.jid.Bare));
-            cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_NOTIFY, (int)room.Notify));
-            cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_DO_JOIN, (int)room.DoJoin));
-            cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_DISPLAY_POSITION, (int)room.DisplayPosition));
-            cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_LASTMESSAGEDT, room.LastMessageDt));
-            cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_LASTSEENDT, room.LastSeenDt));
-            cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_DISPLAY_NAME, room.DisplayName));
+            cmd.Parameters.Add(new SqliteParameter("@p" + Roomdata.COL_SUBJECT, String.IsNullOrEmpty(room.Subject) ? "" : room.Subject));
+            cmd.Parameters.Add(new SqliteParameter("@p" + Roomdata.COL_ROOM, room.jid.Bare));
+            cmd.Parameters.Add(new SqliteParameter("@p" + Roomdata.COL_NOTIFY, (int)room.Notify));
+            cmd.Parameters.Add(new SqliteParameter("@p" + Roomdata.COL_DO_JOIN, (int)room.DoJoin));
+            cmd.Parameters.Add(new SqliteParameter("@p" + Roomdata.COL_DISPLAY_POSITION, (int)room.DisplayPosition));
+            cmd.Parameters.Add(new SqliteParameter("@p" + Roomdata.COL_LASTMESSAGEDT, room.LastMessageDt));
+            cmd.Parameters.Add(new SqliteParameter("@p" + Roomdata.COL_LASTSEENDT, room.LastSeenDt));
+            cmd.Parameters.Add(new SqliteParameter("@p" + Roomdata.COL_DISPLAY_NAME, room.DisplayName));
             return cmd.ExecuteNonQuery();
         }
 
@@ -141,8 +141,8 @@ namespace miniConf {
             cmd.CommandText = "SELECT * FROM messages WHERE room = @name AND xmppid = @xmppid;";
             cmd.Parameters.AddWithValue("@name", room); cmd.Parameters.AddWithValue("@xmppid", xmppid);
             var reader = cmd.ExecuteReader();
-            if (reader.HasRows)
-                return reader.GetValues();
+			if (reader.HasRows)
+				return this.GetValues (reader);
             else
                 return null;
         }
@@ -177,7 +177,7 @@ namespace miniConf {
             return SqlDatabase.ScalarStringOrNull(cmd);
         }
 
-        public SQLiteDataReader GetMembers(string room) {
+        public SqliteDataReader GetMembers(string room) {
             var cmd = dataBase.CreateCommand();
             cmd.CommandText = "SELECT nickname,lastseendt,onlinestate,affiliation,role,status_str,user_jid FROM roommates WHERE room = @name;";
             cmd.Parameters.AddWithValue("@name", room);

@@ -260,7 +260,7 @@ namespace miniConf {
 
             jabber.CheckServerFeatures();
 
-            SoundPlayer dingdong3 = new SoundPlayer(Program.appDir + "\\Sounds\\startup.wav");
+			SoundPlayer dingdong3 = new SoundPlayer(Program.appDir + Path.PathSeparator + "Sounds" + Path.PathSeparator + "startup.wav");
             if (enableSoundToolStripMenuItem.Enabled) dingdong3.Play();
 
             //onChatroomSelect();
@@ -372,14 +372,15 @@ namespace miniConf {
                     if (notify) {
                         if (enableSoundToolStripMenuItem.Checked) {
                             string sound = mention ? "popup" : "correct";
-                            SoundPlayer dingdong = new SoundPlayer(Program.appDir + "\\Sounds\\"+sound+".wav");
+							SoundPlayer dingdong = new SoundPlayer(Program.appDir + Path.PathSeparator+"Sounds"+Path.PathSeparator+sound+".wav");
                             dingdong.Play();
                         }
-                        if (!WindowHelper.IsActive(this) || currentRoom != room) {
+                        if (/*!WindowHelper.IsActive(this) ||*/ currentRoom != room) {
                             room.unreadNotifyCount++;
                             if (enablePopupToolStripMenuItem.Checked) {
-                                WindowHelper.ShowWindow(popupWindow.Handle, WindowHelper.SW_SHOWNOACTIVATE); //popupWindow.Show();
-                                popupWindow.updateRooms(rooms);
+                                //WindowHelper.ShowWindow(popupWindow.Handle, WindowHelper.SW_SHOWNOACTIVATE); //
+								popupWindow.Show();
+								popupWindow.updateRooms(rooms);
                             }
                             if (enableNotificationsToolStripMenuItem.Checked && !String.IsNullOrEmpty(messageBody)) {
                                 balloonRoom = msg.From.Bare;
@@ -387,7 +388,7 @@ namespace miniConf {
                             }
 
                         }
-                        if (!WindowHelper.IsActive(this)) tmrBlinky.Start();
+                        //if (!WindowHelper.IsActive(this)) tmrBlinky.Start();
                     }
                 }
             } catch (Exception ex) {
@@ -445,9 +446,9 @@ namespace miniConf {
             // make sure window is created
             IntPtr handle = this.Handle;
 
-            WinSparkle.win_sparkle_set_appcast_url("http://downloads.max-weller.de/miniconf/miniconf.xml");
+            //WinSparkle.win_sparkle_set_appcast_url("http://downloads.max-weller.de/miniconf/miniconf.xml");
             //WinSparkle.win_sparkle_set_app_details("Company","App", "Version"); // THIS CALL NOT IMPLEMENTED YET
-            WinSparkle.win_sparkle_init();
+            //WinSparkle.win_sparkle_init();
 
             logs = new ChatDatabase(Program.dataDir + "chatlogs.db");
             Program.db = logs;
@@ -566,9 +567,9 @@ namespace miniConf {
 
         #region Form Events
         protected override void WndProc(ref Message m) {
-            if (m.Msg == WindowHelper.WM_SHOWME) {
+            /*if (m.Msg == WindowHelper.WM_SHOWME) {
                 ShowMe();
-            }
+            }*/
             base.WndProc(ref m);
         }
 
@@ -718,7 +719,7 @@ namespace miniConf {
         }
 
         private void joinChatroomWithDialog(string defValue) {
-            string newName = Microsoft.VisualBasic.Interaction.InputBox("Enter jabber id of room to create or join:", "Create / join room", defValue);
+			string newName = VbHelper.InputBox("Enter jabber id of room to create or join:", "Create / join room", defValue);
             if (!String.IsNullOrEmpty(newName)) {
                 joinChatroom(newName);
             }
@@ -733,7 +734,7 @@ namespace miniConf {
         #region Chatroom List ITEM Contextmenu
         private void renameToolStripMenuItem_Click(object sender, EventArgs e) {
             Roomdata room = (Roomdata)lbChatrooms.SelectedItem;
-            string newName = Microsoft.VisualBasic.Interaction.InputBox("Enter new display name for room \"" + room.jid.Bare + "\":", "Rename", room.DisplayName);
+			string newName = VbHelper.InputBox("Enter new display name for room \"" + room.jid.Bare + "\":", "Rename", room.DisplayName);
             if (!String.IsNullOrEmpty(newName)) {
                 room.DisplayName = newName;
                 logs.StoreRoom(room);
@@ -884,7 +885,7 @@ namespace miniConf {
             }
             if (e.KeyCode == Keys.V && e.Control) {
                 if (Clipboard.ContainsImage()) {
-                    string uploadfn = Program.dataDir + "Temporary Data\\upload.jpg";
+					string uploadfn = Program.dataDir + "Temporary Data" + Path.PathSeparator + "upload.jpg";
                     Clipboard.GetImage().Save(uploadfn);
                     doMediaUpload(uploadfn);
                 }

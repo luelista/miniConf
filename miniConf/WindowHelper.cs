@@ -8,6 +8,7 @@ using System.Windows.Forms;
 
 namespace miniConf {
     class WindowHelper {
+		/*
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern IntPtr GetForegroundWindow();
         [DllImport("user32")]
@@ -38,7 +39,7 @@ namespace miniConf {
             SendMessage(textBox.Handle, EM_SETCUEBANNER, 0, banner);
 
         }
-
+*/
         public static Color getColorForHSL(double hue, double sat, double light) {
                 double[] t = new double[] { 0, 0, 0 };
 
