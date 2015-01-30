@@ -16,7 +16,7 @@ namespace miniConf {
         }
 
         private void ConfigForm_Load(object sender, EventArgs e) {
-            WindowHelper.SetCueBanner(qq_txtPrefUsername, "jane-doe@example.org");
+            //WindowHelper.SetCueBanner(qq_txtPrefUsername, "jane-doe@example.org");
             updateSmileyThemeList();
 
             qq_txtPrefUsername.Text = ApplicationPreferences.AccountJID;
@@ -110,7 +110,7 @@ namespace miniConf {
 
         #region Smileys
         private void updateSmileyThemeList() {
-            string path = Program.dataDir + "Emoticons\\";
+			string path = Program.dataDir + "Emoticons" + Path.PathSeparator;
             string[] emoteDirs = Directory.GetDirectories(path);
             cmbSmileyTheme.Items.Clear();
             cmbSmileyTheme.Items.Add("(none)");
@@ -120,7 +120,7 @@ namespace miniConf {
 
 
         private void lnkInstallSmiley_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            System.Diagnostics.Process.Start("explorer.exe", Program.dataDir + "Emoticons\\");
+			System.Diagnostics.Process.Start("explorer.exe", Program.dataDir + "Emoticons" + Path.PathSeparator);
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {

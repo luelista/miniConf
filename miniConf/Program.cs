@@ -27,14 +27,14 @@ namespace miniConf {
         static void Main(string[] argv) {
             Jabber = new JabberService();
 
-            appDir = Path.GetDirectoryName(Application.ExecutablePath) + "\\";
-            dataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\miniConf\\";
+			appDir = Path.GetDirectoryName(Application.ExecutablePath) + Path.PathSeparator;
+			dataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + Path.PathSeparator + "miniConf" + Path.PathSeparator;
             System.IO.Directory.CreateDirectory(dataDir);
             System.IO.Directory.CreateDirectory(dataDir + "Received Files");
             System.IO.Directory.CreateDirectory(dataDir + "Temporary Data");
             System.IO.Directory.CreateDirectory(dataDir + "Avatars");
             System.IO.Directory.CreateDirectory(dataDir + "Emoticons");
-            tempDir = dataDir + "Temporary Data\\";
+			tempDir = dataDir + "Temporary Data" + Path.PathSeparator;
 
             singleInstanceMutex = new Mutex(true, "singleInstanceMutex@miniConf.luelista.net");
             if (singleInstanceMutex.WaitOne(TimeSpan.Zero, true)) {
@@ -48,8 +48,10 @@ namespace miniConf {
                 Application.Run(MainWnd);
                 singleInstanceMutex.ReleaseMutex();
             } else {
-                WindowHelper.PostMessage((IntPtr)WindowHelper.HWND_BROADCAST,
+                /*WindowHelper.PostMessage((IntPtr)WindowHelper.HWND_BROADCAST,
                                         WindowHelper.WM_SHOWME, IntPtr.Zero, IntPtr.Zero);
+                                        */
+				MessageBox.Show ("miniConf is already running.");
             }
         }
     }

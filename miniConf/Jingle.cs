@@ -174,7 +174,7 @@ namespace miniConf {
                 iq_to = initiateIq.From;
 
                 var filename = contentIn.SelectSingleElement("file", true).GetTag("name");
-                localFilespec = Program.dataDir + "received files\\" + filename;
+				localFilespec = Program.dataDir + "received files" + Path.PathSeparator + filename;
 
             }
 

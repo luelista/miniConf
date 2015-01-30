@@ -1,4 +1,4 @@
-using MSHTML;
+//using MSHTML;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -54,9 +54,9 @@ namespace miniConf {
                 Console.WriteLine("Error loading stylesheet: " + e.Message);
             }
             try {
-                IHTMLDocument3 doc = (IHTMLDocument3)this.Document.DomDocument;
-                IHTMLStyleElement styleEl = (IHTMLStyleElement)doc.getElementById("st");
-                styleEl.styleSheet.cssText = style + "\n" + style2;
+                //IHTMLDocument3 doc = (IHTMLDocument3)this.Document.DomDocument;
+                //IHTMLStyleElement styleEl = (IHTMLStyleElement)doc.getElementById("st");
+                //styleEl.styleSheet.cssText = style + "\n" + style2;
             } catch (Exception e) {
                 Console.WriteLine("Error applying stylesheet: " + e.Message);
             }
@@ -64,10 +64,10 @@ namespace miniConf {
         public void loadSmileyTheme() {
             string dataDir = Program.dataDir,
                    themeName = Program.glob.para("Form1__cmbSmileyTheme", "(none)"),
-                   themeDir = dataDir+"Emoticons\\"+themeName;
+			themeDir = dataDir+"Emoticons"+Path.PathSeparator+themeName;
             smileys = new Dictionary<string,string>();
             if (themeName == "(none)" || themeName == "" || !Directory.Exists(themeDir)) return;
-            string[] themeIni = File.ReadAllLines(themeDir + "\\theme");
+			string[] themeIni = File.ReadAllLines(themeDir + Path.PathSeparator+"theme");
             string category = null;
             foreach (string lineIter in themeIni) {
                 string line = lineIter.Trim();
@@ -76,7 +76,7 @@ namespace miniConf {
 
                 if (category != null) {
                     string[] info = line.Split(' ', '\t');
-                    string fn = themeDir + "\\" + info[0];
+					string fn = themeDir + Path.PathSeparator + info[0];
                     for (int i = 1; i < info.Length; i++) {
                         if (info[i] == "") continue;
                         smileys[info[i]] = fn;

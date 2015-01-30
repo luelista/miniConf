@@ -21,7 +21,7 @@ namespace miniConf {
         Dictionary<string, string> m_content = new Dictionary<string, string>();
         SqlDatabase db;
 
-        const string tabDelimiter = "<=" + Constants.vbTab;
+        const string tabDelimiter = "<=\t";
 
 
         //: ========== Konstruktor + Destruktor ==================================
@@ -78,7 +78,7 @@ namespace miniConf {
         public void readFormPos(Form frm, bool readSize = true, string suffix = "") {
             try {
                 string paraName = frm.Name.ToLower() + "__" + "Rect" + suffix;
-                string[] formPos = Strings.Split(this.para(paraName), ";");
+                string[] formPos = this.para(paraName).Split(';');
                 frm.Left = Convert.ToInt32(formPos[0]);
                 frm.Top = Convert.ToInt32(formPos[1]);
                 if (readSize) {
@@ -119,13 +119,13 @@ namespace miniConf {
                     recursive_readTuttiFrutti(frm, subctrl);
                 typ = subctrl.GetType().ToString();
 
-                Debug.Print(subctrl.Name + Constants.vbTab + typ);
+                Debug.Print(subctrl.Name + "\t" + typ);
                 if (subctrl.Name.StartsWith("qq_"))
                     continue;
 
                 try {
                     if (typ == "System.Windows.Forms.RadioButton") {
-                        string[] paras = Strings.Split(subctrl.Name, "__");
+						string[] paras = VbHelper.Split(subctrl.Name, "__");
                         if (this.para(prefix + paras[0]) == paras[1]) {
                             ((RadioButton)subctrl).Checked = true;
                         } else {
@@ -135,7 +135,7 @@ namespace miniConf {
 
                     if (!this.Contains(prefix + subctrl.Name))
                         continue;
-                    Debug.Print("ja" + Constants.vbTab + subctrl.Name + Constants.vbTab + typ);
+                    Debug.Print("ja" + "\t" + subctrl.Name + "\t" + typ);
 
                     if (typ == "System.Windows.Forms.TextBox") {
                         subctrl.Text = this.para(prefix + subctrl.Name);
@@ -187,7 +187,7 @@ namespace miniConf {
                 if (typ == "System.Windows.Forms.RadioButton") {
                     RadioButton radioBox = (RadioButton)subctrl;
                     if (radioBox.Checked) {
-                        string[] paras = Strings.Split(subctrl.Name, "__");
+                        string[] paras = VbHelper.Split(subctrl.Name, "__");
                         this.setPara(prefix + paras[0], paras[1]);
                     }
                 }
@@ -217,16 +217,16 @@ namespace miniConf {
                 return;
 
             try {
-                string[] cont = Strings.Split(File.ReadAllText(m_paraFileSpec), Constants.vbNewLine);
+				string[] cont = VbHelper.Split(File.ReadAllText(m_paraFileSpec), "\r\n");
 
                 string[] line = null;
                 foreach (string lineString in cont) {
-                    line = Strings.Split(lineString, tabDelimiter);
+					line = VbHelper.Split(lineString, tabDelimiter);
                     if (line.Length < 2)
                         continue;
 
                     this.db.ExecSQL("INSERT OR IGNORE INTO params (item,value) VALUES (?,?)",
-                        line[0], Strings.Replace(line[1], "|-ZS-|", Constants.vbNewLine));
+						line[0], VbHelper.Replace(line[1], "|-ZS-|", "\r\n"));
                     //m_content.Add(line[0], Strings.Replace(line[1], "|-ZS-|", Constants.vbNewLine));
                     //TT.Write("ParaRead", line(0))
                     //Debug.Print(lineString)
@@ -234,7 +234,7 @@ namespace miniConf {
                 }
 
             } catch (Exception e) {
-                Interaction.MsgBox("beim Laden der Einstellungen ist ein Fehler aufgetreten:" + Constants.vbNewLine + e.Message + Constants.vbNewLine + "(cls_globPara)");
+				MessageBox.Show( "beim Laden der Einstellungen ist ein Fehler aufgetreten:\n" + e.Message + "\n" + "(cls_globPara)");
             }
 
             readFromDatabase();

@@ -35,7 +35,7 @@ namespace miniConf {
         }
 
         public string GetAvatarFilename(string userId) {
-            return Program.dataDir + "Avatars\\" + Regex.Replace(userId, "[^a-zA-Z0-9@_.-]", ",") + ".png";
+			return Program.dataDir + "Avatars" + Path.PathSeparator + Regex.Replace(userId, "[^a-zA-Z0-9@_.-]", ",") + ".png";
         }
 
         public void RequestAvatar(Jid userId, RequestAvatarCallback finished) {
