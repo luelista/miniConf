@@ -33,7 +33,7 @@ namespace miniConf {
         string balloonRoom = null;
         UnreadMessageForm popupWindow = new UnreadMessageForm();
         DirectMessageManager dmManager = new DirectMessageManager();
-        HashSet<string> onlineContacts = new HashSet<string>();
+        //List<string> onlineContacts = new List<string>();
         XmppDebugForm debugForm;
 
         Icon icon1;
@@ -943,7 +943,10 @@ namespace miniConf {
             if (result == System.Windows.Forms.DialogResult.OK) {
                 if (f.resultStatus == FileUploader.UploadFileStatus.Success || f.resultStatus == FileUploader.UploadFileStatus.AlreadyUploaded) {
 
-                    string hash = Convert.ToString(f.resultObject["hash"]);
+                    //string hash = Convert.ToString(f.resultObject["hash"]);
+                    var res = Regex.Match(f.jsonResult, "\"hash\":\"([a-zA-Z0-9]+)\"");
+                    string hash = res.Groups[1].Value;
+
                     string ext = Path.GetExtension(filename).ToLower();
                     txtSendmessage.AppendText(FileUploader.ApplicationUrl + "/" + hash + ext);
 

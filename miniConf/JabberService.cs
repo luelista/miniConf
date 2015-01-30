@@ -2,7 +2,7 @@
 using agsXMPP.Xml.Dom;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+
 using System.Text;
 using agsXMPP.protocol.client;
 
@@ -17,7 +17,7 @@ namespace miniConf {
         public MucService muc;
         public JabberAvatars avatar;
 
-        public HashSet<string> serverFeatures = new HashSet<string>();
+        public List<string> serverFeatures = new List<string>();
 
         public Dictionary<string, JabberContact> contacts = new Dictionary<string,JabberContact>();
 
@@ -96,7 +96,8 @@ namespace miniConf {
                     contacts.Add(pres.From.Bare, new JabberContact(pres.From));
                 }
                 JabberContact contact = contacts[pres.From.Bare];
-                contact.resources.Add(pres.From.Resource);
+                if (!contact.resources.Contains(pres.From.Resource))
+                    contact.resources.Add(pres.From.Resource);
                 if (pres.Type == agsXMPP.protocol.client.PresenceType.unavailable) {
                     contact.available = false;
                 } else {

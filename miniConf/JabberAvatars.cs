@@ -8,7 +8,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
+
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -16,7 +16,7 @@ using System.Windows.Forms;
 namespace miniConf {
     class JabberAvatars : BackgroundWorker {
 
-        public HashSet<string> dontRequestIds = new HashSet<string>();
+        public List<string> dontRequestIds = new List<string>();
 
         public delegate void RequestAvatarCallback(bool success, string fileName);
 
