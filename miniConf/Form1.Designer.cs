@@ -30,8 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Online", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Not available", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Online", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Not available", System.Windows.Forms.HorizontalAlignment.Left);
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.pnlToolbar = new System.Windows.Forms.Panel();
             this.button4 = new System.Windows.Forms.Button();
@@ -40,6 +40,7 @@
             this.txtSubject = new System.Windows.Forms.TextBox();
             this.panel3 = new System.Windows.Forms.Panel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.webBrowser1 = new miniConf.MessageView();
             this.txtSendmessage = new System.Windows.Forms.TextBox();
             this.pnlErrMes = new System.Windows.Forms.Panel();
             this.btnCancelReconnect = new System.Windows.Forms.Button();
@@ -94,11 +95,13 @@
             this.privateMessageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openDirectChatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.infoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.conversationImageList = new System.Windows.Forms.ImageList(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.naviBand3 = new Guifreaks.NavigationBar.NaviBand(this.components);
             this.lvContacts = new System.Windows.Forms.ListView();
             this.naviBand1 = new Guifreaks.NavigationBar.NaviBand(this.components);
+            this.lblConferencesEmpty = new System.Windows.Forms.Label();
             this.panel5 = new System.Windows.Forms.Panel();
             this.label14 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -110,9 +113,6 @@
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lbChatrooms = new System.Windows.Forms.ListBox();
             this.naviBar1 = new Guifreaks.NavigationBar.NaviBar(this.components);
-            this.hideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.webBrowser1 = new miniConf.MessageView();
-            this.lblConferencesEmpty = new System.Windows.Forms.Label();
             this.pnlToolbar.SuspendLayout();
             this.panel3.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -238,6 +238,22 @@
             this.splitContainer1.Size = new System.Drawing.Size(464, 508);
             this.splitContainer1.SplitterDistance = 368;
             this.splitContainer1.TabIndex = 9;
+            // 
+            // webBrowser1
+            // 
+            this.webBrowser1.AllowWebBrowserDrop = false;
+            this.webBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.webBrowser1.Location = new System.Drawing.Point(1, 0);
+            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser1.Name = "webBrowser1";
+            this.webBrowser1.ScriptErrorsSuppressed = true;
+            this.webBrowser1.Size = new System.Drawing.Size(461, 444);
+            this.webBrowser1.TabIndex = 0;
+            this.webBrowser1.Url = new System.Uri("about:blank", System.UriKind.Absolute);
+            this.webBrowser1.OnRealKeyDown += new System.Windows.Forms.HtmlElementEventHandler(this.webBrowser1_OnRealKeyDown);
+            this.webBrowser1.OnSpecialUrl += new miniConf.MessageView.SpecialUrlEvent(this.webBrowser1_OnSpecialUrl);
             // 
             // txtSendmessage
             // 
@@ -691,6 +707,13 @@
             this.infoToolStripMenuItem.Text = "Info";
             this.infoToolStripMenuItem.Click += new System.EventHandler(this.infoToolStripMenuItem_Click);
             // 
+            // hideToolStripMenuItem
+            // 
+            this.hideToolStripMenuItem.Name = "hideToolStripMenuItem";
+            this.hideToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.hideToolStripMenuItem.Text = "Hide";
+            this.hideToolStripMenuItem.Click += new System.EventHandler(this.hideToolStripMenuItem_Click);
+            // 
             // conversationImageList
             // 
             this.conversationImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("conversationImageList.ImageStream")));
@@ -758,12 +781,23 @@
             this.naviBand1.TabIndex = 3;
             this.naviBand1.Text = "Groups";
             // 
+            // lblConferencesEmpty
+            // 
+            this.lblConferencesEmpty.BackColor = System.Drawing.Color.White;
+            this.lblConferencesEmpty.ForeColor = System.Drawing.Color.Gray;
+            this.lblConferencesEmpty.Location = new System.Drawing.Point(11, 80);
+            this.lblConferencesEmpty.Name = "lblConferencesEmpty";
+            this.lblConferencesEmpty.Size = new System.Drawing.Size(111, 42);
+            this.lblConferencesEmpty.TabIndex = 3;
+            this.lblConferencesEmpty.Text = "click the plus sign to add a conference";
+            this.lblConferencesEmpty.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblConferencesEmpty.Visible = false;
+            // 
             // panel5
             // 
             this.panel5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(143)))), ((int)(((byte)(171)))));
-            this.panel5.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel5.BackgroundImage")));
             this.panel5.Controls.Add(this.label14);
             this.panel5.Location = new System.Drawing.Point(0, 211);
             this.panel5.Name = "panel5";
@@ -773,7 +807,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.BackColor = System.Drawing.Color.Transparent;
+            this.label14.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(143)))), ((int)(((byte)(171)))));
             this.label14.ForeColor = System.Drawing.Color.White;
             this.label14.Location = new System.Drawing.Point(5, 2);
             this.label14.Name = "label14";
@@ -786,7 +820,6 @@
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(143)))), ((int)(((byte)(171)))));
-            this.panel2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel2.BackgroundImage")));
             this.panel2.Controls.Add(this.label13);
             this.panel2.Controls.Add(this.lnkRoomlistContextMenu);
             this.panel2.Controls.Add(this.lnkJoinRoom);
@@ -798,7 +831,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.BackColor = System.Drawing.Color.Transparent;
+            this.label13.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(143)))), ((int)(((byte)(171)))));
             this.label13.ForeColor = System.Drawing.Color.White;
             this.label13.Location = new System.Drawing.Point(5, 2);
             this.label13.Name = "label13";
@@ -839,13 +872,13 @@
             this.columnHeader1,
             this.columnHeader2});
             this.lvOnlineStatus.FullRowSelect = true;
-            listViewGroup3.Header = "Online";
-            listViewGroup3.Name = "online";
-            listViewGroup4.Header = "Not available";
-            listViewGroup4.Name = "off";
+            listViewGroup1.Header = "Online";
+            listViewGroup1.Name = "online";
+            listViewGroup2.Header = "Not available";
+            listViewGroup2.Name = "off";
             this.lvOnlineStatus.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup3,
-            listViewGroup4});
+            listViewGroup1,
+            listViewGroup2});
             this.lvOnlineStatus.LargeImageList = this.imageList1;
             this.lvOnlineStatus.Location = new System.Drawing.Point(1, 229);
             this.lvOnlineStatus.Name = "lvOnlineStatus";
@@ -901,41 +934,6 @@
             this.naviBar1.TabIndex = 10;
             this.naviBar1.Text = "naviBar1";
             this.naviBar1.SizeChanged += new System.EventHandler(this.naviBar1_SizeChanged);
-            // 
-            // hideToolStripMenuItem
-            // 
-            this.hideToolStripMenuItem.Name = "hideToolStripMenuItem";
-            this.hideToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
-            this.hideToolStripMenuItem.Text = "Hide";
-            this.hideToolStripMenuItem.Click += new System.EventHandler(this.hideToolStripMenuItem_Click);
-            // 
-            // webBrowser1
-            // 
-            this.webBrowser1.AllowWebBrowserDrop = false;
-            this.webBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.webBrowser1.Location = new System.Drawing.Point(1, 0);
-            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.ScriptErrorsSuppressed = true;
-            this.webBrowser1.Size = new System.Drawing.Size(461, 444);
-            this.webBrowser1.TabIndex = 0;
-            this.webBrowser1.Url = new System.Uri("about:blank", System.UriKind.Absolute);
-            this.webBrowser1.OnRealKeyDown += new System.Windows.Forms.HtmlElementEventHandler(this.webBrowser1_OnRealKeyDown);
-            this.webBrowser1.OnSpecialUrl += new miniConf.MessageView.SpecialUrlEvent(this.webBrowser1_OnSpecialUrl);
-            // 
-            // lblConferencesEmpty
-            // 
-            this.lblConferencesEmpty.BackColor = System.Drawing.Color.White;
-            this.lblConferencesEmpty.ForeColor = System.Drawing.Color.Gray;
-            this.lblConferencesEmpty.Location = new System.Drawing.Point(11, 80);
-            this.lblConferencesEmpty.Name = "lblConferencesEmpty";
-            this.lblConferencesEmpty.Size = new System.Drawing.Size(111, 42);
-            this.lblConferencesEmpty.TabIndex = 3;
-            this.lblConferencesEmpty.Text = "click the plus sign to add a conference";
-            this.lblConferencesEmpty.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblConferencesEmpty.Visible = false;
             // 
             // Form1
             // 
