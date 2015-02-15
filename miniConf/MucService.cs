@@ -1,6 +1,8 @@
-﻿using System;
+﻿using agsXMPP.protocol;
+using agsXMPP.protocol.client;
+using agsXMPP.protocol.x.muc;
+using System;
 using System.Collections.Generic;
-
 using System.Text;
 
 namespace miniConf {
@@ -17,17 +19,17 @@ namespace miniConf {
             Program.db.SetOnlineStatus(room.RoomName, "off");
 
             /// Setup Room
-            agsXMPP.protocol.client.Presence MUCpresence = new agsXMPP.protocol.client.Presence();
+            agsXMPP.protocol.client.Presence MUCpresence = new Presence();
             //MUCpresence.From = jabber.conn.MyJID;
             MUCpresence.To = room.jid;
 
-            var xMuc = new agsXMPP.protocol.x.muc.Muc();
+            var xMuc = new Muc();
             MUCpresence.AddChild(xMuc);
 
             //if (glob.para("notifications__" + roomJid.Bare) == "FALSE") xMuc.SetTag("show", "away");
             if (room.Notify != Roomdata.NotifyMode.Always) xMuc.SetTag("show", "away");
 
-            agsXMPP.protocol.x.muc.History historyChild = new agsXMPP.protocol.x.muc.History(100);
+            agsXMPP.protocol.x.muc.History historyChild = new History(100);
             try {
                 string since = room.LastMessageDt; //logs.GetLastmessageDatetime(room.jid.Bare);
                 if (!String.IsNullOrEmpty(since)) {
@@ -39,7 +41,7 @@ namespace miniConf {
             }
 
             if (loadAllHistory)
-                historyChild = new agsXMPP.protocol.x.muc.History(10000);
+                historyChild = new History(10000);
 
             xMuc.AddChild(historyChild);
 
@@ -54,11 +56,18 @@ namespace miniConf {
             Program.db.SetOnlineStatus(room.RoomName, "off");
             room.online = false;
 
-            agsXMPP.protocol.client.Presence MUCpresence = new agsXMPP.protocol.client.Presence();
+            Presence MUCpresence = new Presence();
             //MUCpresence.From = jabber.conn.MyJID;
             MUCpresence.To = room.jid;
-            MUCpresence.Type = agsXMPP.protocol.client.PresenceType.unavailable;
+            MUCpresence.Type = PresenceType.unavailable;
             Program.Jabber.conn.Send(MUCpresence);
+        }
+
+        public void handleInvitation(Message msg, Invite inv) {
+            InvitationForm frm = new InvitationForm();
+            frm.setChatroomInvite(inv.From, msg.From);
+            frm.Show();
+            frm.Activate();
         }
 
     }

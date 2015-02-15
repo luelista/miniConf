@@ -11,6 +11,10 @@ namespace miniConf
     {
 
         Dictionary<string, DirectMessageForm> dmSessions = new Dictionary<string, DirectMessageForm>();
+        
+        public bool HasWindow(Jid from) {
+            return dmSessions.ContainsKey(from.Bare);
+        }
 
         public DirectMessageForm GetWindow(Jid from)
         {
@@ -37,6 +41,15 @@ namespace miniConf
         public void OnPrivateMessage(agsXMPP.protocol.client.Message msg)
         {
             try {
+                agsXMPP.protocol.x.muc.User x = (agsXMPP.protocol.x.muc.User)msg.SelectSingleElement(typeof(agsXMPP.protocol.x.muc.User));
+                if (x != null && x.Invite != null) {
+                    Program.Jabber.muc.handleInvitation(msg, x.Invite);
+                    return;
+                }
+
+                // Ignore Chatstate notifications if no conversation is open
+                if (!msg.HasTag("body") && !this.HasWindow(msg.From)) return;
+
                 Jid relevantJid = msg.From;
                 // XEP-0280, Message Carbons
                 var carbonsSent = msg.SelectSingleElement("sent", JabberService.URN_CARBONS);

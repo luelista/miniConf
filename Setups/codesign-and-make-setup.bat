@@ -41,6 +41,13 @@ echo.
 echo Step 4 - Code Sign Installer...
 CALL codesign-dragdrop.bat %INSTALLER%
 
+
+echo.
+echo Step 4 - Uploading as minefield...
+scp %INSTALLER% cherry:/srv/hosts/max-weller.de/downloads.max-weller.de/miniconf/miniconf-minefield-setup.exe
+
+
+
 echo.
 echo Done.
 echo.

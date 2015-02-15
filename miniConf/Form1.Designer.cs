@@ -60,6 +60,7 @@
             this.sqliteConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editStylesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reloadStylesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.adhocCommandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.enableNotificationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.enablePopupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -96,9 +97,14 @@
             this.openDirectChatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.infoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showOfflineUsersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.conversationImageList = new System.Windows.Forms.ImageList(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.naviBand3 = new Guifreaks.NavigationBar.NaviBand(this.components);
+            this.btnContactInfo = new System.Windows.Forms.Button();
+            this.btnContactInvite = new System.Windows.Forms.Button();
+            this.btnContactRemove = new System.Windows.Forms.Button();
+            this.btnContactAdd = new System.Windows.Forms.Button();
             this.lvContacts = new System.Windows.Forms.ListView();
             this.naviBand1 = new Guifreaks.NavigationBar.NaviBand(this.components);
             this.lblConferencesEmpty = new System.Windows.Forms.Label();
@@ -401,7 +407,8 @@
             this.xMPPConsoleToolStripMenuItem,
             this.sqliteConsoleToolStripMenuItem,
             this.editStylesToolStripMenuItem,
-            this.reloadStylesToolStripMenuItem});
+            this.reloadStylesToolStripMenuItem,
+            this.adhocCommandsToolStripMenuItem});
             this.extrasToolStripMenuItem.Name = "extrasToolStripMenuItem";
             this.extrasToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.extrasToolStripMenuItem.Text = "Tools";
@@ -437,6 +444,14 @@
             this.reloadStylesToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
             this.reloadStylesToolStripMenuItem.Text = "Reload styles";
             this.reloadStylesToolStripMenuItem.Click += new System.EventHandler(this.reloadStylesToolStripMenuItem_Click);
+            // 
+            // adhocCommandsToolStripMenuItem
+            // 
+            this.adhocCommandsToolStripMenuItem.Name = "adhocCommandsToolStripMenuItem";
+            this.adhocCommandsToolStripMenuItem.ShortcutKeyDisplayString = "F8";
+            this.adhocCommandsToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.adhocCommandsToolStripMenuItem.Text = "Ad-hoc commands";
+            this.adhocCommandsToolStripMenuItem.Click += new System.EventHandler(this.adhocCommandsToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -675,44 +690,55 @@
             this.privateMessageToolStripMenuItem,
             this.openDirectChatToolStripMenuItem,
             this.infoToolStripMenuItem,
-            this.hideToolStripMenuItem});
+            this.hideToolStripMenuItem,
+            this.showOfflineUsersToolStripMenuItem});
             this.ctxMenuParticipant.Name = "ctxMenuParticipant";
-            this.ctxMenuParticipant.Size = new System.Drawing.Size(163, 114);
+            this.ctxMenuParticipant.Size = new System.Drawing.Size(171, 136);
             // 
             // mentionToolStripMenuItem
             // 
             this.mentionToolStripMenuItem.Name = "mentionToolStripMenuItem";
-            this.mentionToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.mentionToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.mentionToolStripMenuItem.Text = "Mention";
             this.mentionToolStripMenuItem.Click += new System.EventHandler(this.mentionToolStripMenuItem_Click);
             // 
             // privateMessageToolStripMenuItem
             // 
             this.privateMessageToolStripMenuItem.Name = "privateMessageToolStripMenuItem";
-            this.privateMessageToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.privateMessageToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.privateMessageToolStripMenuItem.Text = "Private message";
             this.privateMessageToolStripMenuItem.Click += new System.EventHandler(this.privateMessageToolStripMenuItem_Click);
             // 
             // openDirectChatToolStripMenuItem
             // 
             this.openDirectChatToolStripMenuItem.Name = "openDirectChatToolStripMenuItem";
-            this.openDirectChatToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.openDirectChatToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.openDirectChatToolStripMenuItem.Text = "Open direct chat";
             this.openDirectChatToolStripMenuItem.Click += new System.EventHandler(this.openDirectChatToolStripMenuItem_Click);
             // 
             // infoToolStripMenuItem
             // 
             this.infoToolStripMenuItem.Name = "infoToolStripMenuItem";
-            this.infoToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.infoToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.infoToolStripMenuItem.Text = "Info";
             this.infoToolStripMenuItem.Click += new System.EventHandler(this.infoToolStripMenuItem_Click);
             // 
             // hideToolStripMenuItem
             // 
             this.hideToolStripMenuItem.Name = "hideToolStripMenuItem";
-            this.hideToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.hideToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.hideToolStripMenuItem.Text = "Hide";
             this.hideToolStripMenuItem.Click += new System.EventHandler(this.hideToolStripMenuItem_Click);
+            // 
+            // showOfflineUsersToolStripMenuItem
+            // 
+            this.showOfflineUsersToolStripMenuItem.Checked = true;
+            this.showOfflineUsersToolStripMenuItem.CheckOnClick = true;
+            this.showOfflineUsersToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.showOfflineUsersToolStripMenuItem.Name = "showOfflineUsersToolStripMenuItem";
+            this.showOfflineUsersToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.showOfflineUsersToolStripMenuItem.Text = "Show offline users";
+            this.showOfflineUsersToolStripMenuItem.Click += new System.EventHandler(this.showOfflineUsersToolStripMenuItem_Click);
             // 
             // conversationImageList
             // 
@@ -730,6 +756,10 @@
             // 
             // naviBand3.ClientArea
             // 
+            this.naviBand3.ClientArea.Controls.Add(this.btnContactInfo);
+            this.naviBand3.ClientArea.Controls.Add(this.btnContactInvite);
+            this.naviBand3.ClientArea.Controls.Add(this.btnContactRemove);
+            this.naviBand3.ClientArea.Controls.Add(this.btnContactAdd);
             this.naviBand3.ClientArea.Controls.Add(this.lvContacts);
             this.naviBand3.ClientArea.Location = new System.Drawing.Point(0, 0);
             this.naviBand3.ClientArea.Name = "ClientArea";
@@ -745,13 +775,54 @@
             this.naviBand3.Text = "Contacts";
             this.naviBand3.Click += new System.EventHandler(this.naviBand3_Click);
             // 
+            // btnContactInfo
+            // 
+            this.btnContactInfo.Location = new System.Drawing.Point(47, -1);
+            this.btnContactInfo.Name = "btnContactInfo";
+            this.btnContactInfo.Size = new System.Drawing.Size(41, 22);
+            this.btnContactInfo.TabIndex = 4;
+            this.btnContactInfo.Text = "Info";
+            this.btnContactInfo.UseVisualStyleBackColor = true;
+            // 
+            // btnContactInvite
+            // 
+            this.btnContactInvite.Location = new System.Drawing.Point(88, -1);
+            this.btnContactInvite.Name = "btnContactInvite";
+            this.btnContactInvite.Size = new System.Drawing.Size(48, 22);
+            this.btnContactInvite.TabIndex = 3;
+            this.btnContactInvite.Text = "Invite";
+            this.btnContactInvite.UseVisualStyleBackColor = true;
+            this.btnContactInvite.Click += new System.EventHandler(this.btnContactInvite_Click);
+            // 
+            // btnContactRemove
+            // 
+            this.btnContactRemove.Location = new System.Drawing.Point(23, -1);
+            this.btnContactRemove.Name = "btnContactRemove";
+            this.btnContactRemove.Size = new System.Drawing.Size(24, 22);
+            this.btnContactRemove.TabIndex = 2;
+            this.btnContactRemove.Text = "-";
+            this.btnContactRemove.UseVisualStyleBackColor = true;
+            this.btnContactRemove.Click += new System.EventHandler(this.btnContactRemove_Click);
+            // 
+            // btnContactAdd
+            // 
+            this.btnContactAdd.Location = new System.Drawing.Point(-1, -1);
+            this.btnContactAdd.Name = "btnContactAdd";
+            this.btnContactAdd.Size = new System.Drawing.Size(24, 22);
+            this.btnContactAdd.TabIndex = 1;
+            this.btnContactAdd.Text = "+";
+            this.btnContactAdd.UseVisualStyleBackColor = true;
+            this.btnContactAdd.Click += new System.EventHandler(this.btnContactAdd_Click);
+            // 
             // lvContacts
             // 
-            this.lvContacts.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvContacts.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lvContacts.LargeImageList = this.contactsImageList;
-            this.lvContacts.Location = new System.Drawing.Point(0, 0);
+            this.lvContacts.Location = new System.Drawing.Point(0, 21);
             this.lvContacts.Name = "lvContacts";
-            this.lvContacts.Size = new System.Drawing.Size(136, 546);
+            this.lvContacts.Size = new System.Drawing.Size(136, 525);
             this.lvContacts.SmallImageList = this.contactsImageList;
             this.lvContacts.TabIndex = 0;
             this.lvContacts.UseCompatibleStateImageBehavior = false;
@@ -920,9 +991,9 @@
             // 
             // naviBar1
             // 
-            this.naviBar1.ActiveBand = this.naviBand1;
-            this.naviBar1.Controls.Add(this.naviBand1);
+            this.naviBar1.ActiveBand = this.naviBand3;
             this.naviBar1.Controls.Add(this.naviBand3);
+            this.naviBar1.Controls.Add(this.naviBand1);
             this.naviBar1.Dock = System.Windows.Forms.DockStyle.Left;
             this.naviBar1.HeaderHeight = 0;
             this.naviBar1.LayoutStyle = Guifreaks.NavigationBar.NaviLayoutStyle.Office2007Silver;
@@ -1067,6 +1138,12 @@
         private System.Windows.Forms.Button btnCancelReconnect;
         private System.Windows.Forms.ToolStripMenuItem hideToolStripMenuItem;
         private System.Windows.Forms.Label lblConferencesEmpty;
+        private System.Windows.Forms.Button btnContactInfo;
+        private System.Windows.Forms.Button btnContactInvite;
+        private System.Windows.Forms.Button btnContactRemove;
+        private System.Windows.Forms.Button btnContactAdd;
+        private System.Windows.Forms.ToolStripMenuItem showOfflineUsersToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem adhocCommandsToolStripMenuItem;
     }
 }
 
