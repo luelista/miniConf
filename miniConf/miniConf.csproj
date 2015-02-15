@@ -67,6 +67,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdhocCommandForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AdhocCommandForm.Designer.cs">
+      <DependentUpon>AdhocCommandForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="ApplicationPreferences.cs" />
     <Compile Include="ChatDatabase.cs" />
     <Compile Include="ChatMessage.cs" />
@@ -96,6 +102,12 @@
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InvitationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InvitationForm.Designer.cs">
+      <DependentUpon>InvitationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="JabberAvatars.cs">
       <SubType>Component</SubType>
@@ -139,6 +151,9 @@
     <Compile Include="XmppDebugForm.Designer.cs">
       <DependentUpon>XmppDebugForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="AdhocCommandForm.resx">
+      <DependentUpon>AdhocCommandForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ConfigForm.resx">
       <DependentUpon>ConfigForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -150,6 +165,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InvitationForm.resx">
+      <DependentUpon>InvitationForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaUploadForm.resx">
       <DependentUpon>MediaUploadForm.cs</DependentUpon>

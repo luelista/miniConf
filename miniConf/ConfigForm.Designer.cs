@@ -54,6 +54,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.button1 = new System.Windows.Forms.Button();
+            this.chkRememberPassword = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -65,7 +66,7 @@
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnOK.BackColor = System.Drawing.SystemColors.Control;
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOK.Location = new System.Drawing.Point(252, 451);
+            this.btnOK.Location = new System.Drawing.Point(252, 458);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(96, 22);
             this.btnOK.TabIndex = 4;
@@ -127,7 +128,7 @@
             // 
             this.txtNickname.BackColor = System.Drawing.SystemColors.Window;
             this.txtNickname.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.txtNickname.Location = new System.Drawing.Point(92, 111);
+            this.txtNickname.Location = new System.Drawing.Point(92, 128);
             this.txtNickname.Name = "txtNickname";
             this.txtNickname.Size = new System.Drawing.Size(200, 20);
             this.txtNickname.TabIndex = 8;
@@ -136,12 +137,12 @@
             // 
             this.cmbFileUploadService.FormattingEnabled = true;
             this.cmbFileUploadService.Items.AddRange(new object[] {
-            "https://mediacru.sh"});
+            "https://chat2.teamwiki.de"});
             this.cmbFileUploadService.Location = new System.Drawing.Point(111, 22);
             this.cmbFileUploadService.Name = "cmbFileUploadService";
             this.cmbFileUploadService.Size = new System.Drawing.Size(181, 21);
             this.cmbFileUploadService.TabIndex = 1;
-            this.cmbFileUploadService.Text = "https://mediacru.sh";
+            this.cmbFileUploadService.Text = "https://chat2.teamwiki.de";
             // 
             // comboMessageTheme
             // 
@@ -163,7 +164,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.BackColor = System.Drawing.Color.Transparent;
-            this.label5.Location = new System.Drawing.Point(13, 114);
+            this.label5.Location = new System.Drawing.Point(13, 131);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(32, 13);
             this.label5.TabIndex = 7;
@@ -239,6 +240,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.chkRememberPassword);
             this.groupBox1.Controls.Add(this.qq_txtPrefServerPort);
             this.groupBox1.Controls.Add(this.qq_txtPrefServer);
             this.groupBox1.Controls.Add(this.label1);
@@ -252,7 +254,7 @@
             this.groupBox1.Controls.Add(this.btnConnect);
             this.groupBox1.Location = new System.Drawing.Point(18, 79);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(430, 142);
+            this.groupBox1.Size = new System.Drawing.Size(430, 162);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Jabber account";
@@ -262,7 +264,7 @@
             this.qq_txtPrefServerPort.FormattingEnabled = true;
             this.qq_txtPrefServerPort.Items.AddRange(new object[] {
             "5222"});
-            this.qq_txtPrefServerPort.Location = new System.Drawing.Point(238, 85);
+            this.qq_txtPrefServerPort.Location = new System.Drawing.Point(238, 102);
             this.qq_txtPrefServerPort.Name = "qq_txtPrefServerPort";
             this.qq_txtPrefServerPort.Size = new System.Drawing.Size(54, 21);
             this.qq_txtPrefServerPort.TabIndex = 6;
@@ -270,7 +272,7 @@
             // 
             // qq_txtPrefServer
             // 
-            this.qq_txtPrefServer.Location = new System.Drawing.Point(92, 85);
+            this.qq_txtPrefServer.Location = new System.Drawing.Point(92, 102);
             this.qq_txtPrefServer.Name = "qq_txtPrefServer";
             this.qq_txtPrefServer.Size = new System.Drawing.Size(140, 20);
             this.qq_txtPrefServer.TabIndex = 5;
@@ -278,7 +280,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 88);
+            this.label1.Location = new System.Drawing.Point(13, 105);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(65, 13);
             this.label1.TabIndex = 4;
@@ -351,7 +353,7 @@
             this.groupBox2.Controls.Add(this.chkEnableImagePreview);
             this.groupBox2.Controls.Add(this.chkDisplayOccupantStatus);
             this.groupBox2.Controls.Add(this.chkSternchen);
-            this.groupBox2.Location = new System.Drawing.Point(18, 234);
+            this.groupBox2.Location = new System.Drawing.Point(18, 247);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(431, 108);
             this.groupBox2.TabIndex = 2;
@@ -363,7 +365,7 @@
             this.groupBox3.Controls.Add(this.cmbFileUploadService);
             this.groupBox3.Controls.Add(this.chkFiletransferAutoAccept);
             this.groupBox3.Controls.Add(this.label6);
-            this.groupBox3.Location = new System.Drawing.Point(18, 348);
+            this.groupBox3.Location = new System.Drawing.Point(18, 361);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(431, 82);
             this.groupBox3.TabIndex = 3;
@@ -394,18 +396,28 @@
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button1.BackColor = System.Drawing.SystemColors.Control;
             this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button1.Location = new System.Drawing.Point(353, 451);
+            this.button1.Location = new System.Drawing.Point(353, 458);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(96, 22);
             this.button1.TabIndex = 46;
             this.button1.Text = "Cancel";
             this.button1.UseVisualStyleBackColor = true;
             // 
+            // chkRememberPassword
+            // 
+            this.chkRememberPassword.AutoSize = true;
+            this.chkRememberPassword.Location = new System.Drawing.Point(93, 72);
+            this.chkRememberPassword.Name = "chkRememberPassword";
+            this.chkRememberPassword.Size = new System.Drawing.Size(125, 17);
+            this.chkRememberPassword.TabIndex = 11;
+            this.chkRememberPassword.Text = "Remember password";
+            this.chkRememberPassword.UseVisualStyleBackColor = true;
+            // 
             // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(460, 485);
+            this.ClientSize = new System.Drawing.Size(460, 492);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.label4);
@@ -464,5 +476,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.CheckBox chkRememberPassword;
     }
 }

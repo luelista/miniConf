@@ -16,7 +16,7 @@ namespace miniConf {
         }
 
         public static string FileUploadServiceUrl {
-            get { return Program.glob.para("Form1__cmbFileUploadService", "https://mediacru.sh"); }
+            get { return Program.glob.para("Form1__cmbFileUploadService", "https://chat2.teamwiki.de"); }
             set {     Program.glob.setPara("Form1__cmbFileUploadService", value); }
         }
 
@@ -50,10 +50,14 @@ namespace miniConf {
             set {     Program.glob.setPara("Form1__txtNickname", value); }
         }
 
-        
+
+        public static bool RememberPassword {
+            get { return Program.glob.para("account__RememberPassword", "TRUE") == "TRUE"; }
+            set { Program.glob.setPara("account__RememberPassword", value ? "TRUE" : "FALSE"); }
+        }
         public static bool Sternchen {
             get { return Program.glob.para("Form1__chkSternchen", "FALSE") == "TRUE"; }
-            set {     Program.glob.setPara("Form1__chkSternchen", value ? "TRUE" : "FALSE"); }
+            set { Program.glob.setPara("Form1__chkSternchen", value ? "TRUE" : "FALSE"); }
         }
         public static bool DisplayOccupantStatus {
             get { return Program.glob.para("Form1__chkDisplayOccupantStatus", "FALSE") == "TRUE"; }

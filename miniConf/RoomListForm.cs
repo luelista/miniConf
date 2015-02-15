@@ -87,6 +87,7 @@ namespace miniConf {
                     DiscoItems items = query as DiscoItems;
                     DiscoItem[] itms = items.GetDiscoItems();
                     string server = "";
+                    listView1.BeginUpdate();
                     foreach (DiscoItem itm in itms) {
                         if (itm.Jid != null) {
                             var lvi = listView1.Items.Add(itm.Jid.Bare, itm.Jid.User, -1);
@@ -105,6 +106,7 @@ namespace miniConf {
 
                     listView1.Sort();
                     UseWaitCursor = false;
+                    listView1.EndUpdate();
                 }
             }
         }

@@ -74,5 +74,11 @@ namespace miniConf
             }
          }
 
+        private void listView1_DoubleClick(object sender, EventArgs e) {
+            string room = listView1.Items[0].Text;
+            if (OnItemClick != null) OnItemClick(this, null, room);
+            this.Hide();
+        }
+
     }
 }

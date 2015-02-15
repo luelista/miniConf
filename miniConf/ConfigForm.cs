@@ -21,6 +21,7 @@ namespace miniConf {
 
             qq_txtPrefUsername.Text = ApplicationPreferences.AccountJID;
             qq_txtPrefPassword.Text = ApplicationPreferences.AccountPassword;
+            chkRememberPassword.Checked = ApplicationPreferences.RememberPassword;
             qq_txtPrefServerPort.Text = ApplicationPreferences.AccountPort;
             qq_txtPrefServer.Text = ApplicationPreferences.AccountServer;
 
@@ -53,6 +54,7 @@ namespace miniConf {
 
             ApplicationPreferences.AccountJID = qq_txtPrefUsername.Text;
             ApplicationPreferences.AccountPassword = qq_txtPrefPassword.Text;
+            ApplicationPreferences.RememberPassword = chkRememberPassword.Checked;
             ApplicationPreferences.AccountPort = qq_txtPrefServerPort.Text;
             ApplicationPreferences.AccountServer = qq_txtPrefServer.Text;
 
