@@ -111,8 +111,13 @@ namespace miniConf {
             }
             jabber.conn.Port = port;
 
-            jabber.conn.UseSSL = false;
-            jabber.conn.UseStartTLS = (glob.para("useSSL", "TRUE") != "FALSE");
+            if (port == 5223) {
+                jabber.conn.UseSSL = true;
+                jabber.conn.UseStartTLS = false;
+            } else {
+                jabber.conn.UseSSL = false;
+                jabber.conn.UseStartTLS = (glob.para("useSSL", "TRUE") != "FALSE");
+            }
             //jabber.conn.UseSSL = (glob.para("useSSL", "TRUE") != "FALSE");
             jabber.conn.Open(username[0], ApplicationPreferences.AccountPassword, "miniConf-" + Environment.MachineName, 0);
             //txtConnInfo.Text = "";

@@ -991,9 +991,9 @@
             // 
             // naviBar1
             // 
-            this.naviBar1.ActiveBand = this.naviBand3;
-            this.naviBar1.Controls.Add(this.naviBand3);
+            this.naviBar1.ActiveBand = this.naviBand1;
             this.naviBar1.Controls.Add(this.naviBand1);
+            this.naviBar1.Controls.Add(this.naviBand3);
             this.naviBar1.Dock = System.Windows.Forms.DockStyle.Left;
             this.naviBar1.HeaderHeight = 0;
             this.naviBar1.LayoutStyle = Guifreaks.NavigationBar.NaviLayoutStyle.Office2007Silver;

@@ -16,6 +16,7 @@ namespace miniConf {
         }
 
         private void ConfigForm_Load(object sender, EventArgs e) {
+            labProgramVersion.Text = "Version "+Application.ProductVersion;
             WindowHelper.SetCueBanner(qq_txtPrefUsername, "jane-doe@example.org");
             updateSmileyThemeList();
 

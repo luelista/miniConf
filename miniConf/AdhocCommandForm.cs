@@ -50,6 +50,23 @@ namespace miniConf {
                 }
             }
         }
+        private void displayCommandlistForm(DiscoItems items) {
+            commandNode = null; sessionId = null;
+            DiscoItem[] itms = items.GetDiscoItems();
+            clearButtons();
+            addButton("execute", true);
+            clearForm();
+            addFormInfoLabel("Select ad hoc command:", FONT_TITLE);
+            ListItem[] list = new ListItem[itms.Length];
+            for (int i = 0; i < itms.Length; i++) {
+                list[i] = new ListItem(itms[i].Name, itms[i].Node);
+            }
+            Array.Sort(list);
+            addFormListSingle("command", "Command:", list, null);
+            this.Height = formY + 100;
+            focusFirstElement();
+        }
+
 
         private void onCommandResult_threadsafe(object sender, IQ iq, object data) {
             this.Invoke(new Action<IQ>(onCommandResult), iq);
@@ -77,28 +94,33 @@ namespace miniConf {
                                 addButton(((Element)node).TagName, execute == ((Element)node).TagName);
                         }
                     }
-                    addFormInfoLabel(iq.InnerXml, 8);
-                    addFormInfoLabel("-----------------------------------------------", 8);
-
-                    ListView lv;
+                    
+                    //    addFormInfoLabel(iq.InnerXml, 8);
+                    //    addFormInfoLabel("-----------------------------------------------", 8);
+                    
+                    ListView lv = null;
                     foreach (Node child in result.ChildNodes) {
                         if (child.NodeType != NodeType.Element) continue;
                         Element ch = (Element)child;
                         switch (ch.TagName.ToUpper()) {
                             case "REPORTED":
-                                lv = new ListView();
+                                //clearForm();
+                                formY = 500;
+                                lv = new ListView(); 
                                 pnlForm.Controls.Add(lv);
-                                lv.Dock = DockStyle.Fill; lv.View = View.Details;
+                                lv.Dock = DockStyle.Fill; lv.View = View.Details; lv.FullRowSelect = true;
                                 foreach (Element field in ch.SelectElements("field")) {
                                     lv.Columns.Add(field.GetAttribute("var"), field.GetAttribute("label"));
                                 }
                                 break;
                             case "ITEM":
-                                var item = new ListViewItem();
+                                if (lv == null) continue;
+                                var item = new ListViewItem("undefined");
                                 foreach (Element field in ch.SelectElements("field")) {
-                                    if (item.Text == null) item.Text = field.GetTag("value");
+                                    if (item.Text == "undefined") item.Text = field.GetTag("value");
                                     else item.SubItems.Add(field.GetTag("value"));
                                 }
+                                lv.Items.Add(item);
                                 break;
                             case "TITLE":
                                 addFormInfoLabel(ch.Value, FONT_TITLE);
@@ -136,29 +158,13 @@ namespace miniConf {
                                 break;
                         }
                     }
-
+                    if (lv != null) lv.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
                     this.Height = Math.Min(Screen.PrimaryScreen.WorkingArea.Height - 60, formY + 100);
                 }
                 focusFirstElement();
             }
         }
 
-
-        private void displayCommandlistForm(DiscoItems items) {
-            commandNode = null; sessionId = null;
-            DiscoItem[] itms = items.GetDiscoItems();
-            clearButtons();
-            addButton("execute", true);
-            clearForm();
-            addFormInfoLabel("Select ad hoc command:", FONT_TITLE);
-            ListItem[] list = new ListItem[itms.Length];
-            for (int i = 0; i < itms.Length; i++) {
-                list[i] = new ListItem(itms[i].Name, itms[i].Node);
-            }
-            addFormListSingle("command", "Command:", list, null);
-            this.Height = formY + 100;
-            focusFirstElement();
-        }
 
         private void focusFirstElement() {
             foreach (Control ctrl in pnlForm.Controls)
@@ -279,7 +285,7 @@ namespace miniConf {
             formY += sel.Height + 10;
         }
 
-        class ListItem {
+        class ListItem : IComparable {
             string label;
             public string value { get; private set; }
             public ListItem(string _label, string _value) { 
@@ -288,6 +294,9 @@ namespace miniConf {
             }
             public override string ToString() {
                 return label;
+            }
+            public int CompareTo(object obj) {
+                return this.label.CompareTo(((ListItem)obj).label);
             }
         }
 

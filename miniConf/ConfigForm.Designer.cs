@@ -40,6 +40,7 @@
             this.chkFiletransferAutoAccept = new System.Windows.Forms.CheckBox();
             this.chkSternchen = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkRememberPassword = new System.Windows.Forms.CheckBox();
             this.qq_txtPrefServerPort = new System.Windows.Forms.ComboBox();
             this.qq_txtPrefServer = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -54,7 +55,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.chkRememberPassword = new System.Windows.Forms.CheckBox();
+            this.labProgramVersion = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -259,6 +260,16 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Jabber account";
             // 
+            // chkRememberPassword
+            // 
+            this.chkRememberPassword.AutoSize = true;
+            this.chkRememberPassword.Location = new System.Drawing.Point(93, 72);
+            this.chkRememberPassword.Name = "chkRememberPassword";
+            this.chkRememberPassword.Size = new System.Drawing.Size(125, 17);
+            this.chkRememberPassword.TabIndex = 11;
+            this.chkRememberPassword.Text = "Remember password";
+            this.chkRememberPassword.UseVisualStyleBackColor = true;
+            // 
             // qq_txtPrefServerPort
             // 
             this.qq_txtPrefServerPort.FormattingEnabled = true;
@@ -403,21 +414,22 @@
             this.button1.Text = "Cancel";
             this.button1.UseVisualStyleBackColor = true;
             // 
-            // chkRememberPassword
+            // labProgramVersion
             // 
-            this.chkRememberPassword.AutoSize = true;
-            this.chkRememberPassword.Location = new System.Drawing.Point(93, 72);
-            this.chkRememberPassword.Name = "chkRememberPassword";
-            this.chkRememberPassword.Size = new System.Drawing.Size(125, 17);
-            this.chkRememberPassword.TabIndex = 11;
-            this.chkRememberPassword.Text = "Remember password";
-            this.chkRememberPassword.UseVisualStyleBackColor = true;
+            this.labProgramVersion.AutoSize = true;
+            this.labProgramVersion.ForeColor = System.Drawing.Color.Gray;
+            this.labProgramVersion.Location = new System.Drawing.Point(15, 463);
+            this.labProgramVersion.Name = "labProgramVersion";
+            this.labProgramVersion.Size = new System.Drawing.Size(35, 13);
+            this.labProgramVersion.TabIndex = 47;
+            this.labProgramVersion.Text = "label9";
             // 
             // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(460, 492);
+            this.Controls.Add(this.labProgramVersion);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.label4);
@@ -477,5 +489,6 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.CheckBox chkRememberPassword;
+        private System.Windows.Forms.Label labProgramVersion;
     }
 }
