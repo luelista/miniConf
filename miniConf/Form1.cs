@@ -20,7 +20,6 @@ namespace miniConf {
             InitializeComponent();
 
             webBrowser1.imagePreview = true;
-            popupWindow.OnItemClick += popupWindow_OnItemClick;
             icon1 = this.Icon; icon2 = Icon.FromHandle(new Bitmap(imageList1.Images[2]).GetHicon());
 
             CheckForIllegalCrossThreadCalls = false;
@@ -31,7 +30,7 @@ namespace miniConf {
 
         Boolean loginError = true;
         string balloonRoom = null;
-        UnreadMessageForm popupWindow = new UnreadMessageForm();
+        UnreadMessageForm popupWindow;
         DirectMessageManager dmManager = new DirectMessageManager();
         //List<string> onlineContacts = new List<string>();
         XmppDebugForm debugForm;
@@ -166,7 +165,7 @@ namespace miniConf {
         }
 
         void conn_OnIq(object sender, agsXMPP.protocol.client.IQ iq) {
-            Console.WriteLine("IQ: " + iq.ToString());
+            //Console.WriteLine("IQ: " + iq.ToString());
             if (iq.Type == agsXMPP.protocol.client.IqType.get) {
                 var ping = iq.SelectSingleElement("ping", "urn:xmpp:ping");
                 if (ping != null) {
@@ -192,12 +191,13 @@ namespace miniConf {
 
         #region Connection error handling
         void conn_OnBindError(object sender, Element e) {
+            Console.WriteLine("BIND ERR: " + e.ToString());
             this.Invoke(new ParameterizedThreadStart(showNetworkError),
                 "Network error:\n" + e.ToString());
             this.Invoke(new ThreadStart(checkReconnect));
         }
         void conn_OnSocketError(object sender, Exception ex) {
-            //MessageBox.Show("SOCKET ERR: " + ex.Message);
+            Console.WriteLine("SOCKET ERR: " + ex.Message);
             this.Invoke(new ParameterizedThreadStart(showNetworkError),
                 "Network error:\n" + ex.Message);
             this.Invoke(new ThreadStart(checkReconnect));
@@ -212,8 +212,10 @@ namespace miniConf {
         void conn_OnError(object sender, Exception ex) {
             //MessageBox.Show("ERROR: " + ex.Message);
             if (loginError) this.Invoke(new ParameterizedThreadStart(showAuthError), "General connection error: \n" + ex.Message);
-
-            Console.WriteLine("conn_OnError:" + ex.Message);
+            
+            Console.WriteLine("conn_OnError:\t" + ex.Message);
+            Console.WriteLine(ex.ToString());
+            Console.WriteLine("---------");
         }
         void conn_OnAuthError(object sender, agsXMPP.Xml.Dom.Element e) {
             //MessageBox.Show("AUTH ERROR: " + e.ToString());
@@ -230,7 +232,7 @@ namespace miniConf {
 
 
         void conn_OnMessage(object sender, agsXMPP.protocol.client.Message msg) {
-            Console.WriteLine(msg);
+            //Console.WriteLine(msg);
             if (msg.Type == agsXMPP.protocol.client.MessageType.groupchat
                     || (msg.Type == agsXMPP.protocol.client.MessageType.error && rooms.ContainsKey(msg.From.Bare))) {
                 this.Invoke(new XmppMessageDelegate(OnMucMessage), msg);
@@ -384,7 +386,7 @@ namespace miniConf {
                             dingdong.Play();
                         }
                         if (!WindowHelper.IsActive(this) || currentRoom != room) {
-                            room.unreadNotifyCount++;
+                            room.unreadNotifyCount++; room.unreadNotifyText = msg.From.Resource + ":" + messageBody;
                             if (enablePopupToolStripMenuItem.Checked) {
                                 WindowHelper.ShowWindow(popupWindow.Handle, WindowHelper.SW_SHOWNOACTIVATE); //popupWindow.Show();
                                 popupWindow.updateRooms(rooms);
@@ -471,6 +473,10 @@ namespace miniConf {
             glob.readTuttiFrutti(this);
             this.Show();
 
+            popupWindow = new UnreadMessageForm();
+            popupWindow.OnItemClick += popupWindow_OnItemClick;
+            var createTheHandlePlease = popupWindow.Handle;
+
             enableNotificationsToolStripMenuItem.Checked = glob.para("enableNotifications") == "TRUE";
             enableSoundToolStripMenuItem.Checked = glob.para("enableSound") != "FALSE";
             enablePopupToolStripMenuItem.Checked = glob.para("enablePopup") != "FALSE";
@@ -482,6 +488,7 @@ namespace miniConf {
                 showPreferences();
             }
 
+            DebugTests.PrintDnsServers();
         }
 
         private void updateWinTitle() {
@@ -579,6 +586,10 @@ namespace miniConf {
         protected override void WndProc(ref Message m) {
             if (m.Msg == WindowHelper.WM_SHOWME) {
                 ShowMe();
+            }
+            if (m.Msg == WindowHelper.WM_ACTIVATEAPP) {
+                Console.WriteLine("WM_ACTIVATEAPP " + m.LParam.ToString() + " " + m.WParam.ToString());
+                if ((int)m.WParam == 1 && WindowHelper.IsActive(this)) onFormActivated();
             }
             base.WndProc(ref m);
         }
@@ -847,6 +858,7 @@ namespace miniConf {
         }
 
         private void updateMemberList() {
+            bool winetricks = ApplicationPreferences.WineTricks;
             lvOnlineStatus.BeginUpdate();
             lvOnlineStatus.Items.Clear();
             if (currentRoom != null) {
@@ -854,6 +866,7 @@ namespace miniConf {
                 foreach (System.Data.Common.DbDataRecord k in onlines) {
                     if (showOfflineUsersToolStripMenuItem.Checked == false && k.GetString(2) == "off") continue;
                     string nick = k.GetString(0);
+                    if (winetricks&&k.GetString(2) == "off") nick = "#" + nick;
                     var item = lvOnlineStatus.Items.Add(nick, k.GetString(2));
                     string statusStr = (k.IsDBNull(5)) ? "" : k.GetString(5);
                     string jid = (k.IsDBNull(6)) ? "" : k.GetString(6);
@@ -1256,8 +1269,14 @@ namespace miniConf {
         }
 
         private void Form1_Activated(object sender, EventArgs e) {
+            //FIXME falsches event - Activated feuert nur wenn vorher eine andere form der gleichen anwendung aktiv war
+            onFormActivated();
+        }
+
+        private void onFormActivated() {
             if (currentRoom != null) {
-                currentRoom.unreadMsgCount = 0;
+                currentRoom.ResetUnread();
+                popupWindow.updateRooms(rooms);
                 if (currentRoom != null) currentRoom.sendChatstate(txtSendmessage.Text == "" ? agsXMPP.protocol.extensions.chatstates.Chatstate.active : agsXMPP.protocol.extensions.chatstates.Chatstate.paused);
             }
             stopBlinky();

@@ -65,7 +65,14 @@ namespace miniConf {
         }
         public static bool EnableImagePreview {
             get { return Program.glob.para("Form1__chkEnableImagePreview", "TRUE") == "TRUE"; }
-            set {     Program.glob.setPara("Form1__chkEnableImagePreview", value ? "TRUE" : "FALSE"); }
+            set { Program.glob.setPara("Form1__chkEnableImagePreview", value ? "TRUE" : "FALSE"); }
+        }
+        /**
+         * <summary>Enable Workarounds for better Wine compatibility</summary>
+         **/
+        public static bool WineTricks {
+            get { return Program.glob.para("WineTricks", "FALSE") == "TRUE"; }
+            set { Program.glob.setPara("WineTricks", value ? "TRUE" : "FALSE"); }
         }
         
         
