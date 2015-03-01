@@ -34,11 +34,13 @@ namespace miniConf
         public UnreadMessageForm()
         {
             InitializeComponent();
+            if (ApplicationPreferences.WineTricks) {
+                listView1.View = View.Details; this.Width = 350;
+            }
         }
 
         private void UnreadMessageForm_Load(object sender, EventArgs e)
         {
-
         }
 
         public void updateRooms(Dictionary<string, Roomdata> rooms)
@@ -47,10 +49,16 @@ namespace miniConf
             foreach(var r in rooms.Values) {
                 if (r.unreadNotifyCount > 0)
                 {
-                    listView1.Items.Add(r.RoomName).SubItems.Add(r.unreadNotifyCount.ToString() + " unread message" + (r.unreadNotifyCount > 1 ? "s" : ""));
+                    var l=listView1.Items.Add(r.RoomName + "(" + r.unreadNotifyCount.ToString()+")");
+                    l.SubItems.Add(r.unreadNotifyText);
+                    l.Tag = r.RoomName;
                 }
             }
-            this.Height = listView1.Items.Count * 50 + 35;
+            if (ApplicationPreferences.WineTricks) {
+                this.Height = listView1.Items.Count * 25 + 65;
+            } else {
+                this.Height = listView1.Items.Count * 50 + 35;
+            }
             this.Top = Screen.PrimaryScreen.WorkingArea.Bottom - this.Height;
             this.Left = Screen.PrimaryScreen.WorkingArea.Right - this.Width;
             if (listView1.Items.Count == 0)
@@ -63,7 +71,7 @@ namespace miniConf
         {
             if (listView1.SelectedItems.Count > 0)
             {
-                string room = listView1.SelectedItems[0].Text;
+                string room =(string) listView1.SelectedItems[0].Tag;
                 if (OnItemClick != null) OnItemClick(this, e, room);
             }
         }
@@ -75,7 +83,7 @@ namespace miniConf
          }
 
         private void listView1_DoubleClick(object sender, EventArgs e) {
-            string room = listView1.Items[0].Text;
+            string room =(string) listView1.Items[0].Tag;
             if (OnItemClick != null) OnItemClick(this, null, room);
             this.Hide();
         }

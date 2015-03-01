@@ -14,6 +14,7 @@ namespace miniConf {
         public System.Collections.Generic.List<String> users = new List<string>();
         public int unreadMsgCount = 0;
         public int unreadNotifyCount = 0;
+        public string unreadNotifyText = "";
 
         public bool online = false;
 

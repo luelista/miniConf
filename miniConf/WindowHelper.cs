@@ -21,6 +21,7 @@ namespace miniConf {
 
         public const int HWND_BROADCAST = 0xffff;
         public static readonly int WM_SHOWME = RegisterWindowMessage("WM_SHOWME");
+        public const int WM_ACTIVATEAPP = 0x001C;
 
         public static bool IsActive(Control wnd) {
             // workaround for minimization bug

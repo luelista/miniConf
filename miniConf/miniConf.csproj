@@ -211,6 +211,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Newtonsoft.Json.dll" />
+    <None Include="Resources\user-group-new.png" />
+    <None Include="Resources\12-em-down.png" />
+    <None Include="Resources\12-em-plus.png" />
+    <None Include="Resources\16-message-info.png" />
+    <None Include="Resources\user-group-new-48.png" />
     <Content Include="Sounds\correct.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
