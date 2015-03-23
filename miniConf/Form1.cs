@@ -75,6 +75,8 @@ namespace miniConf {
                 jabber.conn.OnBindError += conn_OnBindError;
                 jabber.conn.OnLogin += conn_OnLogin;
                 jabber.conn.OnIq += conn_OnIq;
+                jabber.conn.OnSaslStart += conn_OnSaslStart;
+                jabber.conn.OnSaslEnd += conn_OnSaslEnd;
                 muc = new agsXMPP.protocol.x.muc.MucManager(jabber.conn);
                 jabber.jingle.init(jabber.conn);
                 jabber.listenToRoster();
@@ -102,7 +104,15 @@ namespace miniConf {
                 return;
             }
 
+
             jabber.conn.Server = username[1];
+            if (!String.IsNullOrEmpty(ApplicationPreferences.AccountServer)) {
+                jabber.conn.ConnectServer = ApplicationPreferences.AccountServer;
+                jabber.conn.AutoResolveConnectServer = false;
+            } else {
+                jabber.conn.AutoResolveConnectServer = true;
+            }
+
             //if (glob.para("account__Server") != "") jabber.conn.Server = glob.para("account__Server");
             int port;
             if (!Int32.TryParse(ApplicationPreferences.AccountPort, out port)) {
@@ -121,6 +131,14 @@ namespace miniConf {
             jabber.conn.Open(username[0], ApplicationPreferences.AccountPassword, "miniConf-" + Environment.MachineName, 0);
             //txtConnInfo.Text = "";
             webBrowser1.selfNickname = ApplicationPreferences.Nickname;
+        }
+
+        void conn_OnSaslEnd(object sender) {
+            Console.WriteLine("OnSaslEnd");
+        }
+
+        void conn_OnSaslStart(object sender, agsXMPP.Sasl.SaslEventArgs args) {
+            Console.WriteLine("OnSaslStart: " + args.ToString());
         }
 
         void jabber_OnContactPresence(object sender, JabberService.JabberEventArgs e) {
@@ -212,7 +230,7 @@ namespace miniConf {
         void conn_OnError(object sender, Exception ex) {
             //MessageBox.Show("ERROR: " + ex.Message);
             if (loginError) this.Invoke(new ParameterizedThreadStart(showAuthError), "General connection error: \n" + ex.Message);
-            
+
             Console.WriteLine("conn_OnError:\t" + ex.Message);
             Console.WriteLine(ex.ToString());
             Console.WriteLine("---------");
@@ -866,7 +884,7 @@ namespace miniConf {
                 foreach (System.Data.Common.DbDataRecord k in onlines) {
                     if (showOfflineUsersToolStripMenuItem.Checked == false && k.GetString(2) == "off") continue;
                     string nick = k.GetString(0);
-                    if (winetricks&&k.GetString(2) == "off") nick = "#" + nick;
+                    if (winetricks && k.GetString(2) == "off") nick = "#" + nick;
                     var item = lvOnlineStatus.Items.Add(nick, k.GetString(2));
                     string statusStr = (k.IsDBNull(5)) ? "" : k.GetString(5);
                     string jid = (k.IsDBNull(6)) ? "" : k.GetString(6);
@@ -914,10 +932,15 @@ namespace miniConf {
                 e.SuppressKeyPress = true;
             }
             if (e.KeyCode == Keys.V && e.Control) {
+                var dobj = Clipboard.GetDataObject();
+                Console.WriteLine(string.Join("\n", dobj.GetFormats()));
                 if (Clipboard.ContainsImage()) {
                     string uploadfn = Program.dataDir + "Temporary Data\\upload.jpg";
-                    Clipboard.GetImage().Save(uploadfn);
-                    doMediaUpload(uploadfn);
+                    if (clipboardImageToFile(uploadfn)) {
+                        doMediaUpload(uploadfn);
+                    } else {
+                        MessageBox.Show("Unable to get image from clipboard.");
+                    }
                 }
             }
             if (txtSendmessage.Text == "" && e.KeyCode == Keys.Up) {
@@ -926,6 +949,39 @@ namespace miniConf {
             }
             //if (e.Control && (e.KeyCode == Keys.A))
             //    e.SuppressKeyPress = true;
+        }
+
+        private bool clipboardImageToFile(string uploadfn) {
+            try {
+                Image img = Clipboard.GetImage();
+                var dobj = Clipboard.GetDataObject();
+                string[] tryFormats = { "PNG", "JFIF", "DeviceIndependentBitmap" };
+                int tryIdx = 0;
+                while (img == null && tryIdx < tryFormats.Length) {
+                    string fmt = tryFormats[tryIdx];
+                    tryIdx++;
+                    Console.WriteLine("img is null; checking format " + fmt + " ...");
+                    if (img == null && dobj.GetDataPresent(fmt)) {
+                        Console.WriteLine("getData ...");
+                        MemoryStream obj = dobj.GetData(fmt) as MemoryStream;
+                        if (obj == null) {
+                            Console.WriteLine("NULL!"); 
+                            continue;
+                        }
+                        using (var fs = new FileStream(uploadfn, FileMode.Create)) {
+                            obj.WriteTo(fs);
+                        }
+                        Console.WriteLine("OK!");
+                        return true;
+                    }
+                }
+                if (img == null) return false;
+                img.Save(uploadfn);
+                return true;
+            } catch (Exception ex) {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
         }
 
         private void txtSendmessage_TextChanged(object sender, EventArgs e) {
@@ -971,18 +1027,25 @@ namespace miniConf {
             var f = new MediaUploadForm(filename);
             f.startUpload();
             var result = f.ShowDialog();
+            Console.WriteLine(result);
+            Console.WriteLine(f.resultStatus);
+            Console.WriteLine(f.jsonResult);
+
             if (result == System.Windows.Forms.DialogResult.OK) {
                 if (f.resultStatus == FileUploader.UploadFileStatus.Success || f.resultStatus == FileUploader.UploadFileStatus.AlreadyUploaded) {
 
-                    //string hash = Convert.ToString(f.resultObject["hash"]);
                     var res = Regex.Match(f.jsonResult, "\"hash\":\"([a-zA-Z0-9]+)\"");
+                    if (!res.Success) {
+                        MessageBox.Show("Could not send image.\n\n(server returned invalid data: " + res.ToString() + ")");
+                        return;
+                    }
                     string hash = res.Groups[1].Value;
 
                     string ext = Path.GetExtension(filename).ToLower();
                     txtSendmessage.AppendText(FileUploader.ApplicationUrl + "/" + hash + ext);
 
                 } else {
-                    MessageBox.Show("Media upload failed: " + f.resultStatus.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Could not send image. \n\n(upload failed with error: " + f.resultStatus.ToString()+")", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
             f.Close();

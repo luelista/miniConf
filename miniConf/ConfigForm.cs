@@ -38,6 +38,7 @@ namespace miniConf {
             cmbFileUploadService.Text = ApplicationPreferences.FileUploadServiceUrl;
             chkFiletransferAutoAccept.Checked = ApplicationPreferences.FiletransferAutoAccept;
 
+            qq_txtPrefUsername.AutoCompleteCustomSource.AddRange(Program.db.GetMru("jid", 10));
         }
 
         private void btnOK_Click(object sender, EventArgs e) {
@@ -52,6 +53,8 @@ namespace miniConf {
                 MessageBox.Show("Please enter your password.", "Login", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
+
+            Program.db.AddToMru("jid", qq_txtPrefUsername.Text);
 
             ApplicationPreferences.AccountJID = qq_txtPrefUsername.Text;
             ApplicationPreferences.AccountPassword = qq_txtPrefPassword.Text;
@@ -71,6 +74,7 @@ namespace miniConf {
             ApplicationPreferences.FileUploadServiceUrl = cmbFileUploadService.Text;
             ApplicationPreferences.FiletransferAutoAccept = chkFiletransferAutoAccept.Checked;
 
+            this.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.Close();
         }
 
@@ -130,6 +134,13 @@ namespace miniConf {
             System.Diagnostics.Process.Start("http://home.max-weller.de/programme/miniconf/smilies/");
         }
         #endregion
+
+        private void qq_txtPrefUsername_KeyDown(object sender, KeyEventArgs e) {
+            if (e.KeyCode == Keys.Enter) {
+                e.Handled = true; e.SuppressKeyPress = true;
+                qq_txtPrefPassword.Focus(); qq_txtPrefPassword.SelectAll();
+            }
+        }
 
 
     }
