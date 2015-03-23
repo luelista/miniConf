@@ -239,13 +239,21 @@ namespace miniConf {
             if (url.StartsWith("special:") || url.StartsWith("about:")) {
                 if (OnSpecialUrl != null) OnSpecialUrl(url);
             } else if (url.StartsWith("http://") || url.StartsWith("https://")) {
-                System.Diagnostics.Process.Start(url);
+                runDefaultBrowser(url);
             } else {
                 if (MessageBox.Show("Link clicked: " + e.Url + "\n\nOpen with default application?", "Link", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == System.Windows.Forms.DialogResult.OK) {
-                    System.Diagnostics.Process.Start(url);
+                    runDefaultBrowser(url);
                 }
             }
             base.OnNavigating(e);
+        }
+
+        protected void runDefaultBrowser(string url) {
+            if (Program.glob.para("defaultBrowser") != "") {
+                System.Diagnostics.Process.Start(Program.glob.para("defaultBrowser"), url);
+            } else {
+                System.Diagnostics.Process.Start(url);
+            }
         }
 
 

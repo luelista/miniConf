@@ -11,7 +11,7 @@ namespace miniConf {
             if (username.Length != 2) return null;
             if (String.IsNullOrEmpty(ApplicationPreferences.Nickname))
                 ApplicationPreferences.Nickname = username[0];
-            if (!string.IsNullOrEmpty(ApplicationPreferences.AccountServer)) username[1] = ApplicationPreferences.AccountServer;
+            //if (!string.IsNullOrEmpty(ApplicationPreferences.AccountServer)) username[1] = ApplicationPreferences.AccountServer;
             return username;
         }
 

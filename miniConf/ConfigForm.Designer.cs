@@ -53,9 +53,9 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.button1 = new System.Windows.Forms.Button();
             this.labProgramVersion = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -66,12 +66,11 @@
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnOK.BackColor = System.Drawing.SystemColors.Control;
-            this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOK.Location = new System.Drawing.Point(252, 458);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(96, 22);
             this.btnOK.TabIndex = 4;
-            this.btnOK.Text = "OK";
+            this.btnOK.Text = "&OK";
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
@@ -274,7 +273,8 @@
             // 
             this.qq_txtPrefServerPort.FormattingEnabled = true;
             this.qq_txtPrefServerPort.Items.AddRange(new object[] {
-            "5222"});
+            "5222",
+            "5223"});
             this.qq_txtPrefServerPort.Location = new System.Drawing.Point(238, 102);
             this.qq_txtPrefServerPort.Name = "qq_txtPrefServerPort";
             this.qq_txtPrefServerPort.Size = new System.Drawing.Size(54, 21);
@@ -319,11 +319,14 @@
             // 
             // qq_txtPrefUsername
             // 
+            this.qq_txtPrefUsername.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.qq_txtPrefUsername.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.qq_txtPrefUsername.Location = new System.Drawing.Point(92, 19);
             this.qq_txtPrefUsername.Name = "qq_txtPrefUsername";
             this.qq_txtPrefUsername.Size = new System.Drawing.Size(200, 20);
             this.qq_txtPrefUsername.TabIndex = 1;
             this.qq_txtPrefUsername.TextChanged += new System.EventHandler(this.qq_txtPrefUsername_TextChanged);
+            this.qq_txtPrefUsername.KeyDown += new System.Windows.Forms.KeyEventHandler(this.qq_txtPrefUsername_KeyDown);
             // 
             // label3
             // 
@@ -392,16 +395,6 @@
             this.label4.Text = "To get started, just fill in the Jabber ID and Password and click on \"OK\".\r\n\r\nYou" +
     " may come back later through the menu item \"Preferences\".";
             // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(374, 12);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(64, 64);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.pictureBox1.TabIndex = 45;
-            this.pictureBox1.TabStop = false;
-            // 
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -411,7 +404,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(96, 22);
             this.button1.TabIndex = 46;
-            this.button1.Text = "Cancel";
+            this.button1.Text = "&Cancel";
             this.button1.UseVisualStyleBackColor = true;
             // 
             // labProgramVersion
@@ -424,10 +417,22 @@
             this.labProgramVersion.TabIndex = 47;
             this.labProgramVersion.Text = "label9";
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(374, 12);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(64, 64);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox1.TabIndex = 45;
+            this.pictureBox1.TabStop = false;
+            // 
             // ConfigForm
             // 
+            this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.button1;
             this.ClientSize = new System.Drawing.Size(460, 492);
             this.Controls.Add(this.labProgramVersion);
             this.Controls.Add(this.button1);
@@ -438,6 +443,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnOK);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ConfigForm";

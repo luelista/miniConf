@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>miniConf</RootNamespace>
     <AssemblyName>miniConf</AssemblyName>
-    <TargetFrameworkVersion>v3.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -89,6 +89,7 @@
     <Compile Include="DatabaseDebugForm.Designer.cs">
       <DependentUpon>DatabaseDebugForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="DebugTests.cs" />
     <Compile Include="DirectMessageForm.cs">
       <SubType>Form</SubType>
     </Compile>

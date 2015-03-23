@@ -28,7 +28,7 @@ namespace miniConf {
         public void startUpload() {
             try {
                 pictureBox1.Image = Image.FromFile(uploadFilename);
-            } catch (Exception e) { }
+            } catch (Exception e) { Console.WriteLine("ERR image preview: " + e.ToString()); }
             backgroundWorker1.RunWorkerAsync();
         }
 
@@ -41,7 +41,9 @@ namespace miniConf {
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
             DialogResult = System.Windows.Forms.DialogResult.OK;
-            pictureBox1.Image.Dispose();
+            try {
+                pictureBox1.Image.Dispose();
+            } catch (Exception ex) { }
             pictureBox1.Image = null;
         }
 
