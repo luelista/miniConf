@@ -57,8 +57,8 @@
             // labChatstate
             // 
             this.labChatstate.AutoSize = true;
-            this.labChatstate.ForeColor = System.Drawing.Color.DarkGray;
-            this.labChatstate.Location = new System.Drawing.Point(8, 73);
+            this.labChatstate.ForeColor = System.Drawing.Color.Maroon;
+            this.labChatstate.Location = new System.Drawing.Point(45, 73);
             this.labChatstate.Name = "labChatstate";
             this.labChatstate.Size = new System.Drawing.Size(31, 13);
             this.labChatstate.TabIndex = 1;
