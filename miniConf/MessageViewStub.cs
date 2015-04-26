@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace miniConf {
 	public class MessageViewStub : TextBox, IMessageView{
@@ -9,6 +10,7 @@ namespace miniConf {
 		public MessageViewStub () {
 			this.Multiline = true;
 			this.ScrollBars = ScrollBars.Vertical;
+            this.Font = new Font("Courier New", 9);
 		}
 
 
@@ -28,14 +30,14 @@ namespace miniConf {
 		protected bool updateLastTime(HtmlElementInsertionOrientation where, DateTime newTime) {
 			if (lastTimeTop == DateTime.MinValue && lastTimeBottom == DateTime.MinValue) {
 				this.Select (this.Lines [0].Length + 1, this.Lines [1].Length);
-				this.SelectedText = newTime.ToLongDateString();
+				this.SelectedText = "----- " + newTime.ToLongDateString();
 				lastTimeBottom = newTime; lastTimeTop = newTime; return true;
 			}
 			if (where == HtmlElementInsertionOrientation.AfterBegin) {
 				if (lastTimeTop.Date != newTime.Date) {
 					addDateToView(lastTimeTop.ToLongDateString(), where);
 					this.Select (this.Lines [0].Length + 1, this.Lines [1].Length);
-					this.SelectedText = newTime.ToLongDateString();
+                    this.SelectedText = "----- " + newTime.ToLongDateString();
 					lastTimeTop = newTime;
 					return true;
 				} else {
@@ -67,7 +69,7 @@ namespace miniConf {
 		}
 
 		protected void addDateToView(string text, HtmlElementInsertionOrientation where) {
-			addText( "* " + text + "", where);
+			addText( "\n----- " + text + "", where);
 		}
 
 		#region IMessageView implementation
@@ -90,17 +92,20 @@ namespace miniConf {
 			addText (str, where);
 		}
 
-		public void setHistoryNotice (HistoryNoticeState state) {
-			this.Select (0, this.Lines [0].Length);
+        public void setHistoryNotice (string text) {
+            this.Select(0, this.Lines[0].Length);
+            this.SelectedText = text;
+        }
+        public void setHistoryNotice (HistoryNoticeState state) {
 			switch (state) {
 			case HistoryNoticeState.None:
-				this.SelectedText = "...";
+                setHistoryNotice ("...");
 				break;
 			case HistoryNoticeState.LocalAvailable:
-				this.SelectedText = "Press [F3] to show history";
+                setHistoryNotice ("Press [F3] to show history");
 				break;
 			case HistoryNoticeState.Server:
-				this.SelectedText= "End of local history | Press [F3] to try and load history from server";
+                setHistoryNotice ("End of local history | Press [F3] to try and load history from server");
 				break;
 			}
 		}
@@ -125,7 +130,7 @@ namespace miniConf {
 		}
 
 		public void addNoticeToView (string text) {
-			this.AppendText ("Notice: " + text + "\n");
+			this.AppendText ("* " + text + "\n");
 		}
 
 		public string getLastMessageId (string from) {

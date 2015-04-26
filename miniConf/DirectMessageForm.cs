@@ -14,6 +14,7 @@ namespace miniConf {
     public partial class DirectMessageForm : Form {
         public Jid otherEnd;
         public Roomdata room;
+        private IMessageView messageView;
 
         private agsXMPP.protocol.client.Message beforeLoadedMessage = null;
         private bool loaded = false;
@@ -22,16 +23,23 @@ namespace miniConf {
 
         //OTR.Interface.OTRSessionManager otr_ses;
 
-        public DirectMessageForm(Jid jid) : this() {
+        public DirectMessageForm(Jid jid) {
             this.otherEnd = jid;
             this.room = new Roomdata(jid);
             this.Text = jid;
-        }
-
-        public DirectMessageForm() {
             InitializeComponent();
-            messageView1.Navigate("about:blank");
-            messageView1.selfNickname = Program.Jabber.conn.MyJID.Bare;
+            messageView = VbHelper.createMessageView();
+            WebBrowser browser = messageView as WebBrowser;
+            if (browser != null) {
+                browser.Navigate("about:blank");
+                browser.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.messageView1_DocumentCompleted);
+            } else {
+                messageView.clear();
+                messageView1_DocumentCompleted(null, null);
+            }
+            messageView.selfNickname = Program.Jabber.conn.MyJID.Bare;
+            messageView.OnSpecialUrl += messageView1_OnSpecialUrl;
+            this.Controls.Add((Control)this.messageView);
 
             /*otr_ses = new OTR.Interface.OTRSessionManager(Program.Jabber.conn.MyJID.ToString());
             otr_ses.OnOTREvent += otr_ses_OnOTREvent;
@@ -58,9 +66,9 @@ namespace miniConf {
         }*/
 
         private void DirectMessageForm_Load(object sender, EventArgs e) {
-            messageView1.loadStylesheet();
+            messageView.loadStylesheet();
             Program.Jabber.OnContactPresence += Jabber_OnContactPresence;
-            messageView1.imagePreview = Program.glob.para("Form1__chkEnableImagePreview", "TRUE") == "TRUE";
+            messageView.imagePreview = Program.glob.para("Form1__chkEnableImagePreview", "TRUE") == "TRUE";
         }
 
         void Jabber_OnContactPresence(object sender, miniConf.JabberService.JabberEventArgs e) {
@@ -82,7 +90,7 @@ namespace miniConf {
             try {
                 if(!loaded) { noticeStack.Add(text); return;}
 
-                messageView1.addNoticeToView(text);
+                messageView.addNoticeToView(text);
 
             } catch (NullReferenceException nu) { }
         }
@@ -97,7 +105,7 @@ namespace miniConf {
                 //if (body.StartsWith("?OTR"))
                 //    otr_ses.ProcessOTRMessage(msg.From.ToString(), body);
                 //else
-                    messageView1.addMessageToView(msg.From, body, DateTime.Now, null,
+                    messageView.addMessageToView(msg.From, body, DateTime.Now, null,
                     Program.Jabber.avatar.GetAvatarIfAvailabe(msg.From), msg.Id);
             }
             if (msg.Chatstate != agsXMPP.protocol.extensions.chatstates.Chatstate.None) {
@@ -116,7 +124,7 @@ namespace miniConf {
             //}
 
             Program.db.InsertMessage(room.RoomName, msg.Id, msg.From, msg.Body, ChatDatabase.GetNowString());
-            messageView1.addMessageToView(msg.From, msg.Body, DateTime.Now, null, msg.From, msg.Id);
+            messageView.addMessageToView(msg.From, msg.Body, DateTime.Now, null, msg.From, msg.Id);
             return msg.Id;
         }
 
@@ -141,16 +149,16 @@ namespace miniConf {
         private void messageView1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
             loaded = true;
 
-            messageView1.Document.GetElementById("tb").InnerHtml = "Private conversation started at " + DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString();
+            messageView.setHistoryNotice("Private conversation started at " + DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString());
 
             var msgs = room.GetLogs(0, 10);
             foreach (ChatMessage msg in msgs) {
                 msg.SenderJid = msg.Sender;
-                messageView1.addMessageToView(msg, HtmlElementInsertionOrientation.AfterBegin);
+                messageView.addMessageToView(msg, HtmlElementInsertionOrientation.AfterBegin);
             }
             foreach (string note in noticeStack) onNotice(note);
 
-            messageView1.scrollDown();
+            messageView.scrollDown();
 
             updateResources();
             cmbResources.Text = otherEnd.ToString();
@@ -210,7 +218,7 @@ namespace miniConf {
 
             string fileName = ((string[])e.Data.GetData("FileDrop"))[0];
             Program.Jabber.jingle.SendFile(cmbResources.Text, fileName);
-            messageView1.addNoticeToView("<img src=\"" + fileName + "\" style='width:240px'><br>Sending image ...");
+            messageView.addNoticeToView("<img src=\"" + fileName + "\" style='width:240px'><br>Sending image ...");
         }
 
 

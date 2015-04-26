@@ -107,16 +107,19 @@ namespace miniConf {
             lastTimeBottom = DateTime.MinValue;
         }
 
-		public void setHistoryNotice (HistoryNoticeState state) {
+        public void setHistoryNotice (string text) {
+            this.Document.GetElementById("tb").InnerHtml = text;
+        }
+        public void setHistoryNotice (HistoryNoticeState state) {
 			switch (state) {
 			case HistoryNoticeState.None:
-				this.Document.GetElementById("tb").InnerHtml = "???";
+                setHistoryNotice("???");
 				break;
 			case HistoryNoticeState.LocalAvailable:
-				this.Document.GetElementById("tb").InnerHtml = "history: <a href='" + MessageViewUrls.ShowHistory + "'> 10 more</a> | <a href='" + MessageViewUrls.ShowMoreHistory + "'> 100 more</a>";
+                setHistoryNotice("history: <a href='" + MessageViewUrls.ShowHistory + "'> 10 more</a> | <a href='" + MessageViewUrls.ShowMoreHistory + "'> 100 more</a>");
 				break;
 			case HistoryNoticeState.Server:
-				this.Document.GetElementById("tb").InnerHtml = "End of local history | <a href='" + MessageViewUrls.LoadServerHistory + "'>Try loading server history</a>";
+                setHistoryNotice("End of local history | <a href='" + MessageViewUrls.LoadServerHistory + "'>Try loading server history</a>");
 				break;
 			}
 
