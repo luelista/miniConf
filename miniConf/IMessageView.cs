@@ -19,8 +19,9 @@ namespace miniConf {
 
 		void addMessageToView(ChatMessage message, HtmlElementInsertionOrientation where = HtmlElementInsertionOrientation.BeforeEnd);
 		void addMessageToView(string from, string text, DateTime time, string editDt, string jabberId, string id, HtmlElementInsertionOrientation where = HtmlElementInsertionOrientation.BeforeEnd);
-		void clear();
-		void setHistoryNotice (HistoryNoticeState state);
+        void clear();
+        void setHistoryNotice (HistoryNoticeState state);
+        void setHistoryNotice (string text);
 		bool updateMessage(string oldId, string newId, string newBody, DateTime editTimestamp);
 		void loadSmileyTheme();
 		void loadStylesheet();

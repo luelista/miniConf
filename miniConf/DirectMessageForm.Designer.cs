@@ -29,7 +29,6 @@
             this.cmbResources = new System.Windows.Forms.ComboBox();
             this.labChatstate = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.messageView1 = new miniConf.MessageView();
             this.tmrChatstatePaused = new System.Windows.Forms.Timer(this.components);
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -82,18 +81,6 @@
             // 
             // messageView1
             // 
-            this.messageView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.messageView1.Location = new System.Drawing.Point(0, 0);
-            this.messageView1.MinimumSize = new System.Drawing.Size(20, 20);
-            this.messageView1.Name = "messageView1";
-            this.messageView1.Size = new System.Drawing.Size(461, 414);
-            this.messageView1.TabIndex = 0;
-            this.messageView1.Url = new System.Uri("about:blank", System.UriKind.Absolute);
-            this.messageView1.OnSpecialUrl += new miniConf.SpecialUrlEvent(this.messageView1_OnSpecialUrl);
-            this.messageView1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.messageView1_DocumentCompleted);
-            // 
-            // tmrChatstatePaused
-            // 
             this.tmrChatstatePaused.Interval = 5000;
             this.tmrChatstatePaused.Tick += new System.EventHandler(this.tmrChatstatePaused_Tick);
             // 
@@ -102,7 +89,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(461, 504);
-            this.Controls.Add(this.messageView1);
             this.Controls.Add(this.panel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "DirectMessageForm";
@@ -116,7 +102,6 @@
 
         #endregion
 
-        private MessageView messageView1;
         private System.Windows.Forms.Panel panel1;
         public System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label labChatstate;
