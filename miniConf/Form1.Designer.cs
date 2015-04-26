@@ -897,6 +897,7 @@
             this.btnContactInfo.TabIndex = 4;
             this.toolTip1.SetToolTip(this.btnContactInfo, "Contact info");
             this.btnContactInfo.UseVisualStyleBackColor = true;
+            this.btnContactInfo.Click += new System.EventHandler(this.btnContactInfo_Click);
             // 
             // btnContactInvite
             // 
@@ -943,7 +944,9 @@
             this.lvContacts.TabIndex = 0;
             this.lvContacts.UseCompatibleStateImageBehavior = false;
             this.lvContacts.View = System.Windows.Forms.View.Tile;
+            //this.lvContacts.ShowGroups = true;
             this.lvContacts.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvContacts_MouseDoubleClick);
+            this.lvContacts.Scrollable = true;
             // 
             // pnlToolbar
             // 
