@@ -75,6 +75,15 @@ Section "Program Files" SecProgFiles
   SetOutPath "$INSTDIR\Sounds"
   File "miniConf\Sounds\*.wav"
 
+  SetOutPath "$INSTDIR\Source"
+  File "miniConf\*.cs"
+  File "miniConf\*.csproj"
+  File "miniConf\*.resx"
+  File "miniConf\Properties\*.cs"
+  File "miniConf\Properties\*.resx"
+  File "miniConf\Properties\*.settings"
+  
+
   SetOutPath "$INSTDIR\Emoticons\Pidgin"
   File "Emoticons\Pidgin\*"
 

@@ -2,7 +2,7 @@
 using agsXMPP.Xml.Dom;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+
 using System.Text;
 using agsXMPP.protocol.client;
 
@@ -17,16 +17,16 @@ namespace miniConf {
         public MucService muc;
         public JabberAvatars avatar;
 
-        public HashSet<string> serverFeatures = new HashSet<string>();
+        public List<string> serverFeatures = new List<string>();
 
-        public Dictionary<string, JabberContact> contacts = new Dictionary<string,JabberContact>();
+        public Dictionary<string, JabberContact> contacts = new Dictionary<string, JabberContact>();
 
         public event EventHandler<JabberEventArgs> OnContactPresence;
         public event EventHandler OnServerFeaturesUpdated;
 
         public class JabberEventArgs : EventArgs {
             public Jid jabberId;
-            public JabberEventArgs(Jid jid) { jabberId = jid;  }
+            public JabberEventArgs(Jid jid) { jabberId = jid; }
         }
 
         public JabberService() {
@@ -84,7 +84,46 @@ namespace miniConf {
             conn.OnPresence += conn_OnPresence;
         }
 
+        public void addContact(Jid contactJid) {
+            // 2.3.1. Add Roster Item
+            var iq = new agsXMPP.protocol.iq.roster.RosterIq(IqType.set);
+            iq.Query.AddRosterItem(new agsXMPP.protocol.iq.roster.RosterItem(contactJid));
+            iq.GenerateId();
+            conn.Send(iq);
 
+            // 3.1.1 Subscription Request
+            var pres1 = new Presence();
+            pres1.Type = PresenceType.subscribe;
+            pres1.To = contactJid;
+            pres1.GenerateId();
+            conn.Send(pres1);
+
+            // 3.4.1. Subscription Pre-Approval
+            var pres2 = new Presence();
+            pres2.Type = PresenceType.subscribed;
+            pres2.To = contactJid;
+            conn.Send(pres2);
+        }
+        public void removeContact(Jid contactJid) {
+            // 2.5.1. Delete Roster Item
+            var iq = new agsXMPP.protocol.iq.roster.RosterIq(IqType.set);
+            var item = new agsXMPP.protocol.iq.roster.RosterItem(contactJid);
+            item.Subscription = agsXMPP.protocol.iq.roster.SubscriptionType.remove;
+            iq.Query.AddRosterItem(item);
+            iq.GenerateId();
+            conn.Send(iq);
+
+            var pres1 = new Presence();
+            pres1.Type = PresenceType.unsubscribe;
+            pres1.To = contactJid;
+            pres1.GenerateId();
+            conn.Send(pres1);
+
+            var pres2 = new Presence();
+            pres2.Type = PresenceType.unsubscribed;
+            pres2.To = contactJid;
+            conn.Send(pres2);
+        }
 
         void conn_OnPresence(object sender, agsXMPP.protocol.client.Presence pres) {
             if (pres.HasTag(typeof(agsXMPP.protocol.x.muc.User), true) ||
@@ -96,15 +135,37 @@ namespace miniConf {
                     contacts.Add(pres.From.Bare, new JabberContact(pres.From));
                 }
                 JabberContact contact = contacts[pres.From.Bare];
-                contact.resources.Add(pres.From.Resource);
+                if (!contact.resources.Contains(pres.From.Resource))
+                    contact.resources.Add(pres.From.Resource);
                 if (pres.Type == agsXMPP.protocol.client.PresenceType.unavailable) {
                     contact.available = false;
                 } else {
                     contact.available = true;
                 }
                 if (OnContactPresence != null) OnContactPresence(this, new JabberEventArgs(pres.From.Bare));
+            } else if (pres.Type == PresenceType.subscribe || pres.Type == PresenceType.subscribed
+                || pres.Type == PresenceType.unsubscribe || pres.Type == PresenceType.unsubscribed) {
+                Program.MainWnd.Invoke(new Action<object>((x) => {
+                    var f = new InvitationForm();
+                    switch (pres.Type) {
+                    case PresenceType.subscribe:
+                        f.setContactRequest(pres.From);
+                        break;
+                    case PresenceType.subscribed:
+                        f.setContactSubscriptionApproved(pres.From);
+                        break;
+                    case PresenceType.unsubscribe:
+                        f.setContactUnsubscribe(pres.From);
+                        break;
+                    case PresenceType.unsubscribed:
+                        f.setContactSubscriptionCancelled(pres.From);
+                        break;
+                    }
+                    f.Show();
+                }), this);
             }
         }
+
 
 
     }

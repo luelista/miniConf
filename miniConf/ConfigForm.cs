@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
+
 using System.Text;
 using System.Windows.Forms;
 using agsXMPP.Xml.Dom;
@@ -16,11 +16,14 @@ namespace miniConf {
         }
 
         private void ConfigForm_Load(object sender, EventArgs e) {
-            //WindowHelper.SetCueBanner(qq_txtPrefUsername, "jane-doe@example.org");
+            labProgramVersion.Text = "Version "+Application.ProductVersion;
+			if (!VbHelper.runningOnMono())
+				WindowHelper.SetCueBanner(qq_txtPrefUsername, "jane-doe@example.org");
             updateSmileyThemeList();
 
             qq_txtPrefUsername.Text = ApplicationPreferences.AccountJID;
             qq_txtPrefPassword.Text = ApplicationPreferences.AccountPassword;
+            chkRememberPassword.Checked = ApplicationPreferences.RememberPassword;
             qq_txtPrefServerPort.Text = ApplicationPreferences.AccountPort;
             qq_txtPrefServer.Text = ApplicationPreferences.AccountServer;
 
@@ -36,6 +39,7 @@ namespace miniConf {
             cmbFileUploadService.Text = ApplicationPreferences.FileUploadServiceUrl;
             chkFiletransferAutoAccept.Checked = ApplicationPreferences.FiletransferAutoAccept;
 
+            qq_txtPrefUsername.AutoCompleteCustomSource.AddRange(Program.db.GetMru("jid", 10));
         }
 
         private void btnOK_Click(object sender, EventArgs e) {
@@ -51,8 +55,11 @@ namespace miniConf {
                 return;
             }
 
+            Program.db.AddToMru("jid", qq_txtPrefUsername.Text);
+
             ApplicationPreferences.AccountJID = qq_txtPrefUsername.Text;
             ApplicationPreferences.AccountPassword = qq_txtPrefPassword.Text;
+            ApplicationPreferences.RememberPassword = chkRememberPassword.Checked;
             ApplicationPreferences.AccountPort = qq_txtPrefServerPort.Text;
             ApplicationPreferences.AccountServer = qq_txtPrefServer.Text;
 
@@ -68,6 +75,7 @@ namespace miniConf {
             ApplicationPreferences.FileUploadServiceUrl = cmbFileUploadService.Text;
             ApplicationPreferences.FiletransferAutoAccept = chkFiletransferAutoAccept.Checked;
 
+            this.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.Close();
         }
 
@@ -110,7 +118,7 @@ namespace miniConf {
 
         #region Smileys
         private void updateSmileyThemeList() {
-			string path = Program.dataDir + "Emoticons" + Path.PathSeparator;
+			string path = Program.dataDir + "Emoticons" + Path.DirectorySeparatorChar;
             string[] emoteDirs = Directory.GetDirectories(path);
             cmbSmileyTheme.Items.Clear();
             cmbSmileyTheme.Items.Add("(none)");
@@ -127,6 +135,13 @@ namespace miniConf {
             System.Diagnostics.Process.Start("http://home.max-weller.de/programme/miniconf/smilies/");
         }
         #endregion
+
+        private void qq_txtPrefUsername_KeyDown(object sender, KeyEventArgs e) {
+            if (e.KeyCode == Keys.Enter) {
+                e.Handled = true; e.SuppressKeyPress = true;
+                qq_txtPrefPassword.Focus(); qq_txtPrefPassword.SelectAll();
+            }
+        }
 
 
     }

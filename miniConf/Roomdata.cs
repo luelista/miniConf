@@ -4,16 +4,17 @@ using agsXMPP.protocol.extensions.chatstates;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
+
 using System.Text;
 using System.Data.Common;
 
 namespace miniConf {
     public class Roomdata {
         public Jid jid;
-        public HashSet<String> users = new HashSet<string>();
+        public System.Collections.Generic.List<String> users = new List<string>();
         public int unreadMsgCount = 0;
         public int unreadNotifyCount = 0;
+        public string unreadNotifyText = "";
 
         public bool online = false;
 

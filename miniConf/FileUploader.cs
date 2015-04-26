@@ -1,9 +1,7 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+
 using System.Net;
 using System.Text;
 using System.Windows.Forms;
@@ -24,7 +22,7 @@ namespace miniConf {
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
-        public static KeyValuePair<UploadFileStatus, JObject> UploadFile(string filename) {
+        public static KeyValuePair<UploadFileStatus, String> UploadFile(string filename) {
             FileInfo fi;
 
             uploadProgress = 0;
@@ -84,15 +82,15 @@ namespace miniConf {
             }
 
             if (!string.IsNullOrEmpty(response_text)) {
-                JObject json = JsonConvert.DeserializeObject<JObject>(response_text);
+                //JObject json = JsonConvert.DeserializeObject<JObject>(response_text);
 
                 UploadFileStatus ufs = UploadFileStatus.Unknown;
 
-                if (json["x-status"] != null) {
-                    ufs = parse_uploadfile_status(Convert.ToString(json["x-status"]));
+                //if (json["x-status"] != null) {
+                    //ufs = parse_uploadfile_status(Convert.ToString(json["x-status"]));
 
-                    if (ufs == UploadFileStatus.Success || ufs == UploadFileStatus.AlreadyUploaded) {
-                        string hash = Convert.ToString(json["hash"]);
+                    //if (ufs == UploadFileStatus.Success || ufs == UploadFileStatus.AlreadyUploaded) {
+                        //string hash = Convert.ToString(json["hash"]);
                         /*
                         HashInfo hi = null;
 
@@ -100,14 +98,14 @@ namespace miniConf {
                             hi = parse_hashinfo((JObject)json[hash]);
                         }
                         */
-                        return new KeyValuePair<UploadFileStatus, JObject>(ufs, json);
-                    }
-                }
+                        return new KeyValuePair<UploadFileStatus, string>(UploadFileStatus.Success, response_text);
+                    //}
+                //}
             } else {
-                return new KeyValuePair<UploadFileStatus, JObject>(UploadFileStatus.NoResponse, new JObject());
+                return new KeyValuePair<UploadFileStatus, string>(UploadFileStatus.NoResponse, "");
             }
 
-            return new KeyValuePair<UploadFileStatus, JObject>(UploadFileStatus.Unknown, new JObject());
+            return new KeyValuePair<UploadFileStatus, string>(UploadFileStatus.Unknown, "");
         }
 
 
