@@ -21,6 +21,9 @@ namespace miniConf {
         public Form1() {
             InitializeComponent();
 			createMessageView ();
+            this.lvContacts.Columns.Add("x");
+            this.lvContacts.Columns.Add("y");
+            this.lvContacts.Columns.Add("z");
 
             icon1 = this.Icon; icon2 = Icon.FromHandle(new Bitmap(imageList1.Images[2]).GetHicon());
 
@@ -145,7 +148,9 @@ namespace miniConf {
         }
 
         void jabber_OnContactPresence(object sender, JabberService.JabberEventArgs e) {
-            updateContactList();
+            if (String.IsNullOrEmpty(e.jabberId) ||
+                (jabber.contacts.ContainsKey(e.jabberId) && jabber.contacts[e.jabberId].inRoster))
+                this.Invoke(new ThreadStart( updateContactList));
         }
 
         void jabber_OnServerFeaturesUpdated(object sender, EventArgs e) {
@@ -288,6 +293,7 @@ namespace miniConf {
             loginError = false;
 
             jabber.CheckServerFeatures();
+            jabber.requestRoster();
 
 			try {
 				SoundPlayer dingdong3 = new SoundPlayer(Program.appDir + Path.DirectorySeparatorChar + "Sounds" + Path.DirectorySeparatorChar + "startup.wav");
@@ -298,7 +304,7 @@ namespace miniConf {
         }
 
         private void OnMucSelfPresence(Roomdata room, agsXMPP.protocol.client.Presence pres, agsXMPP.Xml.Dom.Element xChild) {
-            room.online = true;
+            room.online = true; Console.WriteLine("Finished receiving member list in  " + room.DisplayName);
             lbChatrooms.Refresh();
             if (room == currentRoom) txtSendmessage.Enabled = true;
         }
@@ -523,17 +529,9 @@ namespace miniConf {
         }
 
 		private void createMessageView() {
-			if (false) {
-				MessageView browser = new MessageView ();
-				browser.imagePreview = true;
-				browser.Dock = DockStyle.Fill;
-				//browser.Url = new System.Uri("about:blank", System.UriKind.Absolute);
-				browser.OnRealKeyDown += new System.Windows.Forms.HtmlElementEventHandler(this.webBrowser1_OnRealKeyDown);
-				messageView = browser;
-			} else {
-				MessageViewStub stub = new MessageViewStub ();
-				stub.Dock = DockStyle.Fill;
-				messageView = stub;
+            messageView = VbHelper.createMessageView();
+            if (messageView is MessageView) {
+                ((MessageView)messageView).OnRealKeyDown += new System.Windows.Forms.HtmlElementEventHandler(this.webBrowser1_OnRealKeyDown);
 			}
 
 			messageViewPanel.Controls.Add((Control)messageView);
@@ -878,9 +876,17 @@ namespace miniConf {
 			messageView.scrollDown();
         }
 
+        private bool updatingContactList = false;
         private void updateContactList() {
-            lvContacts.BeginUpdate(); lvContacts.Items.Clear();
+           /* if (updatingContactList)
+                return;
+            updatingContactList = true;*/
+            lvContacts.BeginUpdate();
+            lvContacts.Items.Clear(); lvContacts.Groups.Clear();
+
             foreach (JabberContact contact in jabber.contacts.Values) {
+                if (contact.inRoster == false)
+                    continue;
                 if (contactsImageList.Images.ContainsKey(contact.jid) == false) {
                     var image = jabber.avatar.GetAvatarIfAvailabe(contact.jid);
                     if (image != null)
@@ -888,11 +894,26 @@ namespace miniConf {
                     else
                         contactsImageList.Images.Add(contact.jid, JabberContact.getColoredImage(contact.getColor(), 32));
                 }
-                var lvi = lvContacts.Items.Add(contact.jid, contact.jid);
+                Console.WriteLine("Contact: " + contact.jid);
+                //var lvi = lvContacts.Items.Add(contact.jid);//, contact.jid);
+                var lvi = new ListViewItem(contact.jid, contact.jid);
+                if (!String.IsNullOrEmpty(contact.displayName)) {
+                    lvi.Text = contact.displayName; lvi.SubItems.Add(contact.jid);
+                }
+                //lvi.SubItems.Add(contact.displayName);
+                if (!String.IsNullOrEmpty(contact.groupName)) {
+                    if (lvContacts.Groups[contact.groupName] == null) {
+                        lvContacts.Groups.Add(contact.groupName, contact.groupName);
+                    }
+                    lvi.Group = lvContacts.Groups[contact.groupName];
+                }
                 if (contact.available) lvi.ForeColor = Color.Green;
                 lvi.ToolTipText = "Online clients: " + String.Join(", ", contact.resources.ToArray());
+                lvContacts.Items.Add(lvi);
             }
             lvContacts.EndUpdate();
+            lvContacts.Refresh();
+            /*updatingContactList = false;*/
         }
 
         private void updateChatstates() {
@@ -903,7 +924,7 @@ namespace miniConf {
         }
 
         private void updateMemberList() {
-			return;
+			//return;
 			bool winetricks = ApplicationPreferences.WineTricks;
             lvOnlineStatus.BeginUpdate();
             lvOnlineStatus.Items.Clear();
@@ -1121,12 +1142,6 @@ namespace miniConf {
 
 
 
-        private void beendenToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (MessageBox.Show("Are you sure you want to exit miniConf?", "miniConf", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == System.Windows.Forms.DialogResult.Yes) {
-                Application.Exit();
-            }
-        }
-
         private void webBrowser1_OnSpecialUrl(string url) {
             switch (url) {
                 case "special:show_more_history":
@@ -1301,6 +1316,10 @@ namespace miniConf {
             }
         }
 
+        private void btnContactInfo_Click(object sender, EventArgs e) {
+            updateContactList();
+        }
+
         private void btnContactAdd_Click(object sender, EventArgs e) {
             string jid = VbHelper.InputBox(
                 "To add a contact to your contact list, enter their jabber ID:\n\nAdditionally, a subscription request will be sent so you can see their online status, and your contact will be able to see your online status, too.",
@@ -1429,6 +1448,15 @@ namespace miniConf {
         #endregion
 
         #region Tools Menu
+        private void beendenToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (MessageBox.Show("Are you sure you want to exit miniConf?", "miniConf", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == System.Windows.Forms.DialogResult.Yes) {
+                Form1_FormClosing(this, new FormClosingEventArgs(CloseReason.ApplicationExitCall, false));
+                //Form1_FormClosed(this, new FormClosedEventArgs(CloseReason.ApplicationExitCall));
+                //Application.Exit();
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
+            }
+        }
+
         private void sendFileToolStripMenuItem_Click(object sender, EventArgs e) {
             using (OpenFileDialog ofd = new OpenFileDialog()) {
                 ofd.Title = "Send media file...";

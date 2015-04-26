@@ -10,6 +10,8 @@ namespace miniConf {
     public class JabberContact {
         public Jid jid;
         public bool available;
+        public bool inRoster;
+        public string groupName, displayName;
         public List<string> resources = new List<string>();
         public JabberContact(Jid newJid) {
             jid = new Jid(newJid.Bare);

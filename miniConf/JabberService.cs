@@ -68,6 +68,31 @@ namespace miniConf {
             return dt;
         }
 
+        public void requestRoster() {
+            var iq = new agsXMPP.protocol.client.IQ(agsXMPP.protocol.client.IqType.get, conn.MyJID, null);
+            iq.AddChild(new agsXMPP.Xml.Dom.Element("query",null,"jabber:iq:roster")); iq.GenerateId();
+
+            conn.IqGrabber.SendIq(iq, delegate(object a, agsXMPP.protocol.client.IQ b, object c) {
+                foreach(JabberContact cc in contacts.Values) {
+                    cc.inRoster = false;
+                }
+                foreach (Element child in b.SelectSingleElement("query").SelectElements("item")) {
+                    JabberContact cc;
+                    Jid jid = child.GetAttributeJid("jid");
+                    if (!contacts.ContainsKey(jid.Bare)) {
+                        contacts.Add(jid.Bare, new JabberContact(jid));
+                    }
+                    cc = contacts[jid.Bare];
+                    cc.inRoster = true;
+                    var group = child.SelectSingleElement("group");
+                    if (group != null) cc.groupName = group.Value;
+                    cc.displayName = child.GetAttribute("name");
+                }
+
+                if (OnContactPresence != null) OnContactPresence(this, new JabberEventArgs(""));
+            });
+        }
+
         /// <summary>
         /// XEP-0280, Message Carbons
         /// </summary>
