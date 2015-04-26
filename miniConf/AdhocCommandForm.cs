@@ -310,7 +310,7 @@ namespace miniConf {
                 this.loadCommandList();
             }
             if (e.KeyCode == Keys.F6) {
-                string resp = Microsoft.VisualBasic.Interaction.InputBox("Modify Responder JID","",responderJid.ToString());
+                string resp = VbHelper.InputBox("Modify Responder JID","",responderJid.ToString());
                 if (!String.IsNullOrEmpty(resp)) {
                     responderJid = new Jid(resp);
                     this.loadCommandList();

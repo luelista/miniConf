@@ -3,27 +3,31 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace miniConf {
-    class MessageView : WebBrowser {
+	class MessageView : WebBrowser, IMessageView {
+
         public event HtmlElementEventHandler OnRealKeyDown;
 
         public string highlightString = "";
-        public string selfNickname = "";
-        public bool imagePreview = false;
+
+		public string selfNickname { get ; set; } = "";
+		public bool imagePreview  { get ; set; } = false;
+
         public Dictionary<string,string> smileys = new Dictionary<string,string>();
 
+		public List<ChatMessage> messages = new List<ChatMessage>();
 
         public DateTime lastTimeTop=DateTime.MinValue, lastTimeBottom=DateTime.MinValue;
 
         public MessageView() {
-
+			this.AllowWebBrowserDrop = false;
+			this.ScriptErrorsSuppressed = true;
         }
-
+		/*
         protected override void OnDocumentCompleted(WebBrowserDocumentCompletedEventArgs e) {
             this.Document.Write("<html><head><style id='st'></style></head>" +
                  "<body><p id='tb'>Eile mit Weile ...</p><p class='notice date' id='firstdate'></p><div id='m'></div></body></html>");
@@ -34,7 +38,7 @@ namespace miniConf {
 
             base.OnDocumentCompleted(e);
         }
-
+*/
 
         void Body_KeyDown(object sender, HtmlElementEventArgs e) {
             if (OnRealKeyDown != null) OnRealKeyDown(sender, e);
@@ -42,7 +46,7 @@ namespace miniConf {
 
 
         public void loadStylesheet() {
-            string appDir = Program.appDir, dataDir = Program.dataDir,
+            /*string appDir = Program.appDir, dataDir = Program.dataDir,
                 themeName = Program.glob.para("messageView__theme", "Default");
             string style = "", style2 = "";
             try {
@@ -59,7 +63,7 @@ namespace miniConf {
                 //styleEl.styleSheet.cssText = style + "\n" + style2;
             } catch (Exception e) {
                 Console.WriteLine("Error applying stylesheet: " + e.Message);
-            }
+            }*/
         }
         public void loadSmileyTheme() {
             string dataDir = Program.dataDir,
@@ -87,7 +91,8 @@ namespace miniConf {
 
 
         public bool updateMessage(string oldId, string newId, string newBody, DateTime editTimestamp) {
-            var el = Document.GetElementById("MSGID_" + oldId);
+			//this._htmlContainer.
+			var el = Document.GetElementById("MSGID_" + oldId);
             if (el == null) return false;
             var spans = el.GetElementsByTagName("SPAN");
             spans[0].InnerHtml = prepareInnerHtml(newBody) + "<br><small> (Edited) </small>"; 
@@ -101,7 +106,25 @@ namespace miniConf {
             lastTimeTop = DateTime.MinValue;
             lastTimeBottom = DateTime.MinValue;
         }
-        public bool updateLastTime(HtmlElementInsertionOrientation where, DateTime newTime) {
+
+		public void setHistoryNotice (HistoryNoticeState state) {
+			switch (state) {
+			case HistoryNoticeState.None:
+				this.Document.GetElementById("tb").InnerHtml = "???";
+				break;
+			case HistoryNoticeState.LocalAvailable:
+				this.Document.GetElementById("tb").InnerHtml = "history: <a href='" + MessageViewUrls.ShowHistory + "'> 10 more</a> | <a href='" + MessageViewUrls.ShowMoreHistory + "'> 100 more</a>";
+				break;
+			case HistoryNoticeState.Server:
+				this.Document.GetElementById("tb").InnerHtml = "End of local history | <a href='" + MessageViewUrls.LoadServerHistory + "'>Try loading server history</a>";
+				break;
+			}
+
+		}
+
+
+
+        protected bool updateLastTime(HtmlElementInsertionOrientation where, DateTime newTime) {
             if (lastTimeTop == DateTime.MinValue && lastTimeBottom == DateTime.MinValue) {
                 this.Document.GetElementById("firstdate").InnerHtml = newTime.ToLongDateString();
                 lastTimeBottom = newTime; lastTimeTop = newTime; return true;
@@ -126,13 +149,13 @@ namespace miniConf {
             }
         }
 
-        public void addMessageToView(ChatMessage message, HtmlElementInsertionOrientation where = HtmlElementInsertionOrientation.BeforeEnd) {
+		public void addMessageToView(ChatMessage message, HtmlElementInsertionOrientation where = HtmlElementInsertionOrientation.BeforeEnd) {
             addMessageToView(message.Sender, message.Body, message.Date, message.Editdt, 
                 message.SenderJid, message.Id, where);
 
         }
 
-        public void addMessageToView(string from, string text, DateTime time, string editDt, string jabberId, string id, HtmlElementInsertionOrientation where = HtmlElementInsertionOrientation.BeforeEnd) {
+		public void addMessageToView(string from, string text, DateTime time, string editDt, string jabberId, string id, HtmlElementInsertionOrientation where = HtmlElementInsertionOrientation.BeforeEnd) {
             updateLastTime(where, time);
             var div = this.Document.CreateElement("p");
             div.Id = "MSGID_" + id;
@@ -189,7 +212,7 @@ namespace miniConf {
             text = string.Join(" ", parts);
             return text;
         }
-        public void addDateToView(string text, HtmlElementInsertionOrientation where) {
+        protected void addDateToView(string text, HtmlElementInsertionOrientation where) {
             var div = this.Document.CreateElement("p");
             div.SetAttribute("className", "date notice");
             div.InnerHtml = "* " + text + "";
@@ -228,7 +251,6 @@ namespace miniConf {
             }
         }
 
-        public delegate void SpecialUrlEvent(string url);
         public event SpecialUrlEvent OnSpecialUrl;
 
         protected override void OnNavigating(WebBrowserNavigatingEventArgs e) {

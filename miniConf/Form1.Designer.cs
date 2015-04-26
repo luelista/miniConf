@@ -1,7 +1,5 @@
-﻿namespace miniConf
-{
-    partial class Form1
-    {
+﻿namespace miniConf {
+    partial class Form1 {
         /// <summary>
         /// Erforderliche Designervariable.
         /// </summary>
@@ -11,10 +9,8 @@
         /// Verwendete Ressourcen bereinigen.
         /// </summary>
         /// <param name="disposing">True, wenn verwaltete Ressourcen gelöscht werden sollen; andernfalls False.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
+        protected override void Dispose(bool disposing) {
+            if (disposing && (components != null)) {
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -26,8 +22,7 @@
         /// Erforderliche Methode für die Designerunterstützung.
         /// Der Inhalt der Methode darf nicht mit dem Code-Editor geändert werden.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Online", System.Windows.Forms.HorizontalAlignment.Left);
@@ -119,7 +114,7 @@
             this.labChatstates = new System.Windows.Forms.Label();
             this.chkToggleSidebar = new System.Windows.Forms.CheckBox();
             this.txtSubject = new System.Windows.Forms.TextBox();
-            this.webBrowser1 = new miniConf.MessageView();
+            this.messageViewPanel = new System.Windows.Forms.Panel();
             this.panel3.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -170,7 +165,7 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.webBrowser1);
+            this.splitContainer1.Panel1.Controls.Add(this.messageViewPanel);
             this.splitContainer1.Panel1.Controls.Add(this.txtSendmessage);
             this.splitContainer1.Panel1MinSize = 200;
             this.splitContainer1.Panel2Collapsed = true;
@@ -182,7 +177,7 @@
             // txtSendmessage
             // 
             this.txtSendmessage.AllowDrop = true;
-            this.txtSendmessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtSendmessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSendmessage.BackColor = System.Drawing.SystemColors.Window;
             this.txtSendmessage.Enabled = false;
@@ -224,7 +219,7 @@
             // 
             // labErrMes
             // 
-            this.labErrMes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.labErrMes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.labErrMes.ForeColor = System.Drawing.Color.White;
             this.labErrMes.Location = new System.Drawing.Point(9, 5);
@@ -245,21 +240,22 @@
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openMiniConfToolStripMenuItem,
-            this.sendFileToolStripMenuItem,
-            this.findToolStripMenuItem,
-            this.toolStripMenuItem3,
-            this.preferencesToolStripMenuItem,
-            this.reconnectToolStripMenuItem,
-            this.searchForUpdatesToolStripMenuItem,
-            this.helpToolStripMenuItem,
-            this.extrasToolStripMenuItem,
-            this.toolStripMenuItem2,
-            this.enableNotificationsToolStripMenuItem,
-            this.enablePopupToolStripMenuItem,
-            this.enableSoundToolStripMenuItem,
-            this.toolStripMenuItem1,
-            this.beendenToolStripMenuItem});
+                this.openMiniConfToolStripMenuItem,
+                this.sendFileToolStripMenuItem,
+                this.findToolStripMenuItem,
+                this.toolStripMenuItem3,
+                this.preferencesToolStripMenuItem,
+                this.reconnectToolStripMenuItem,
+                this.searchForUpdatesToolStripMenuItem,
+                this.helpToolStripMenuItem,
+                this.extrasToolStripMenuItem,
+                this.toolStripMenuItem2,
+                this.enableNotificationsToolStripMenuItem,
+                this.enablePopupToolStripMenuItem,
+                this.enableSoundToolStripMenuItem,
+                this.toolStripMenuItem1,
+                this.beendenToolStripMenuItem
+            });
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(175, 286);
             // 
@@ -322,11 +318,12 @@
             // extrasToolStripMenuItem
             // 
             this.extrasToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.xMPPConsoleToolStripMenuItem,
-            this.sqliteConsoleToolStripMenuItem,
-            this.editStylesToolStripMenuItem,
-            this.reloadStylesToolStripMenuItem,
-            this.adhocCommandsToolStripMenuItem});
+                this.xMPPConsoleToolStripMenuItem,
+                this.sqliteConsoleToolStripMenuItem,
+                this.editStylesToolStripMenuItem,
+                this.reloadStylesToolStripMenuItem,
+                this.adhocCommandsToolStripMenuItem
+            });
             this.extrasToolStripMenuItem.Name = "extrasToolStripMenuItem";
             this.extrasToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.extrasToolStripMenuItem.Text = "Tools";
@@ -472,10 +469,11 @@
             // ctxMenuConversationHeader
             // 
             this.ctxMenuConversationHeader.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.joinConversationToolStripMenuItem,
-            this.createNewRoomToolStripMenuItem,
-            this.toolStripMenuItem7,
-            this.showAllRoomsToolStripMenuItem});
+                this.joinConversationToolStripMenuItem,
+                this.createNewRoomToolStripMenuItem,
+                this.toolStripMenuItem7,
+                this.showAllRoomsToolStripMenuItem
+            });
             this.ctxMenuConversationHeader.Name = "ctxMenuConversationHeader";
             this.ctxMenuConversationHeader.Size = new System.Drawing.Size(178, 76);
             // 
@@ -509,17 +507,18 @@
             // ctxMenuConversation
             // 
             this.ctxMenuConversation.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.renameToolStripMenuItem,
-            this.changeNickToolStripMenuItem,
-            this.toolStripMenuItem4,
-            this.alwaysNotifyToolStripMenuItem,
-            this.notifyOnMentionToolStripMenuItem,
-            this.disableNotificationToolStripMenuItem,
-            this.toolStripMenuItem6,
-            this.showFullHistoryToolStripMenuItem,
-            this.toolStripMenuItem5,
-            this.closeToolStripMenuItem,
-            this.rejoinToolStripMenuItem});
+                this.renameToolStripMenuItem,
+                this.changeNickToolStripMenuItem,
+                this.toolStripMenuItem4,
+                this.alwaysNotifyToolStripMenuItem,
+                this.notifyOnMentionToolStripMenuItem,
+                this.disableNotificationToolStripMenuItem,
+                this.toolStripMenuItem6,
+                this.showFullHistoryToolStripMenuItem,
+                this.toolStripMenuItem5,
+                this.closeToolStripMenuItem,
+                this.rejoinToolStripMenuItem
+            });
             this.ctxMenuConversation.Name = "ctxMenuConversation";
             this.ctxMenuConversation.Size = new System.Drawing.Size(186, 198);
             // 
@@ -604,12 +603,13 @@
             // ctxMenuParticipant
             // 
             this.ctxMenuParticipant.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mentionToolStripMenuItem,
-            this.privateMessageToolStripMenuItem,
-            this.openDirectChatToolStripMenuItem,
-            this.infoToolStripMenuItem,
-            this.hideToolStripMenuItem,
-            this.showOfflineUsersToolStripMenuItem});
+                this.mentionToolStripMenuItem,
+                this.privateMessageToolStripMenuItem,
+                this.openDirectChatToolStripMenuItem,
+                this.infoToolStripMenuItem,
+                this.hideToolStripMenuItem,
+                this.showOfflineUsersToolStripMenuItem
+            });
             this.ctxMenuParticipant.Name = "ctxMenuParticipant";
             this.ctxMenuParticipant.Size = new System.Drawing.Size(171, 136);
             // 
@@ -723,7 +723,7 @@
             // 
             // panel5
             // 
-            this.panel5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.panel5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(91)))), ((int)(((byte)(91)))), ((int)(((byte)(130)))));
             this.panel5.Controls.Add(this.lnkInvitetoConference);
@@ -758,7 +758,7 @@
             // 
             // panel2
             // 
-            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(91)))), ((int)(((byte)(91)))), ((int)(((byte)(130)))));
             this.panel2.Controls.Add(this.label13);
@@ -809,20 +809,22 @@
             // 
             // lvOnlineStatus
             // 
-            this.lvOnlineStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.lvOnlineStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvOnlineStatus.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2});
+                this.columnHeader1,
+                this.columnHeader2
+            });
             this.lvOnlineStatus.FullRowSelect = true;
             listViewGroup1.Header = "Online";
             listViewGroup1.Name = "online";
             listViewGroup2.Header = "Not available";
             listViewGroup2.Name = "off";
             this.lvOnlineStatus.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1,
-            listViewGroup2});
+                listViewGroup1,
+                listViewGroup2
+            });
             this.lvOnlineStatus.LargeImageList = this.imageList1;
             this.lvOnlineStatus.Location = new System.Drawing.Point(1, 229);
             this.lvOnlineStatus.Name = "lvOnlineStatus";
@@ -847,7 +849,7 @@
             // 
             // lbChatrooms
             // 
-            this.lbChatrooms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.lbChatrooms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lbChatrooms.DisplayMember = "RoomName";
             this.lbChatrooms.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -930,8 +932,8 @@
             // 
             // lvContacts
             // 
-            this.lvContacts.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.lvContacts.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvContacts.LargeImageList = this.contactsImageList;
             this.lvContacts.Location = new System.Drawing.Point(0, 21);
@@ -970,7 +972,7 @@
             // 
             // labChatstates
             // 
-            this.labChatstates.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.labChatstates.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.labChatstates.BackColor = System.Drawing.Color.Cyan;
             this.labChatstates.Image = ((System.Drawing.Image)(resources.GetObject("labChatstates.Image")));
@@ -1000,7 +1002,7 @@
             // 
             // txtSubject
             // 
-            this.txtSubject.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtSubject.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSubject.BackColor = System.Drawing.SystemColors.Window;
             this.txtSubject.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -1010,21 +1012,16 @@
             this.txtSubject.Size = new System.Drawing.Size(523, 21);
             this.txtSubject.TabIndex = 1;
             // 
-            // webBrowser1
+            // messageViewPanel
             // 
-            this.webBrowser1.AllowWebBrowserDrop = false;
-            this.webBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.messageViewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.webBrowser1.Location = new System.Drawing.Point(1, 0);
-            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.ScriptErrorsSuppressed = true;
-            this.webBrowser1.Size = new System.Drawing.Size(461, 444);
-            this.webBrowser1.TabIndex = 0;
-            //this.webBrowser1.Url = new System.Uri("about:blank", System.UriKind.Absolute);
-            this.webBrowser1.OnRealKeyDown += new System.Windows.Forms.HtmlElementEventHandler(this.webBrowser1_OnRealKeyDown);
-            this.webBrowser1.OnSpecialUrl += new miniConf.MessageView.SpecialUrlEvent(this.webBrowser1_OnSpecialUrl);
+            this.messageViewPanel.Location = new System.Drawing.Point(1, 0);
+            this.messageViewPanel.MinimumSize = new System.Drawing.Size(20, 20);
+            this.messageViewPanel.Name = "messageViewPanel";
+            this.messageViewPanel.Size = new System.Drawing.Size(461, 444);
+            this.messageViewPanel.TabIndex = 0;
             // 
             // Form1
             // 
@@ -1080,7 +1077,7 @@
         private System.Windows.Forms.Panel pnlToolbar;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.TextBox txtSendmessage;
-        private MessageView webBrowser1;
+        private System.Windows.Forms.Panel messageViewPanel;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TextBox txtSubject;
         private System.Windows.Forms.Panel pnlErrMes;

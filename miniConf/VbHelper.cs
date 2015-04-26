@@ -9,6 +9,10 @@ namespace miniConf {
 		private VbHelper () {
 		}
 
+		public static bool runningOnMono() {
+			return Type.GetType ("Mono.Runtime") != null;
+		}
+
 		public static string[] Split(string haystack, string needle) {
 			if (String.IsNullOrEmpty (haystack))
 				return new string[]{ };
@@ -23,7 +27,7 @@ namespace miniConf {
 
 		public static string InputBox(string prompt, string title="Input", string defaultValue = "") {
 			string result = null;
-			Form f = new Form (); f.Text = title;
+			Form f = new Form (); f.Text = title; f.FormBorderStyle = FormBorderStyle.FixedDialog; f.StartPosition = FormStartPosition.CenterParent;
 			f.Width = 200;
 			f.Height = 100;
 			TextBox t = new TextBox (); t.Text = defaultValue;
@@ -32,8 +36,11 @@ namespace miniConf {
 			Button ok = new Button (); ok.Text = "  OK  ";
 			ok.Click += (object sender, EventArgs e) => {
 				result = t.Text;
-				f.Hide();
+				f.Close();
 			};
+			f.Controls.Add (ok);
+			ok.Top = 50; ok.Left = 70;
+			f.AcceptButton = ok;
 			f.ShowDialog ();
 			return result;
 		}
