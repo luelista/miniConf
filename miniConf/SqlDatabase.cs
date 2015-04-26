@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using Mono.Data.Sqlite;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Collections.Specialized;

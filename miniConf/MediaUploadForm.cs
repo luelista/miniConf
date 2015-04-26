@@ -1,10 +1,8 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
@@ -12,7 +10,8 @@ namespace miniConf {
     public partial class MediaUploadForm : Form {
         string uploadFilename;
         public FileUploader.UploadFileStatus resultStatus;
-        public JObject resultObject;
+        //public JObject resultObject;
+        public string jsonResult;
 
         public MediaUploadForm(string filename) {
             InitializeComponent();
@@ -29,20 +28,22 @@ namespace miniConf {
         public void startUpload() {
             try {
                 pictureBox1.Image = Image.FromFile(uploadFilename);
-            } catch (Exception e) { }
+            } catch (Exception e) { Console.WriteLine("ERR image preview: " + e.ToString()); }
             backgroundWorker1.RunWorkerAsync();
         }
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e) {
             var result = FileUploader.UploadFile(uploadFilename);
             resultStatus = result.Key;
-            resultObject = result.Value;
-            
+            //resultObject = result.Value;
+            jsonResult = result.Value;
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
             DialogResult = System.Windows.Forms.DialogResult.OK;
-            pictureBox1.Image.Dispose();
+            try {
+                pictureBox1.Image.Dispose();
+            } catch (Exception ex) { }
             pictureBox1.Image = null;
         }
 

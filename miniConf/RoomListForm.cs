@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
+
 using System.Text;
 using System.Windows.Forms;
 
@@ -27,6 +27,10 @@ namespace miniConf {
         }
 
         private void RoomListForm_Load(object sender, EventArgs e) {
+            if (ApplicationPreferences.WineTricks) {
+                listView1.Columns.Add("Server",100);
+                this.Width = 650;
+            }
             this.Show();
             try {
                 discoManager = new DiscoManager(Program.Jabber.conn);
@@ -87,24 +91,27 @@ namespace miniConf {
                     DiscoItems items = query as DiscoItems;
                     DiscoItem[] itms = items.GetDiscoItems();
                     string server = "";
+                    listView1.BeginUpdate();
                     foreach (DiscoItem itm in itms) {
                         if (itm.Jid != null) {
                             var lvi = listView1.Items.Add(itm.Jid.Bare, itm.Jid.User, -1);
                             try { lvi.Group = listView1.Groups[itm.Jid.Server]; } catch (Exception e) { }
                             server = itm.Jid.Server;
                             lvi.SubItems.Add(itm.Name); lvi.Tag = itm.Jid.Bare;
+                            if (listView1.Columns.Count == 3) lvi.SubItems.Add(itm.Jid.Server);
                             //if (rooms.Contains(itm.Jid.Bare)) lvi.Checked = true;
                         }
                         
                     }
                     if (server != "") {
                         var lvi2 = listView1.Items.Add("@"+server, "< other room >", -1);
-                        try { lvi2.Group = listView1.Groups[server]; } catch (Exception e) { }
+                        try { lvi2.Group = listView1.Groups[server]; lvi2.SubItems.Add(""); lvi2.SubItems.Add(server); } catch (Exception e) { }
                         lvi2.Tag = "@" + server;
                     }
 
                     listView1.Sort();
                     UseWaitCursor = false;
+                    listView1.EndUpdate();
                 }
             }
         }

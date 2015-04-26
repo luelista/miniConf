@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
+
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -22,6 +22,7 @@ namespace miniConf {
 
         public const int HWND_BROADCAST = 0xffff;
         public static readonly int WM_SHOWME = RegisterWindowMessage("WM_SHOWME");
+        public const int WM_ACTIVATEAPP = 0x001C;
 
         public static bool IsActive(Control wnd) {
             // workaround for minimization bug

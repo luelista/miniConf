@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>miniConf</RootNamespace>
     <AssemblyName>miniConf</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -72,6 +72,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdhocCommandForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AdhocCommandForm.Designer.cs">
+      <DependentUpon>AdhocCommandForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="ApplicationPreferences.cs" />
     <Compile Include="ChatDatabase.cs" />
     <Compile Include="ChatMessage.cs" />
@@ -88,6 +94,7 @@
     <Compile Include="DatabaseDebugForm.Designer.cs">
       <DependentUpon>DatabaseDebugForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="DebugTests.cs" />
     <Compile Include="DirectMessageForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -101,6 +108,12 @@
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InvitationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InvitationForm.Designer.cs">
+      <DependentUpon>InvitationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="JabberAvatars.cs">
       <SubType>Component</SubType>
@@ -144,6 +157,9 @@
     <Compile Include="XmppDebugForm.Designer.cs">
       <DependentUpon>XmppDebugForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="AdhocCommandForm.resx">
+      <DependentUpon>AdhocCommandForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ConfigForm.resx">
       <DependentUpon>ConfigForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -155,6 +171,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InvitationForm.resx">
+      <DependentUpon>InvitationForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaUploadForm.resx">
       <DependentUpon>MediaUploadForm.cs</DependentUpon>
@@ -199,6 +218,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Newtonsoft.Json.dll" />
+    <None Include="Resources\user-group-new.png" />
+    <None Include="Resources\12-em-down.png" />
+    <None Include="Resources\12-em-plus.png" />
+    <None Include="Resources\16-message-info.png" />
+    <None Include="Resources\user-group-new-48.png" />
     <Content Include="Sounds\correct.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

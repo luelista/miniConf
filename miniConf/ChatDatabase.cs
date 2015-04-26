@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data.Common;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Mono.Data.Sqlite;
@@ -10,7 +9,7 @@ using Mono.Data.Sqlite;
 namespace miniConf {
     public class ChatDatabase : SqlDatabase {
 
-        public const long schemaVersion = 9;
+        public const long schemaVersion = 10;
 
         public ChatDatabase(string dbfile)
             : base(dbfile) {
@@ -62,10 +61,15 @@ namespace miniConf {
                     this.ExecSQL("ALTER TABLE room ADD COLUMN lastseendt TEXT DEFAULT ''; ");
                     this.ExecSQL("ALTER TABLE room ADD COLUMN notify INT DEFAULT 0; ");
                     this.ExecSQL("ALTER TABLE room ADD COLUMN display_position INT DEFAULT 0; ");
+                }
+
+                if (currentVersion < 10) {
+                    this.ExecSQL("CREATE TABLE IF NOT EXISTS mru (mrulist TEXT, value TEXT, useddt INT, CONSTRAINT itemunique UNIQUE (mrulist,value) ON CONFLICT REPLACE); ");
 
                     // update db version number
                     this.ExecSQL("PRAGMA user_version = " + ChatDatabase.schemaVersion.ToString());
                 }
+
 
             } catch (Exception ex) {
                 System.IO.File.AppendAllText(Program.tempDir + "error.log", GetNowString() + "\tDatabase error (schema update):\t" + ex.Message);
@@ -202,6 +206,28 @@ namespace miniConf {
             return list;
         }
 
+        public string[] GetMru(string mruid, int maxlength) {
+            var cmd = dataBase.CreateCommand();
+            cmd.CommandText = "SELECT value,rowid FROM mru WHERE mrulist = @id ORDER BY useddt DESC ; ";
+            cmd.Parameters.AddWithValue("@id", mruid);
+            var reader = cmd.ExecuteReader();
+            string[] list = new string[maxlength];
+            int count = 0;
+            foreach (DbDataRecord rec in reader) {
+                count++;
+                if (count > maxlength) {
+                    ExecSQL("DELETE from mru where rowid = ?", rec.GetInt32(1));
+                } else {
+                    list[count - 1] = rec.GetString(0);
+                }
+            }
+            if (count < maxlength) Array.Resize(ref list, count);
+            return list;
+        }
+
+        public void AddToMru(string mruid, string value) {
+            ExecSQL("INSERT INTO mru (mrulist,value,useddt) VALUES (?,?,?)", mruid, value, DateTime.Now.Ticks);
+        }
 
         public static String GetNowString() {
             return DateTime.Now.ToUniversalTime().ToString("yyyy-MM-ddTHH\\:mm\\:ss.FFFZ");

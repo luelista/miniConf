@@ -41,6 +41,13 @@ echo.
 echo Step 4 - Code Sign Installer...
 CALL codesign-dragdrop.bat %INSTALLER%
 
+
+echo.
+echo Step 4 - Uploading as minefield...
+"C:\Program Files (x86)\Git\bin\scp.exe" %INSTALLER% maxweller@cherry.luelista.net:/srv/hosts/luelista.net/downloads.luelista.net/miniconf/miniconf-minefield-setup.exe
+
+
+
 echo.
 echo Done.
 echo.

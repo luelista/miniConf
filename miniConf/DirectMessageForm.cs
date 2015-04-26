@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
+
 using System.Text;
 using System.Windows.Forms;
 
@@ -20,6 +20,8 @@ namespace miniConf {
 
         private agsXMPP.protocol.extensions.chatstates.Chatstate lastChatstate;
 
+        //OTR.Interface.OTRSessionManager otr_ses;
+
         public DirectMessageForm(Jid jid) : this() {
             this.otherEnd = jid;
             this.room = new Roomdata(jid);
@@ -30,7 +32,30 @@ namespace miniConf {
             InitializeComponent();
             messageView1.Navigate("about:blank");
             messageView1.selfNickname = Program.Jabber.conn.MyJID.Bare;
+
+            /*otr_ses = new OTR.Interface.OTRSessionManager(Program.Jabber.conn.MyJID.ToString());
+            otr_ses.OnOTREvent += otr_ses_OnOTREvent;
+            */
         }
+        /*
+        void otr_ses_OnOTREvent(object source, OTR.Interface.OTREventArgs e) {
+            switch (e.GetOTREvent()) {
+                case OTR.Interface.OTR_EVENT.MESSAGE:
+                    messageView1.addMessageToView("otr_message", e.GetMessage(), DateTime.Now, null, null, "");
+                    break;
+                case OTR.Interface.OTR_EVENT.SEND:
+                    var msg = new agsXMPP.protocol.client.Message(this.otherEnd.Bare, Program.Jabber.conn.MyJID, 
+                        agsXMPP.protocol.client.MessageType.chat, e.GetMessage());
+                    msg.Id = Guid.NewGuid().ToString();
+                    msg.Chatstate = agsXMPP.protocol.extensions.chatstates.Chatstate.active;
+                    
+                    Program.Jabber.conn.Send(msg);
+                    break;
+                case OTR.Interface.OTR_EVENT.ERROR:
+                    messageView1.addNoticeToView("Error: " + e.GetErrorMessage());
+                    break;
+            }
+        }*/
 
         private void DirectMessageForm_Load(object sender, EventArgs e) {
             messageView1.loadStylesheet();
@@ -68,7 +93,11 @@ namespace miniConf {
             if (loaded == false) return;
 
             if (msg.HasTag("body")) {
-                messageView1.addMessageToView(msg.From, msg.GetTag("body"), DateTime.Now, null,
+                string body = msg.Body;
+                //if (body.StartsWith("?OTR"))
+                //    otr_ses.ProcessOTRMessage(msg.From.ToString(), body);
+                //else
+                    messageView1.addMessageToView(msg.From, body, DateTime.Now, null,
                     Program.Jabber.avatar.GetAvatarIfAvailabe(msg.From), msg.Id);
             }
             if (msg.Chatstate != agsXMPP.protocol.extensions.chatstates.Chatstate.None) {
@@ -77,10 +106,14 @@ namespace miniConf {
         }
 
         private string sendMessage(string text) {
-            var msg = new agsXMPP.protocol.client.Message(this.otherEnd.Bare, Program.Jabber.conn.MyJID, agsXMPP.protocol.client.MessageType.chat, text);
-            msg.Id = Guid.NewGuid().ToString();
-            msg.Chatstate = agsXMPP.protocol.extensions.chatstates.Chatstate.active;
-            Program.Jabber.conn.Send(msg);
+            //if (checkBox1.Checked) {
+            //    otr_ses.EncryptMessage(this.otherEnd.ToString(), text);
+            //} else {
+                var msg = new agsXMPP.protocol.client.Message(this.otherEnd.Bare, Program.Jabber.conn.MyJID, agsXMPP.protocol.client.MessageType.chat, text);
+                msg.Id = Guid.NewGuid().ToString();
+                msg.Chatstate = agsXMPP.protocol.extensions.chatstates.Chatstate.active;
+                Program.Jabber.conn.Send(msg);
+            //}
 
             Program.db.InsertMessage(room.RoomName, msg.Id, msg.From, msg.Body, ChatDatabase.GetNowString());
             messageView1.addMessageToView(msg.From, msg.Body, DateTime.Now, null, msg.From, msg.Id);

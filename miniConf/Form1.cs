@@ -16,24 +16,26 @@ using agsXMPP.protocol.iq.disco;
 
 namespace miniConf {
     public partial class Form1 : Form {
+
+
         public Form1() {
             InitializeComponent();
+			createMessageView ();
 
-            webBrowser1.imagePreview = true;
-            popupWindow.OnItemClick += popupWindow_OnItemClick;
             icon1 = this.Icon; icon2 = Icon.FromHandle(new Bitmap(imageList1.Images[2]).GetHicon());
 
-            CheckForIllegalCrossThreadCalls = false;
+            //CheckForIllegalCrossThreadCalls = false;
             /*pnlLoginWrapper.Location = new Point(0, 0);
             pnlLoginWrapper.Size = this.ClientSize;*/
         }
 
+		IMessageView messageView;
 
         Boolean loginError = true;
         string balloonRoom = null;
-        UnreadMessageForm popupWindow = new UnreadMessageForm();
+        UnreadMessageForm popupWindow;
         DirectMessageManager dmManager = new DirectMessageManager();
-        HashSet<string> onlineContacts = new HashSet<string>();
+        //List<string> onlineContacts = new List<string>();
         XmppDebugForm debugForm;
 
         Icon icon1;
@@ -54,7 +56,8 @@ namespace miniConf {
 
 
         private void jabberConnect() {
-            /*pnlLoginWrapper.Enabled = false;*/ UseWaitCursor = true;
+            /*pnlLoginWrapper.Enabled = false;*/
+            UseWaitCursor = true;
             if (jabber.conn == null) {
                 jabber.conn = new XmppClientConnection();
                 jabber.conn.DiscoInfo.AddFeature(new DiscoFeature("urn:xmpp:avatar:metadata+notify"));
@@ -75,6 +78,8 @@ namespace miniConf {
                 jabber.conn.OnBindError += conn_OnBindError;
                 jabber.conn.OnLogin += conn_OnLogin;
                 jabber.conn.OnIq += conn_OnIq;
+                jabber.conn.OnSaslStart += conn_OnSaslStart;
+                jabber.conn.OnSaslEnd += conn_OnSaslEnd;
                 muc = new agsXMPP.protocol.x.muc.MucManager(jabber.conn);
                 jabber.jingle.init(jabber.conn);
                 jabber.listenToRoster();
@@ -102,7 +107,15 @@ namespace miniConf {
                 return;
             }
 
+
             jabber.conn.Server = username[1];
+            if (!String.IsNullOrEmpty(ApplicationPreferences.AccountServer)) {
+                jabber.conn.ConnectServer = ApplicationPreferences.AccountServer;
+                jabber.conn.AutoResolveConnectServer = false;
+            } else {
+                jabber.conn.AutoResolveConnectServer = true;
+            }
+
             //if (glob.para("account__Server") != "") jabber.conn.Server = glob.para("account__Server");
             int port;
             if (!Int32.TryParse(ApplicationPreferences.AccountPort, out port)) {
@@ -110,12 +123,25 @@ namespace miniConf {
             }
             jabber.conn.Port = port;
 
-            jabber.conn.UseSSL = false;
-            jabber.conn.UseStartTLS = (glob.para("useSSL", "TRUE") != "FALSE");
+            if (port == 5223) {
+                jabber.conn.UseSSL = true;
+                jabber.conn.UseStartTLS = false;
+            } else {
+                jabber.conn.UseSSL = false;
+                jabber.conn.UseStartTLS = (glob.para("useSSL", "TRUE") != "FALSE");
+            }
             //jabber.conn.UseSSL = (glob.para("useSSL", "TRUE") != "FALSE");
             jabber.conn.Open(username[0], ApplicationPreferences.AccountPassword, "miniConf-" + Environment.MachineName, 0);
             //txtConnInfo.Text = "";
-            webBrowser1.selfNickname = ApplicationPreferences.Nickname;
+            messageView.selfNickname = ApplicationPreferences.Nickname;
+        }
+
+        void conn_OnSaslEnd(object sender) {
+            Console.WriteLine("OnSaslEnd");
+        }
+
+        void conn_OnSaslStart(object sender, agsXMPP.Sasl.SaslEventArgs args) {
+            Console.WriteLine("OnSaslStart: " + args.ToString());
         }
 
         void jabber_OnContactPresence(object sender, JabberService.JabberEventArgs e) {
@@ -160,7 +186,7 @@ namespace miniConf {
         }
 
         void conn_OnIq(object sender, agsXMPP.protocol.client.IQ iq) {
-            Console.WriteLine("IQ: " + iq.ToString());
+            //Console.WriteLine("IQ: " + iq.ToString());
             if (iq.Type == agsXMPP.protocol.client.IqType.get) {
                 var ping = iq.SelectSingleElement("ping", "urn:xmpp:ping");
                 if (ping != null) {
@@ -186,12 +212,13 @@ namespace miniConf {
 
         #region Connection error handling
         void conn_OnBindError(object sender, Element e) {
+            Console.WriteLine("BIND ERR: " + e.ToString());
             this.Invoke(new ParameterizedThreadStart(showNetworkError),
                 "Network error:\n" + e.ToString());
             this.Invoke(new ThreadStart(checkReconnect));
         }
         void conn_OnSocketError(object sender, Exception ex) {
-            //MessageBox.Show("SOCKET ERR: " + ex.Message);
+			Console.WriteLine("SOCKET ERR: " + ex.ToString());
             this.Invoke(new ParameterizedThreadStart(showNetworkError),
                 "Network error:\n" + ex.Message);
             this.Invoke(new ThreadStart(checkReconnect));
@@ -206,8 +233,10 @@ namespace miniConf {
         void conn_OnError(object sender, Exception ex) {
             //MessageBox.Show("ERROR: " + ex.Message);
             if (loginError) this.Invoke(new ParameterizedThreadStart(showAuthError), "General connection error: \n" + ex.Message);
-            
-            Console.WriteLine("conn_OnError:" + ex.Message);
+
+            Console.WriteLine("conn_OnError:\t" + ex.Message);
+            Console.WriteLine(ex.ToString());
+            Console.WriteLine("---------");
         }
         void conn_OnAuthError(object sender, agsXMPP.Xml.Dom.Element e) {
             //MessageBox.Show("AUTH ERROR: " + e.ToString());
@@ -224,9 +253,9 @@ namespace miniConf {
 
 
         void conn_OnMessage(object sender, agsXMPP.protocol.client.Message msg) {
-            Console.WriteLine(msg);
+            //Console.WriteLine(msg);
             if (msg.Type == agsXMPP.protocol.client.MessageType.groupchat
-                    || ( msg.Type == agsXMPP.protocol.client.MessageType.error &&  rooms.ContainsKey(msg.From.Bare) )) {
+                    || (msg.Type == agsXMPP.protocol.client.MessageType.error && rooms.ContainsKey(msg.From.Bare))) {
                 this.Invoke(new XmppMessageDelegate(OnMucMessage), msg);
             } else {
                 this.Invoke(new XmppMessageDelegate(dmManager.OnPrivateMessage), msg);
@@ -260,8 +289,10 @@ namespace miniConf {
 
             jabber.CheckServerFeatures();
 
-			SoundPlayer dingdong3 = new SoundPlayer(Program.appDir + Path.PathSeparator + "Sounds" + Path.PathSeparator + "startup.wav");
-            if (enableSoundToolStripMenuItem.Enabled) dingdong3.Play();
+			try {
+				SoundPlayer dingdong3 = new SoundPlayer(Program.appDir + Path.DirectorySeparatorChar + "Sounds" + Path.DirectorySeparatorChar + "startup.wav");
+	            if (enableSoundToolStripMenuItem.Enabled) dingdong3.Play();
+			} catch(Exception e) { }
 
             //onChatroomSelect();
         }
@@ -330,20 +361,22 @@ namespace miniConf {
                 }
 
                 string dt = JabberService.GetMessageDt(msg);
+
+                if (msg.Type == agsXMPP.protocol.client.MessageType.error) {
+                    messageView.addNoticeToView("<b><font color=red>ERROR FROM ROOM " + msg.From + ": <br>" + msg.Error.ToString().Replace("<", "&lt;"));
+
+                    return;
+                }
+
                 if (room.handleChatstate(msg))
                     if (currentRoom == room) { updateChatstates(); updateMemberList(); }
 
-                if (msg.Type == agsXMPP.protocol.client.MessageType.error) {
-                    webBrowser1.addNoticeToView("<b><font color=red>ERROR FROM ROOM " + msg.From + ": <br>" + msg.Error.ToString().Replace("<", "&lt;"));
-                    
-                    return;
-                }
                 if (msg.HasTag("replace") && msg.HasTag("body")) {
                     Element replace = msg.SelectSingleElement("replace");
                     string replaceId = replace.GetAttribute("id");
                     if (logs.EditMessage(room.RoomName, replaceId, msg.GetAttribute("id"), msg.From.Resource, msg.GetTag("body"), dt)) {
                         room.LastMessageDt = dt; logs.StoreRoom(room);
-                        if (webBrowser1.updateMessage(replaceId, msg.GetAttribute("id"), msg.GetTag("body"), DateTime.Parse(dt)))
+						if (messageView.updateMessage(replaceId, msg.GetAttribute("id"), msg.GetTag("body"), DateTime.Parse(dt)))
                             return;
                     }
                 }
@@ -352,7 +385,7 @@ namespace miniConf {
                     //logs.SetSubject(msg.From.Bare, subject);
                     room.Subject = subject; logs.StoreRoom(room);
                     if (currentRoom == room) {
-                        webBrowser1.addNoticeToView("The subject was set by " + msg.From.Resource + ": " + subject);
+						messageView.addNoticeToView("The subject was set by " + msg.From.Resource + ": " + subject);
                         txtSubject.Text = subject;
                     }
                 } else if (msg.HasTag("body")) {
@@ -362,7 +395,7 @@ namespace miniConf {
                     room.LastMessageDt = dt; logs.StoreRoom(room);
                     if (currentRoom == room) {
                         string fullJid = logs.GetUserJid(msg.From.Bare, msg.From.Resource);
-                        webBrowser1.addMessageToView(msg.From.Resource, messageBody, DateTime.Parse(dt), null, fullJid, msg.Id);
+						messageView.addMessageToView(msg.From.Resource, messageBody, DateTime.Parse(dt), null, fullJid, msg.Id);
                     }
                     if (currentRoom != room) { room.unreadMsgCount++; lbChatrooms.Refresh(); }
                     bool mention = IsMention(messageBody);
@@ -372,11 +405,12 @@ namespace miniConf {
                     if (notify) {
                         if (enableSoundToolStripMenuItem.Checked) {
                             string sound = mention ? "popup" : "correct";
-							SoundPlayer dingdong = new SoundPlayer(Program.appDir + Path.PathSeparator+"Sounds"+Path.PathSeparator+sound+".wav");
+							SoundPlayer dingdong = new SoundPlayer(Program.appDir + Path.DirectorySeparatorChar+"Sounds"+Path.DirectorySeparatorChar+sound+".wav");
                             dingdong.Play();
                         }
-                        if (/*!WindowHelper.IsActive(this) ||*/ currentRoom != room) {
-                            room.unreadNotifyCount++;
+
+                        if (!WindowHelper.IsActive(this) || currentRoom != room) {
+                            room.unreadNotifyCount++; room.unreadNotifyText = msg.From.Resource + ":" + messageBody;
                             if (enablePopupToolStripMenuItem.Checked) {
                                 //WindowHelper.ShowWindow(popupWindow.Handle, WindowHelper.SW_SHOWNOACTIVATE); //
 								popupWindow.Show();
@@ -392,7 +426,7 @@ namespace miniConf {
                     }
                 }
             } catch (Exception ex) {
-                MessageBox.Show( ex.ToString());
+                MessageBox.Show(ex.ToString());
             }
         }
 
@@ -456,10 +490,17 @@ namespace miniConf {
             glob = new cls_globPara(logs); Program.glob = glob;
             if (logs.databaseVersion < 6) glob.legacyImport(Program.dataDir + "miniConf.ini");
             if (logs.databaseVersion < 9) Roomdata.legacyImport();
+            // 2015-02-15 ...mediacrush went out of business
+            if (ApplicationPreferences.FileUploadServiceUrl == "https://mediacru.sh")
+                ApplicationPreferences.FileUploadServiceUrl = "https://chat2.teamwiki.de";
 
             glob.readFormPos(this);
             glob.readTuttiFrutti(this);
             this.Show();
+
+            popupWindow = new UnreadMessageForm();
+            popupWindow.OnItemClick += popupWindow_OnItemClick;
+            var createTheHandlePlease = popupWindow.Handle;
 
             enableNotificationsToolStripMenuItem.Checked = glob.para("enableNotifications") == "TRUE";
             enableSoundToolStripMenuItem.Checked = glob.para("enableSound") != "FALSE";
@@ -468,10 +509,11 @@ namespace miniConf {
             rooms = Roomdata.MakeDict(logs.GetRooms(false));
 
             applyPreferences();
-            if (ApplicationPreferences.AccountJID == "") {
+            if (ApplicationPreferences.AccountJID == "" || ApplicationPreferences.AccountPassword == "") {
                 showPreferences();
             }
 
+            DebugTests.PrintDnsServers();
         }
 
         private void updateWinTitle() {
@@ -479,6 +521,26 @@ namespace miniConf {
             this.Text = (ApplicationPreferences.Sternchen ? "*" : "") + Application.ProductName + " " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3) +
                 (currentRoom != null ? " | " + currentRoom.RoomName : "") + " | " + (jabber.conn != null ? (jabber.conn.XmppConnectionState == XmppConnectionState.SessionStarted ? jabber.conn.MyJID.ToString() : jabber.conn.XmppConnectionState.ToString()) : "NoConnection");
         }
+
+		private void createMessageView() {
+			if (false) {
+				MessageView browser = new MessageView ();
+				browser.imagePreview = true;
+				browser.Dock = DockStyle.Fill;
+				//browser.Url = new System.Uri("about:blank", System.UriKind.Absolute);
+				browser.OnRealKeyDown += new System.Windows.Forms.HtmlElementEventHandler(this.webBrowser1_OnRealKeyDown);
+				messageView = browser;
+			} else {
+				MessageViewStub stub = new MessageViewStub ();
+				stub.Dock = DockStyle.Fill;
+				messageView = stub;
+			}
+
+			messageViewPanel.Controls.Add((Control)messageView);
+
+			messageView.OnSpecialUrl += new miniConf.SpecialUrlEvent(this.webBrowser1_OnSpecialUrl);
+
+		}
 
         #region Preferences
 
@@ -492,11 +554,11 @@ namespace miniConf {
             lvOnlineStatus.View = (ApplicationPreferences.DisplayOccupantStatus ?
                 View.Tile : View.SmallIcon);
             //chkEnableImagePreview_CheckedChanged
-            webBrowser1.imagePreview = ApplicationPreferences.EnableImagePreview;
+			messageView.imagePreview = ApplicationPreferences.EnableImagePreview;
             //comboMessageTheme_SelectedIndexChanged
             Program.glob.setPara("messageView__theme", ApplicationPreferences.ChatTheme);
-            webBrowser1.loadStylesheet();
-            webBrowser1.loadSmileyTheme();
+			messageView.loadStylesheet();
+			messageView.loadSmileyTheme();
 
             if (jabber.conn == null || jabber.conn.XmppConnectionState == XmppConnectionState.Disconnected) {
                 if (ApplicationPreferences.AccountJID != "" && ApplicationPreferences.AccountPassword != "") {
@@ -567,9 +629,13 @@ namespace miniConf {
 
         #region Form Events
         protected override void WndProc(ref Message m) {
-            /*if (m.Msg == WindowHelper.WM_SHOWME) {
+            if (m.Msg == WindowHelper.WM_SHOWME) {
                 ShowMe();
-            }*/
+            }
+            if (m.Msg == WindowHelper.WM_ACTIVATEAPP) {
+                Console.WriteLine("WM_ACTIVATEAPP " + m.LParam.ToString() + " " + m.WParam.ToString());
+                if ((int)m.WParam == 1 && WindowHelper.IsActive(this)) onFormActivated();
+            }
             base.WndProc(ref m);
         }
 
@@ -580,6 +646,10 @@ namespace miniConf {
                 e.Cancel = true;
                 this.Hide();
                 if (currentRoom != null) currentRoom.sendChatstate(agsXMPP.protocol.extensions.chatstates.Chatstate.inactive);
+            } else {
+                if (ApplicationPreferences.RememberPassword == false) {
+                    ApplicationPreferences.AccountPassword = "";
+                }
             }
         }
 
@@ -628,14 +698,14 @@ namespace miniConf {
             e.DrawFocusRectangle();
             if (e.Index == -1) return;
             Roomdata room = (Roomdata)lbChatrooms.Items[e.Index];
-            e.Graphics.DrawString(room.DisplayName, lbChatrooms.Font,0!=(e.State & DrawItemState.Selected) ? whiteBrush : blackBrush,
-                     e.Bounds.Left+22, e.Bounds.Top+4);
+            e.Graphics.DrawString(room.DisplayName, lbChatrooms.Font, 0 != (e.State & DrawItemState.Selected) ? whiteBrush : blackBrush,
+                     e.Bounds.Left + 22, e.Bounds.Top + 4);
             if (room.Notify != Roomdata.NotifyMode.Always) {
-                e.Graphics.DrawImageUnscaled(conversationImageList.Images["notify" + (Int32)room.Notify], e.Bounds.Width-20, e.Bounds.Top+2);
+                e.Graphics.DrawImageUnscaled(conversationImageList.Images["notify" + (Int32)room.Notify], e.Bounds.Width - 20, e.Bounds.Top + 2);
             }
             if (room.unreadMsgCount > 0) {
                 e.Graphics.FillRectangle(unreadBrush, e.Bounds.Left + 3, e.Bounds.Top + 2, 19, 16);
-                e.Graphics.DrawString((room.unreadMsgCount>99 ? "..." : room.unreadMsgCount.ToString()), new Font(lbChatrooms.Font, FontStyle.Bold),
+                e.Graphics.DrawString((room.unreadMsgCount > 99 ? "..." : room.unreadMsgCount.ToString()), new Font(lbChatrooms.Font, FontStyle.Bold),
                     whiteBrush, e.Bounds.Left + (room.unreadMsgCount > 9 ? 3 : 7), e.Bounds.Top + 3);
             } else {
                 string image = room.roomType == Roomdata.RoomType.Multi ? "group" : "user";
@@ -680,7 +750,7 @@ namespace miniConf {
             updateRoomList();
         }
 
-        private void joinChatroom(string bareJid) {
+        public void joinChatroom(string bareJid) {
             if (rooms.ContainsKey(bareJid)) {
                 Roomdata myRoom = rooms[bareJid];
                 lbChatrooms.SelectedItem = myRoom;
@@ -773,7 +843,7 @@ namespace miniConf {
 
         private void onChatroomSelect(string gotoRoom = null) {
             tmrChatstatePaused.Stop();
-            if (currentRoom != null && currentRoom.online) 
+            if (currentRoom != null && currentRoom.online)
                 currentRoom.sendChatstate(agsXMPP.protocol.extensions.chatstates.Chatstate.inactive);
 
             try {
@@ -793,11 +863,11 @@ namespace miniConf {
                 glob.setPara("currentRoom", currentRoom.RoomName);
                 currentRoom.ResetUnread();
                 popupWindow.updateRooms(rooms);
-                webBrowser1.addNoticeToView("Subject is: " + logs.GetSubject(currentRoom.RoomName));
+                messageView.addNoticeToView("Subject is: " + logs.GetSubject(currentRoom.RoomName));
                 if (currentRoom.getErrorMessage() != null)
-                    webBrowser1.addNoticeToView("<b><font color=red>" + currentRoom.getErrorMessage() + "</font></b>");
+					messageView.addNoticeToView("<b><font color=red>" + currentRoom.getErrorMessage() + "</font></b>");
                 if (currentRoom.online == false)
-                    webBrowser1.addNoticeToView("<b><font color=red>You are offline in this room.</font></b>");
+					messageView.addNoticeToView("<b><font color=red>You are offline in this room.</font></b>");
                 updateWinTitle();
                 updateChatstates();
                 if (currentRoom.online)
@@ -805,7 +875,7 @@ namespace miniConf {
                 txtSendmessage.Enabled = currentRoom.online;
                 txtSendmessage.Focus();
             }
-            webBrowser1.scrollDown();
+			messageView.scrollDown();
         }
 
         private void updateContactList() {
@@ -814,11 +884,13 @@ namespace miniConf {
                 if (contactsImageList.Images.ContainsKey(contact.jid) == false) {
                     var image = jabber.avatar.GetAvatarIfAvailabe(contact.jid);
                     if (image != null)
-                        contactsImageList.Images.Add(contact.jid, Image.FromFile( image));
+                        contactsImageList.Images.Add(contact.jid, Image.FromFile(image));
                     else
                         contactsImageList.Images.Add(contact.jid, JabberContact.getColoredImage(contact.getColor(), 32));
                 }
-                lvContacts.Items.Add(contact.jid, contact.jid);
+                var lvi = lvContacts.Items.Add(contact.jid, contact.jid);
+                if (contact.available) lvi.ForeColor = Color.Green;
+                lvi.ToolTipText = "Online clients: " + String.Join(", ", contact.resources.ToArray());
             }
             lvContacts.EndUpdate();
         }
@@ -831,12 +903,16 @@ namespace miniConf {
         }
 
         private void updateMemberList() {
+			return;
+			bool winetricks = ApplicationPreferences.WineTricks;
             lvOnlineStatus.BeginUpdate();
             lvOnlineStatus.Items.Clear();
             if (currentRoom != null) {
                 var onlines = logs.GetMembers(currentRoom.RoomName);
                 foreach (System.Data.Common.DbDataRecord k in onlines) {
+                    if (showOfflineUsersToolStripMenuItem.Checked == false && k.GetString(2) == "off") continue;
                     string nick = k.GetString(0);
+                    if (winetricks && k.GetString(2) == "off") nick = "~" + nick;
                     var item = lvOnlineStatus.Items.Add(nick, k.GetString(2));
                     string statusStr = (k.IsDBNull(5)) ? "" : k.GetString(5);
                     string jid = (k.IsDBNull(6)) ? "" : k.GetString(6);
@@ -850,19 +926,19 @@ namespace miniConf {
             lvOnlineStatus.EndUpdate();
         }
         private void clearMessageView() {
-            webBrowser1.clear();
-            webBrowser1.Document.GetElementById("tb").InnerHtml = "history: <a href='special:show_more_history'> 10 more</a> | <a href='special:show_more_more_history'> 100 more</a>";
+			messageView.clear();
+			messageView.setHistoryNotice (HistoryNoticeState.LocalAvailable);
         }
         int histAmount = 0;
         private void showLastMessages(int count) {
             if (currentRoom == null) return;
             var length = logs.GetLogLength(currentRoom.RoomName);
             if (histAmount + count > length) {
-                webBrowser1.Document.GetElementById("tb").InnerHtml = "End of local history | <a href='special:load_all'>Try loading server history</a>";
+				messageView.setHistoryNotice (HistoryNoticeState.Server);
             }
             var msgs = currentRoom.GetLogs(histAmount, count);
             foreach (ChatMessage msg in msgs) {
-                webBrowser1.addMessageToView(msg, HtmlElementInsertionOrientation.AfterBegin);
+				messageView.addMessageToView(msg, HtmlElementInsertionOrientation.AfterBegin);
             }
             histAmount += count;
         }
@@ -884,18 +960,56 @@ namespace miniConf {
                 e.SuppressKeyPress = true;
             }
             if (e.KeyCode == Keys.V && e.Control) {
+                var dobj = Clipboard.GetDataObject();
+                Console.WriteLine(string.Join("\n", dobj.GetFormats()));
                 if (Clipboard.ContainsImage()) {
 					string uploadfn = Program.dataDir + "Temporary Data" + Path.PathSeparator + "upload.jpg";
-                    Clipboard.GetImage().Save(uploadfn);
-                    doMediaUpload(uploadfn);
+                    if (clipboardImageToFile(uploadfn)) {
+                        doMediaUpload(uploadfn);
+                    } else {
+                        MessageBox.Show("Unable to get image from clipboard.");
+                    }
                 }
             }
             if (txtSendmessage.Text == "" && e.KeyCode == Keys.Up) {
-                string id = webBrowser1.getLastMessageId(currentRoom.jid.Resource);
+                string id = messageView.getLastMessageId(currentRoom.jid.Resource);
                 editMessage(id);
             }
             //if (e.Control && (e.KeyCode == Keys.A))
             //    e.SuppressKeyPress = true;
+        }
+
+        private bool clipboardImageToFile(string uploadfn) {
+            try {
+                Image img = Clipboard.GetImage();
+                var dobj = Clipboard.GetDataObject();
+                string[] tryFormats = { "PNG", "JFIF", "DeviceIndependentBitmap" };
+                int tryIdx = 0;
+                while (img == null && tryIdx < tryFormats.Length) {
+                    string fmt = tryFormats[tryIdx];
+                    tryIdx++;
+                    Console.WriteLine("img is null; checking format " + fmt + " ...");
+                    if (img == null && dobj.GetDataPresent(fmt)) {
+                        Console.WriteLine("getData ...");
+                        MemoryStream obj = dobj.GetData(fmt) as MemoryStream;
+                        if (obj == null) {
+                            Console.WriteLine("NULL!"); 
+                            continue;
+                        }
+                        using (var fs = new FileStream(uploadfn, FileMode.Create)) {
+                            obj.WriteTo(fs);
+                        }
+                        Console.WriteLine("OK!");
+                        return true;
+                    }
+                }
+                if (img == null) return false;
+                img.Save(uploadfn);
+                return true;
+            } catch (Exception ex) {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
         }
 
         private void txtSendmessage_TextChanged(object sender, EventArgs e) {
@@ -941,15 +1055,25 @@ namespace miniConf {
             var f = new MediaUploadForm(filename);
             f.startUpload();
             var result = f.ShowDialog();
+            Console.WriteLine(result);
+            Console.WriteLine(f.resultStatus);
+            Console.WriteLine(f.jsonResult);
+
             if (result == System.Windows.Forms.DialogResult.OK) {
                 if (f.resultStatus == FileUploader.UploadFileStatus.Success || f.resultStatus == FileUploader.UploadFileStatus.AlreadyUploaded) {
 
-                    string hash = Convert.ToString(f.resultObject["hash"]);
+                    var res = Regex.Match(f.jsonResult, "\"hash\":\"([a-zA-Z0-9]+)\"");
+                    if (!res.Success) {
+                        MessageBox.Show("Could not send image.\n\n(server returned invalid data: " + res.ToString() + ")");
+                        return;
+                    }
+                    string hash = res.Groups[1].Value;
+
                     string ext = Path.GetExtension(filename).ToLower();
                     txtSendmessage.AppendText(FileUploader.ApplicationUrl + "/" + hash + ext);
 
                 } else {
-                    MessageBox.Show("Media upload failed: " + f.resultStatus.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Could not send image. \n\n(upload failed with error: " + f.resultStatus.ToString()+")", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
             f.Close();
@@ -966,7 +1090,7 @@ namespace miniConf {
             var message = logs.GetMessageById(currentRoom.RoomName, id);
             if (message == null) return;
             editingMessageId = id;
-            webBrowser1.setMessageEditing(id, true);
+			messageView.setMessageEditing(id, true);
             txtSendmessage.Text = message["messagebody"];
             txtSendmessage.BackColor = Color.FromArgb(0xFA, 0xFA, 0xA0);
 
@@ -975,7 +1099,7 @@ namespace miniConf {
         public void stopEditingMessage() {
             txtSendmessage.BackColor = Color.White;
             txtSendmessage.Text = "";
-            webBrowser1.setMessageEditing(editingMessageId, false);
+			messageView.setMessageEditing(editingMessageId, false);
             editingMessageId = null;
         }
 
@@ -1007,7 +1131,7 @@ namespace miniConf {
             switch (url) {
                 case "special:show_more_history":
                     showLastMessages(10);
-                    webBrowser1.Document.Body.ScrollTop = 0;
+                    //FIXME webBrowser1.Document.Body.ScrollTop = 0;
                     break;
                 case "special:show_more_more_history":
                     showLastMessages(100);
@@ -1053,6 +1177,9 @@ namespace miniConf {
                 case Keys.F2:
                     try { lbChatrooms.SelectedIndex += 1; onChatroomSelect(); } catch (Exception ex) { }
                     return true;
+                case Keys.F8:
+                    adhocCommandsToolStripMenuItem_Click(null, null);
+                    break;
                 case Keys.F9:
                     xMPPConsoleToolStripMenuItem_Click(null, null);
                     return true;
@@ -1062,6 +1189,10 @@ namespace miniConf {
                 case Keys.Control | Keys.F9:
                     System.Diagnostics.Process.Start("explorer.exe", "/e,\"" + Program.dataDir + "\"");
                     return true;
+                case Keys.Control | Keys.Shift | Keys.U:
+                    WinSparkle.win_sparkle_set_appcast_url("http://downloads.luelista.net/miniconf/miniconf-minefield.xml");
+                    WinSparkle.win_sparkle_check_update_with_ui();
+                    break;
                 case Keys.Control | Keys.F:
                     findToolStripMenuItem_Click(null, null);
                     return true;
@@ -1155,14 +1286,61 @@ namespace miniConf {
             updateMemberList();
         }
 
+        private void showOfflineUsersToolStripMenuItem_Click(object sender, EventArgs e) {
+            updateMemberList();
+        }
+
         #endregion
 
+
+        #region "Contact list"
 
         private void lvContacts_MouseDoubleClick(object sender, MouseEventArgs e) {
             if (lvContacts.SelectedItems.Count == 1) {
                 dmManager.GetWindow(lvContacts.SelectedItems[0].Text);
             }
         }
+
+        private void btnContactAdd_Click(object sender, EventArgs e) {
+            string jid = VbHelper.InputBox(
+                "To add a contact to your contact list, enter their jabber ID:\n\nAdditionally, a subscription request will be sent so you can see their online status, and your contact will be able to see your online status, too.",
+                "Add contact", "@" + jabber.conn.MyJID.Server);
+            if (String.IsNullOrEmpty(jid) || jid.StartsWith("@")) return;
+            try {
+                jabber.addContact(new Jid(jid));
+            } catch (Exception exc) {
+                MessageBox.Show(exc.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+
+        }
+
+        private void btnContactRemove_Click(object sender, EventArgs e) {
+            if (lvContacts.SelectedItems.Count != 1) return;
+            var item = lvContacts.SelectedItems[0];
+            if (DialogResult.Yes != MessageBox.Show("Are you sure you want to remove " + item.Text + " from your contact list?", currentRoom.jid.ToString(), MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation)) {
+                return;
+            }
+            jabber.removeContact(new Jid(item.Text));
+        }
+
+        private void btnContactInvite_Click(object sender, EventArgs e) {
+            if (currentRoom == null) return;
+            if (lvContacts.SelectedItems.Count != 1) {
+                MessageBox.Show("Please select a contact to invite", currentRoom.jid, MessageBoxButtons.OK, MessageBoxIcon.Exclamation); return;
+            }
+            var item = lvContacts.SelectedItems[0];
+            if (DialogResult.Yes != MessageBox.Show("Do you want to invite " + item.Text + " to the active conference?", currentRoom.jid.ToString(), MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation)) {
+                return;
+            }
+            Jid recipient = new Jid(item.Text);
+            var msg = new agsXMPP.protocol.client.Message(currentRoom.jid, jabber.conn.MyJID);
+            var x = new agsXMPP.protocol.x.muc.User();
+            string reason = "Invitation to join this conference";
+            x.Invite = new agsXMPP.protocol.x.muc.Invite(recipient, reason);
+            msg.ChildNodes.Add(x);
+            jabber.conn.Send(msg);
+        }
+        #endregion
 
 
 
@@ -1182,8 +1360,14 @@ namespace miniConf {
         }
 
         private void Form1_Activated(object sender, EventArgs e) {
+            //FIXME falsches event - Activated feuert nur wenn vorher eine andere form der gleichen anwendung aktiv war
+            onFormActivated();
+        }
+
+        private void onFormActivated() {
             if (currentRoom != null) {
-                currentRoom.unreadMsgCount = 0;
+                currentRoom.ResetUnread();
+                popupWindow.updateRooms(rooms);
                 if (currentRoom != null) currentRoom.sendChatstate(txtSendmessage.Text == "" ? agsXMPP.protocol.extensions.chatstates.Chatstate.active : agsXMPP.protocol.extensions.chatstates.Chatstate.paused);
             }
             stopBlinky();
@@ -1208,29 +1392,35 @@ namespace miniConf {
 
         #region FilterBar
         private void filterBarCloseBtn_Click(object sender, EventArgs e) {
-            filterBarPanel.Hide();
-            clearMessageView();
-            histAmount = 0;
-            showLastMessages(30);
-            webBrowser1.highlightString = "";
+			MessageView browser = messageView as MessageView;
+			if (browser != null) {
+				filterBarPanel.Hide ();
+				clearMessageView ();
+				histAmount = 0;
+				showLastMessages (30);
+				((MessageView)messageView).highlightString = "";
+			}
         }
-        private void filterTextbox_KeyDown(object sender, KeyEventArgs e) {
-            webBrowser1.highlightString = filterTextbox.Text;
-            if (e.KeyCode == Keys.Enter) {
-                var messages = this.currentRoom.GetFilteredLogs(filterTextbox.Text, 0, 250);
-                clearMessageView();
-                webBrowser1.Document.GetElementById("tb").InnerHtml = "Search results, press ESC to quit filter mode";
+		private void filterTextbox_KeyDown(object sender, KeyEventArgs e) {
+			MessageView browser = messageView as MessageView;
+			if (browser != null) {
+				browser.highlightString = filterTextbox.Text;
+				if (e.KeyCode == Keys.Enter) {
+					var messages = this.currentRoom.GetFilteredLogs (filterTextbox.Text, 0, 250);
+					clearMessageView ();
+					browser.Document.GetElementById ("tb").InnerHtml = "Search results, press ESC to quit filter mode";
 
-                foreach (ChatMessage msg in messages) {
-                    webBrowser1.addMessageToView(msg, HtmlElementInsertionOrientation.AfterBegin);
-                }
-                e.SuppressKeyPress = true;
-            }
-            if (e.KeyCode == Keys.F) {
-                clearMessageView();
-                histAmount = 0;
-                showLastMessages(100);
-            }
+					foreach (ChatMessage msg in messages) {
+						browser.addMessageToView (msg, HtmlElementInsertionOrientation.AfterBegin);
+					}
+					e.SuppressKeyPress = true;
+				}
+				if (e.KeyCode == Keys.F) {
+					clearMessageView ();
+					histAmount = 0;
+					showLastMessages (100);
+				}
+			}
         }
         private void filterTextbox_TextChanged(object sender, EventArgs e) {
 
@@ -1270,7 +1460,7 @@ namespace miniConf {
         }
 
         private void reloadStylesToolStripMenuItem_Click(object sender, EventArgs e) {
-            webBrowser1.loadStylesheet();
+            messageView.loadStylesheet();
         }
         #endregion
 
@@ -1324,12 +1514,20 @@ namespace miniConf {
         void showPreferences() {
             ConfigForm cfg = new ConfigForm();
             if (cfg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-              applyPreferences();
+                applyPreferences();
         }
 
         private void reconnectToolStripMenuItem_Click(object sender, EventArgs e) {
             jabberConnect();
         }
+
+        private void adhocCommandsToolStripMenuItem_Click(object sender, EventArgs e) {
+            AdhocCommandForm frm = new AdhocCommandForm();
+            frm.Show();
+            frm.loadCommandList();
+        }
+
+
 
 
 
