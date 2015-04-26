@@ -36,6 +36,8 @@ namespace miniConf {
         public static bool IsActive(Control wnd) {
             // workaround for minimization bug
             // Managed .IsActive may return wrong value
+            if (VbHelper.runningOnMono())
+                return ((Form)wnd).Focused;
             if (wnd == null)
                 return false;
             return GetForegroundWindow() == wnd.Handle;
