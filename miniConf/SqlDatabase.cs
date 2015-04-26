@@ -48,7 +48,7 @@ namespace miniConf {
 		public NameValueCollection GetValues(SqliteDataReader reader) {
 			NameValueCollection nvc = new NameValueCollection ();
 			for(int i = 0; i < reader.FieldCount; i++) {
-				nvc [reader.GetName (i)] = (String) reader.GetValue (i);
+                nvc [reader.GetName (i)] = reader.IsDBNull(i) ? null :  (String) reader.GetValue (i);
 			}
 			return nvc;
 		}
