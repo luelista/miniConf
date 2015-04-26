@@ -1,0 +1,26 @@
+# Contributor: luelista <git@luelista.net>
+
+pkgname=miniconf
+pkgver=1.7.5
+pkgrel=1
+pkgdesc="miniConf is a jabber client designed for group chats"
+url="http://home.luelista.net/programme/miniconf/"
+license="GPL"
+arch=('i686' 'x86_64')
+depends=(mono)
+source=(https://github.com/luelista/miniConf/archive/v$pkgver-mono.zip)
+md5sums=('')
+
+
+build() {
+pwd
+ls .
+ls $pkgname-$pkgver
+
+}
+
+package() {
+echo no-op
+
+}
+
