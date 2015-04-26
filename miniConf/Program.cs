@@ -25,8 +25,13 @@ namespace miniConf {
         /// </summary>
         [STAThread]
         static void Main(string[] argv) {
-			System.Net.ServicePointManager.ServerCertificateValidationCallback += (o, certificate, chain, errors) => true;
-			//System.Security.Cryptography.AesCryptoServiceProvider b = new System.Security.Cryptography.AesCryptoServiceProvider();
+            Application.ThreadException += delegate(object sender, ThreadExceptionEventArgs e) {
+                Console.Error.WriteLine("Unhandled Thread Exception!\n" + e.Exception.ToString());
+            };
+            AppDomain.CurrentDomain.UnhandledException += delegate(object sender, UnhandledExceptionEventArgs e) {
+                Console.Error.WriteLine("Unhandled AppDomain Exception!\n" + e.ExceptionObject.ToString());
+            };
+
             Jabber = new JabberService();
 
 			appDir = Path.GetDirectoryName(Application.ExecutablePath) + Path.DirectorySeparatorChar;
