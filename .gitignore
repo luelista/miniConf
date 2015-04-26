@@ -2,4 +2,6 @@ bin/
 obj/
 Setups/config.sh
 *.suo
+Setups/miniconf*exe
+*~
 
