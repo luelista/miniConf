@@ -70,6 +70,7 @@
     <Reference Include="webkit-sharp">
       <HintPath>..\..\..\..\..\usr\lib\mono\webkit-sharp\webkit-sharp.dll</HintPath>
     </Reference>
+    <Reference Include="Mono.WebBrowser" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdhocCommandForm.cs">
@@ -209,6 +210,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="VbHelper.cs" />
+    <Compile Include="IMessageView.cs" />
+    <Compile Include="MessageViewStub.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AppIcon.ico" />
@@ -277,4 +280,23 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Downloads\htmlRenderer\Source\HtmlRenderer.WinForms\HtmlRenderer.WinForms.csproj">
+      <Project>{1B058920-24B4-4140-8AE7-C8C6C38CA52D}</Project>
+      <Name>HtmlRenderer.WinForms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Downloads\htmlRenderer\Source\HtmlRenderer\HtmlRenderer.csproj">
+      <Project>{FE611685-391F-4E3E-B27E-D3150E51E49B}</Project>
+      <Name>HtmlRenderer</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <TextStylePolicy EolMarker="Windows" inheritsSet="VisualStudio" inheritsScope="text/plain" scope="text/plain" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
 </Project>

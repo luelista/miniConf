@@ -89,7 +89,7 @@
             this.messageView1.Size = new System.Drawing.Size(461, 414);
             this.messageView1.TabIndex = 0;
             this.messageView1.Url = new System.Uri("about:blank", System.UriKind.Absolute);
-            this.messageView1.OnSpecialUrl += new miniConf.MessageView.SpecialUrlEvent(this.messageView1_OnSpecialUrl);
+            this.messageView1.OnSpecialUrl += new miniConf.SpecialUrlEvent(this.messageView1_OnSpecialUrl);
             this.messageView1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.messageView1_DocumentCompleted);
             // 
             // tmrChatstatePaused

@@ -25,10 +25,12 @@ namespace miniConf {
         /// </summary>
         [STAThread]
         static void Main(string[] argv) {
+			System.Net.ServicePointManager.ServerCertificateValidationCallback += (o, certificate, chain, errors) => true;
+			//System.Security.Cryptography.AesCryptoServiceProvider b = new System.Security.Cryptography.AesCryptoServiceProvider();
             Jabber = new JabberService();
 
-			appDir = Path.GetDirectoryName(Application.ExecutablePath) + Path.PathSeparator;
-			dataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + Path.PathSeparator + "miniConf" + Path.PathSeparator;
+			appDir = Path.GetDirectoryName(Application.ExecutablePath) + Path.DirectorySeparatorChar;
+			dataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "miniConf" + Path.DirectorySeparatorChar;
             System.IO.Directory.CreateDirectory(dataDir);
             System.IO.Directory.CreateDirectory(dataDir + "Received Files");
             System.IO.Directory.CreateDirectory(dataDir + "Temporary Data");
