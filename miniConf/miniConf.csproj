@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <ReleaseVersion>1.7.6</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -280,16 +281,6 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Downloads\htmlRenderer\Source\HtmlRenderer.WinForms\HtmlRenderer.WinForms.csproj">
-      <Project>{1B058920-24B4-4140-8AE7-C8C6C38CA52D}</Project>
-      <Name>HtmlRenderer.WinForms</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Downloads\htmlRenderer\Source\HtmlRenderer\HtmlRenderer.csproj">
-      <Project>{FE611685-391F-4E3E-B27E-D3150E51E49B}</Project>
-      <Name>HtmlRenderer</Name>
-    </ProjectReference>
-  </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
