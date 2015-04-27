@@ -9,7 +9,7 @@ license="GPL"
 arch=('any')
 depends=(mono)
 source=(https://github.com/luelista/miniConf/archive/v$pkgver-mono.zip)
-md5sums=('ba11fd96f28eb756e1c2ee347ec77c13')
+md5sums=('1a463ce5ce9cc750f36d48a3d22734f8')
 
 
 build() {
