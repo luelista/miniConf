@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=miniConf
+GenericName=Jabber Conferencing Client
+Comment=Jabber client specialized for group chats
+Exec=miniconf
+Icon=miniconf
+Terminal=false
+StartupNotify=false
+Categories=Network;

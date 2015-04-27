@@ -34,9 +34,7 @@
             this.pnlErrMes = new System.Windows.Forms.Panel();
             this.btnCancelReconnect = new System.Windows.Forms.Button();
             this.labErrMes = new System.Windows.Forms.Label();
-            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.openMiniConfToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sendFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
@@ -57,7 +55,6 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.beendenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tmrReconnect = new System.Windows.Forms.Timer(this.components);
-            this.tmrBlinky = new System.Windows.Forms.Timer(this.components);
             this.filterBarPanel = new System.Windows.Forms.Panel();
             this.filterBarCloseBtn = new System.Windows.Forms.Button();
             this.filterTextbox = new System.Windows.Forms.TextBox();
@@ -228,19 +225,9 @@
             this.labErrMes.TabIndex = 0;
             this.labErrMes.Text = "label5";
             // 
-            // notifyIcon1
-            // 
-            this.notifyIcon1.ContextMenuStrip = this.contextMenuStrip1;
-            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
-            this.notifyIcon1.Text = "miniConf";
-            this.notifyIcon1.Visible = true;
-            this.notifyIcon1.BalloonTipClicked += new System.EventHandler(this.notifyIcon1_BalloonTipClicked);
-            this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseClick);
-            // 
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                this.openMiniConfToolStripMenuItem,
                 this.sendFileToolStripMenuItem,
                 this.findToolStripMenuItem,
                 this.toolStripMenuItem3,
@@ -258,14 +245,6 @@
             });
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(175, 286);
-            // 
-            // openMiniConfToolStripMenuItem
-            // 
-            this.openMiniConfToolStripMenuItem.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.openMiniConfToolStripMenuItem.Name = "openMiniConfToolStripMenuItem";
-            this.openMiniConfToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
-            this.openMiniConfToolStripMenuItem.Text = "Open miniConf";
-            this.openMiniConfToolStripMenuItem.Click += new System.EventHandler(this.openMiniConfToolStripMenuItem_Click);
             // 
             // sendFileToolStripMenuItem
             // 
@@ -417,11 +396,6 @@
             // 
             this.tmrReconnect.Interval = 10000;
             this.tmrReconnect.Tick += new System.EventHandler(this.tmrReconnect_Tick);
-            // 
-            // tmrBlinky
-            // 
-            this.tmrBlinky.Interval = 1000;
-            this.tmrBlinky.Tick += new System.EventHandler(this.tmrBlinky_Tick);
             // 
             // filterBarPanel
             // 
@@ -1086,19 +1060,16 @@
         private System.Windows.Forms.Panel pnlErrMes;
         private System.Windows.Forms.Label labErrMes;
         private System.Windows.Forms.ImageList imageList1;
-        private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem beendenToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openMiniConfToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem enableNotificationsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem enableSoundToolStripMenuItem;
+        internal System.Windows.Forms.ToolStripMenuItem enableNotificationsToolStripMenuItem;
+        internal System.Windows.Forms.ToolStripMenuItem enableSoundToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.Timer tmrReconnect;
-        private System.Windows.Forms.ToolStripMenuItem enablePopupToolStripMenuItem;
+        internal System.Windows.Forms.ToolStripMenuItem enablePopupToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
-        private System.Windows.Forms.Timer tmrBlinky;
         private System.Windows.Forms.Panel filterBarPanel;
         private System.Windows.Forms.Button filterBarCloseBtn;
         private System.Windows.Forms.TextBox filterTextbox;

@@ -25,6 +25,8 @@ namespace miniConf {
         /// </summary>
         [STAThread]
         static void Main(string[] argv) {
+
+
             Application.ThreadException += delegate(object sender, ThreadExceptionEventArgs e) {
                 Console.Error.WriteLine("Unhandled Thread Exception!\n" + e.Exception.ToString());
             };
@@ -45,7 +47,7 @@ namespace miniConf {
 
             singleInstanceMutex = new Mutex(true, "singleInstanceMutex@miniConf.max-weller.de");
             if (singleInstanceMutex.WaitOne(TimeSpan.Zero, true)) {
-                Application.EnableVisualStyles();
+                if (!VbHelper.runningOnMono()) Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 MainWnd = new Form1();
                 isAutorun = ! (argv.Length < 1 || argv[0] != "/autostart");
