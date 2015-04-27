@@ -13,6 +13,7 @@ using System.Media;
 using System.IO;
 using agsXMPP.Xml.Dom;
 using agsXMPP.protocol.iq.disco;
+using System.Reflection;
 
 namespace miniConf {
     public partial class Form1 : Form {
@@ -21,28 +22,25 @@ namespace miniConf {
         public Form1() {
             InitializeComponent();
 			createMessageView ();
+            createNotificationHelper();
+
             this.lvContacts.Columns.Add("x");
             this.lvContacts.Columns.Add("y");
             this.lvContacts.Columns.Add("z");
-
-            icon1 = this.Icon; icon2 = Icon.FromHandle(new Bitmap(imageList1.Images[2]).GetHicon());
 
             //CheckForIllegalCrossThreadCalls = false;
             /*pnlLoginWrapper.Location = new Point(0, 0);
             pnlLoginWrapper.Size = this.ClientSize;*/
         }
 
+        NotificationHelper notifications;
 		IMessageView messageView;
 
         Boolean loginError = true;
-        string balloonRoom = null;
-        UnreadMessageForm popupWindow;
         DirectMessageManager dmManager = new DirectMessageManager();
         //List<string> onlineContacts = new List<string>();
         XmppDebugForm debugForm;
 
-        Icon icon1;
-        Icon icon2;
 
 
         #region Jabber Connection
@@ -51,7 +49,7 @@ namespace miniConf {
         JabberService jabber = Program.Jabber;
         cls_globPara glob;
         ChatDatabase logs;
-        Dictionary<string, Roomdata> rooms = new Dictionary<string, Roomdata>();
+        public Dictionary<string, Roomdata> rooms = new Dictionary<string, Roomdata>();
         Roomdata currentRoom = null;
 
         private delegate void XmppMessageDelegate(agsXMPP.protocol.client.Message msg);
@@ -403,53 +401,21 @@ namespace miniConf {
                         string fullJid = logs.GetUserJid(msg.From.Bare, msg.From.Resource);
 						messageView.addMessageToView(msg.From.Resource, messageBody, DateTime.Parse(dt), null, fullJid, msg.Id);
                     }
-                    if (currentRoom != room) { room.unreadMsgCount++; lbChatrooms.Refresh(); }
-                    bool mention = IsMention(messageBody);
-                    bool notify = !msg.HasTag("delay");
-                    if (room != null && room.Notify == Roomdata.NotifyMode.Never) notify = false;
-                    if (room != null && room.Notify == Roomdata.NotifyMode.OnMention && !mention) notify = false;
-                    if (notify) {
-                        if (enableSoundToolStripMenuItem.Checked) {
-                            string sound = mention ? "popup" : "correct";
-							SoundPlayer dingdong = new SoundPlayer(Program.appDir + Path.DirectorySeparatorChar+"Sounds"+Path.DirectorySeparatorChar+sound+".wav");
-                            dingdong.Play();
-                        }
 
-                        if (!WindowHelper.IsActive(this) || currentRoom != room) {
-                            room.unreadNotifyCount++; room.unreadNotifyText = msg.From.Resource + ":" + messageBody;
-                            if (enablePopupToolStripMenuItem.Checked) {
-                                //WindowHelper.ShowWindow(popupWindow.Handle, WindowHelper.SW_SHOWNOACTIVATE); //
-								popupWindow.Show();
-								popupWindow.updateRooms(rooms);
-                            }
-                            if (enableNotificationsToolStripMenuItem.Checked && !String.IsNullOrEmpty(messageBody)) {
-                                balloonRoom = msg.From.Bare;
-                                notifyIcon1.ShowBalloonTip(30000, msg.From.Resource + " in " + msg.From.User + ":", messageBody, ToolTipIcon.Info);
-                            }
+                    notifications.NotifyMessage(room, msg, currentRoom == room);
 
-                        }
-                        //if (!WindowHelper.IsActive(this)) tmrBlinky.Start();
-                    }
                 }
             } catch (Exception ex) {
                 MessageBox.Show(ex.ToString());
             }
         }
 
-        private void onNotification(agsXMPP.protocol.client.Message msg, Roomdata room) {
-
-        }
 
         private void ShowXmppDebugForm() {
             if (debugForm == null || debugForm.IsDisposed) debugForm = new XmppDebugForm();
             debugForm.Show();
             debugForm.Activate();
             glob.setPara("showXmppDebugOnStartup", "TRUE");
-        }
-
-        private bool IsMention(string text) {
-            text = text.ToLower(); string nick = ApplicationPreferences.Nickname.ToLower();
-            return text.Contains("@" + nick) || text.Contains(nick + ":");
         }
 
         private void sendMessage(string text) {
@@ -503,10 +469,9 @@ namespace miniConf {
             glob.readFormPos(this);
             glob.readTuttiFrutti(this);
             this.Show();
-
-            popupWindow = new UnreadMessageForm();
-            popupWindow.OnItemClick += popupWindow_OnItemClick;
-            var createTheHandlePlease = popupWindow.Handle;
+            notifications.InitializeTrayIcon();
+            notifications.InitializeBlinky();
+            notifications.InitializePopupNotification();
 
             enableNotificationsToolStripMenuItem.Checked = glob.para("enableNotifications") == "TRUE";
             enableSoundToolStripMenuItem.Checked = glob.para("enableSound") != "FALSE";
@@ -539,6 +504,14 @@ namespace miniConf {
 			messageView.OnSpecialUrl += new miniConf.SpecialUrlEvent(this.webBrowser1_OnSpecialUrl);
 
 		}
+
+        private void createNotificationHelper() {
+            if (VbHelper.runningOnMono()) {
+                notifications = new MonoNotificationHelper();
+            } else {
+                notifications = new WindowsNotificationHelper();
+            }
+        }
 
         #region Preferences
 
@@ -839,7 +812,7 @@ namespace miniConf {
         #endregion
 
 
-        private void onChatroomSelect(string gotoRoom = null) {
+        public void onChatroomSelect(string gotoRoom = null) {
             tmrChatstatePaused.Stop();
             if (currentRoom != null && currentRoom.online)
                 currentRoom.sendChatstate(agsXMPP.protocol.extensions.chatstates.Chatstate.inactive);
@@ -859,8 +832,7 @@ namespace miniConf {
             if (currentRoom != null) {
                 txtSubject.Text = logs.GetSubject(currentRoom.RoomName);
                 glob.setPara("currentRoom", currentRoom.RoomName);
-                currentRoom.ResetUnread();
-                popupWindow.updateRooms(rooms);
+                notifications.ResetNotification(currentRoom);
                 messageView.addNoticeToView("Subject is: " + logs.GetSubject(currentRoom.RoomName));
                 if (currentRoom.getErrorMessage() != null)
 					messageView.addNoticeToView("<b><font color=red>" + currentRoom.getErrorMessage() + "</font></b>");
@@ -1230,22 +1202,7 @@ namespace miniConf {
         }
         #endregion
 
-        private void openMiniConfToolStripMenuItem_Click(object sender, EventArgs e) {
-            ShowMe();
-        }
-
-        private void notifyIcon1_MouseClick(object sender, MouseEventArgs e) {
-            openMiniConfToolStripMenuItem.Visible = true;
-            sendFileToolStripMenuItem.Visible = false;
-            extrasToolStripMenuItem.Visible = false;
-            findToolStripMenuItem.Visible = false;
-            if (e.Button == System.Windows.Forms.MouseButtons.Left) {
-                openMiniConfToolStripMenuItem_Click(null, null);
-            }
-        }
-
         private void button4_Click(object sender, EventArgs e) {
-            openMiniConfToolStripMenuItem.Visible = false;
             sendFileToolStripMenuItem.Visible = true;
             extrasToolStripMenuItem.Visible = true;
             findToolStripMenuItem.Visible = true;
@@ -1374,9 +1331,6 @@ namespace miniConf {
 
 
         #region Notifications
-        private void notifyIcon1_BalloonTipClicked(object sender, EventArgs e) {
-            ShowMe(); lbChatrooms.SelectedItem = balloonRoom; onChatroomSelect();
-        }
 
         private void Form1_Activated(object sender, EventArgs e) {
             //FIXME falsches event - Activated feuert nur wenn vorher eine andere form der gleichen anwendung aktiv war
@@ -1385,24 +1339,12 @@ namespace miniConf {
 
         private void onFormActivated() {
             if (currentRoom != null) {
-                currentRoom.ResetUnread();
-                popupWindow.updateRooms(rooms);
+                notifications.ResetNotification(currentRoom);
                 if (currentRoom != null) currentRoom.sendChatstate(txtSendmessage.Text == "" ? agsXMPP.protocol.extensions.chatstates.Chatstate.active : agsXMPP.protocol.extensions.chatstates.Chatstate.paused);
             }
-            stopBlinky();
         }
 
-        void popupWindow_OnItemClick(object sender, MouseEventArgs e, string chatroom) {
-            ShowMe(); onChatroomSelect(chatroom);
-        }
 
-        private void tmrBlinky_Tick(object sender, EventArgs e) {
-            notifyIcon1.Icon = (DateTime.Now.Second % 2 == 0) ? icon1 : icon2;
-            this.Icon = notifyIcon1.Icon;
-        }
-        private void stopBlinky() {
-            tmrBlinky.Stop(); notifyIcon1.Icon = icon1; this.Icon = icon1;
-        }
         #endregion
 
 
@@ -1448,7 +1390,7 @@ namespace miniConf {
         #endregion
 
         #region Tools Menu
-        private void beendenToolStripMenuItem_Click(object sender, EventArgs e) {
+        public void beendenToolStripMenuItem_Click(object sender, EventArgs e) {
             if (MessageBox.Show("Are you sure you want to exit miniConf?", "miniConf", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == System.Windows.Forms.DialogResult.Yes) {
                 Form1_FormClosing(this, new FormClosingEventArgs(CloseReason.ApplicationExitCall, false));
                 //Form1_FormClosed(this, new FormClosedEventArgs(CloseReason.ApplicationExitCall));

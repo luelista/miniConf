@@ -9,10 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>miniConf</RootNamespace>
     <AssemblyName>miniConf</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <ReleaseVersion>1.7.6</ReleaseVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -46,14 +46,11 @@
     <Reference Include="Guifreaks.NavigationBar">
       <HintPath>..\packages\NavigationBar\Guifreaks.NavigationBar.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="Microsoft.VisualBasic.Compatibility" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite">
       <HintPath>System.Data.SQLite.dll</HintPath>
     </Reference>
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -68,10 +65,10 @@
       <HintPath>Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Data.Sqlite" />
-    <Reference Include="webkit-sharp">
-      <HintPath>..\..\..\..\..\usr\lib\mono\webkit-sharp\webkit-sharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.WebBrowser" />
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdhocCommandForm.cs">
@@ -213,6 +210,13 @@
     <Compile Include="VbHelper.cs" />
     <Compile Include="IMessageView.cs" />
     <Compile Include="MessageViewStub.cs" />
+    <Compile Include="MonoNotificationHelper.cs" />
+    <Compile Include="NotificationHelper.cs" />
+    <Compile Include="WindowsNotificationHelper.cs" />
+    <EmbeddedResource Include="Resources\bell16.png" />
+    <None Include="Resources\Jabber16.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="AppIcon.ico" />

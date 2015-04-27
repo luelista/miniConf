@@ -1,26 +1,53 @@
 # Contributor: luelista <git@luelista.net>
 
 pkgname=miniconf
-pkgver=1.7.5
+pkgver=1.7.6
 pkgrel=1
 pkgdesc="miniConf is a jabber client designed for group chats"
 url="http://home.luelista.net/programme/miniconf/"
 license="GPL"
-arch=('i686' 'x86_64')
-depends=(mono)
+arch=('any')
+depends=(mono notify-sharp-3)
 source=(https://github.com/luelista/miniConf/archive/v$pkgver-mono.zip)
-md5sums=('')
+md5sums=('72f68c9e794985efccf03c4d0dd16933')
 
 
 build() {
-pwd
-ls .
-ls $pkgname-$pkgver
+cd "${srcdir}/miniConf-${pkgver}-mono"
+
+xbuild /property:OutputPath="$srcdir/out/"
+
+
 
 }
 
 package() {
-echo no-op
+
+mkdir -p ${pkgdir}/usr/lib ${pkgdir}/usr/bin
+cp -r ${srcdir}/out ${pkgdir}/usr/lib/miniconf
+
+mkdir -p ${pkgdir}/usr/share/man/man1
+gzip < ${srcdir}/miniConf-${pkgver}-mono/Docs/miniconf.1 \
+	> ${pkgdir}/usr/share/man/man1/miniconf.1.gz
+
+for file in $(ls ${srcdir}/miniConf-${pkgver}-mono/Icons/AppIcon/Jabber*.png); do
+  _size=$(basename $file)
+  _size=${_size:6:-4}
+  mkdir -p ${pkgdir}/usr/share/icons/hicolor/${_size}x${_size}/apps
+  cp $file ${pkgdir}/usr/share/icons/hicolor/${_size}x${_size}/apps/miniconf.png
+done
+
+mkdir -p ${pkgdir}/usr/share/applications
+cp ${srcdir}/miniConf-${pkgver}-mono/Docs/miniConf.desktop ${pkgdir}/usr/share/applications/
+
+cat >${pkgdir}/usr/bin/miniconf <<'END_OF_FILE'
+#!/bin/sh
+
+mono /usr/lib/miniconf/miniConf.exe $@
+
+END_OF_FILE
+
+chmod 0755 ${pkgdir}/usr/bin/miniconf
 
 }
 
