@@ -10,7 +10,7 @@ namespace miniConf {
         private static StatusIcon trayIcon;
 
         public override void InitializeTrayIcon() {
-            new Thread(TrayIconThread).Start();
+            //new Thread(TrayIconThread).Start();
         }
 
         private void TrayIconThread() {
