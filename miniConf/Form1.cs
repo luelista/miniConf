@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 using agsXMPP;
 using System.Data.SQLite;
 using System.Threading;
@@ -410,8 +411,15 @@ namespace miniConf {
                                 popupWindow.updateRooms(rooms);
                             }
                             if (enableNotificationsToolStripMenuItem.Checked && !String.IsNullOrEmpty(messageBody)) {
-                                balloonRoom = msg.From.Bare;
-                                notifyIcon1.ShowBalloonTip(30000, msg.From.Resource + " in " + msg.From.User + ":", messageBody, ToolTipIcon.Info);
+                                if (ApplicationPreferences.WineTricks) {
+                                    ProcessStartInfo psi = new ProcessStartInfo();
+                                    psi.FileName = "/usr/bin/notify-send";
+                                    psi.Arguments = "\"Nachricht von " + msg.From.ToString() + "\" \"" + messageBody + "\"";
+                                    Process.Start(psi);
+                                } else {
+                                    balloonRoom = msg.From.Bare;
+                                    notifyIcon1.ShowBalloonTip(30000, msg.From.Resource + " in " + msg.From.User + ":", messageBody, ToolTipIcon.Info);
+                                }
                             }
 
                         }
