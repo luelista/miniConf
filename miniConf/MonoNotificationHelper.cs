@@ -3,6 +3,7 @@ using Gtk;
 using Gdk;
 using System.Threading;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace miniConf {
     public class MonoNotificationHelper : NotificationHelper {
@@ -64,14 +65,10 @@ namespace miniConf {
         // 
 
         public override void DoNotifyPopup(Roomdata room, agsXMPP.protocol.client.Message msg, string messageBody) {
-            /*Notifications.Notification noti = new Notifications.Notification(msg.From.ToString(), messageBody);
-            noti.AddAction("Go to room", "Go to room", delegate(object o, Notifications.ActionArgs args) {
-                Program.MainWnd.Invoke((ThreadStart)delegate {
-                    Program.MainWnd.onChatroomSelect(room.RoomName);
-                    Program.MainWnd.ShowMe();
-                });
-            });*/
-
+          ProcessStartInfo psi = new ProcessStartInfo();
+          psi.FileName = "/usr/bin/notify-send";
+          psi.Arguments = "\"Nachricht von " + msg.From.ToString() + "\" \"" + messageBody + "\"";
+          Process.Start(psi);
         }
 
     }

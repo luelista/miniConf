@@ -43,11 +43,9 @@ namespace miniConf {
                 if (!WindowHelper.IsActive(Program.MainWnd) || !isCurrent) {
                     room.unreadNotifyCount++; 
                     if (Program.MainWnd.enablePopupToolStripMenuItem.Checked) {
-                        DoNotifyPopup(room, msg, messageBody);
-
+                       DoNotifyPopup(room, msg, messageBody);
                     }
                     if (Program.MainWnd.enableNotificationsToolStripMenuItem.Checked && !String.IsNullOrEmpty(messageBody)) {
-
                     }
 
                 }
