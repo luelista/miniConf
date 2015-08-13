@@ -412,11 +412,13 @@ namespace miniConf {
                             }
                             if (enableNotificationsToolStripMenuItem.Checked && !String.IsNullOrEmpty(messageBody)) {
                                 if (ApplicationPreferences.WineTricks) {
+                                    Console.WriteLine("Displaying notification via notify-send ...");
                                     ProcessStartInfo psi = new ProcessStartInfo();
                                     psi.FileName = "/usr/bin/notify-send";
                                     psi.Arguments = "\"Nachricht von " + msg.From.ToString() + "\" \"" + messageBody + "\"";
                                     Process.Start(psi);
                                 } else {
+                                    Console.WriteLine("Showing balloon tip: " + msg.From.Resource + " in " + msg.From.User);
                                     balloonRoom = msg.From.Bare;
                                     notifyIcon1.ShowBalloonTip(30000, msg.From.Resource + " in " + msg.From.User + ":", messageBody, ToolTipIcon.Info);
                                 }

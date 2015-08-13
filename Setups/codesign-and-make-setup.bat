@@ -44,7 +44,7 @@ CALL codesign-dragdrop.bat %INSTALLER%
 
 echo.
 echo Step 4 - Uploading as minefield...
-"C:\Program Files (x86)\Git\bin\scp.exe" %INSTALLER% maxweller@cherry.luelista.net:/srv/hosts/luelista.net/downloads.luelista.net/miniconf/miniconf-minefield-setup.exe
+"C:\Program Files (x86)\Git\bin\scp.exe" %INSTALLER% maxweller@oak.teamwiki.net:/var/www/hosts/downloads.luelista.net/miniconf/miniconf-minefield-setup.exe
 
 
 
