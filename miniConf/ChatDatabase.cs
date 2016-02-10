@@ -10,7 +10,7 @@ using System.Windows.Forms;
 namespace miniConf {
     public class ChatDatabase : SqlDatabase {
 
-        public const long schemaVersion = 10;
+        public const long schemaVersion = 11;
 
         public ChatDatabase(string dbfile)
             : base(dbfile) {
@@ -67,6 +67,12 @@ namespace miniConf {
                 if (currentVersion < 10) {
                     this.ExecSQL("CREATE TABLE IF NOT EXISTS mru (mrulist TEXT, value TEXT, useddt INT, CONSTRAINT itemunique UNIQUE (mrulist,value) ON CONFLICT REPLACE); ");
 
+                }
+
+                if (currentVersion < 11) {
+                    this.ExecSQL("ALTER TABLE messages ADD COLUMN wvl TEXT DEFAULT ''; ");
+                    this.ExecSQL("ALTER TABLE room ADD COLUMN autotodo TEXT DEFAULT ''; ");
+
                     // update db version number
                     this.ExecSQL("PRAGMA user_version = " + ChatDatabase.schemaVersion.ToString());
                 }
@@ -89,15 +95,16 @@ namespace miniConf {
             }
         }
 
-        public int InsertMessage(string room, string id, string sender, string body, string date_dt, string edit_dt = "") {
+        public int InsertMessage(string room, string id, string sender, string body, string date_dt, string edit_dt = "", string todo = "") {
             var cmd = dataBase.CreateCommand();
-            cmd.CommandText = "INSERT INTO messages VALUES (@room, @id, @sender, @body, @ts, NULL, @editts, NULL)";
+            cmd.CommandText = "INSERT INTO messages VALUES (@room, @id, @sender, @body, @ts, NULL, @editts, NULL, @todo)";
             cmd.Parameters.Add(new SQLiteParameter("@room", String.IsNullOrEmpty(room) ? "" : room));
             cmd.Parameters.Add(new SQLiteParameter("@id", String.IsNullOrEmpty(id) ? "" : id));
             cmd.Parameters.Add(new SQLiteParameter("@sender", String.IsNullOrEmpty(sender) ? "" : sender));
             cmd.Parameters.Add(new SQLiteParameter("@body", String.IsNullOrEmpty(body) ? "" : body));
             cmd.Parameters.Add(new SQLiteParameter("@ts", String.IsNullOrEmpty(date_dt) ? "" : date_dt));
             cmd.Parameters.Add(new SQLiteParameter("@editts", String.IsNullOrEmpty(edit_dt) ? "" : edit_dt));
+            cmd.Parameters.Add(new SQLiteParameter("@todo", String.IsNullOrEmpty(todo) ? "" : todo));
             return cmd.ExecuteNonQuery();
         }
         public bool EditMessage(string room, string xmppid, string newXmppid, string from, string newbody, string edit_dt) {
@@ -129,7 +136,7 @@ namespace miniConf {
         }*/
         public int StoreRoom(Roomdata room) {
             var cmd = dataBase.CreateCommand();
-            cmd.CommandText = "INSERT OR REPLACE INTO room VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7)";
+            cmd.CommandText = "INSERT OR REPLACE INTO room VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8)";
             cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_SUBJECT, String.IsNullOrEmpty(room.Subject) ? "" : room.Subject));
             cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_ROOM, room.jid.Bare));
             cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_NOTIFY, (int)room.Notify));
@@ -138,6 +145,7 @@ namespace miniConf {
             cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_LASTMESSAGEDT, room.LastMessageDt));
             cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_LASTSEENDT, room.LastSeenDt));
             cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_DISPLAY_NAME, room.DisplayName));
+            cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_AUTOTODO, room.AutoToDo));
             return cmd.ExecuteNonQuery();
         }
 

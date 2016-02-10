@@ -30,8 +30,9 @@ namespace miniConf {
         public const int COL_DO_JOIN=3;
         public const int COL_DISPLAY_NAME=4;
         public const int COL_LASTSEENDT =5;
-        public const int COL_NOTIFY =6;
+        public const int COL_NOTIFY = 6;
         public const int COL_DISPLAY_POSITION = 7;
+        public const int COL_AUTOTODO = 8;
 
         public RoomType roomType = RoomType.Multi;
         public enum RoomType {
@@ -58,7 +59,6 @@ namespace miniConf {
         public NotifyMode Notify { get; set; }
         public int DisplayPosition { get; set; }
 
-
         public Roomdata(Jid myjid) {
             jid = myjid;
             this.LastMessageDt = "";
@@ -66,6 +66,7 @@ namespace miniConf {
             this.DisplayName = myjid;
             this.Notify = NotifyMode.OnMention;
             this.Subject = "";
+            this.AutoToDo = "";
         }
         public static Roomdata FromDbDataRecord(DbDataRecord record) {
             Roomdata r = new Roomdata(record.GetString(COL_ROOM));
@@ -76,6 +77,7 @@ namespace miniConf {
             r.LastSeenDt = SqlDatabase.StringOrNull(record, COL_LASTSEENDT);
             r.Notify = (NotifyMode)record.GetInt32(COL_NOTIFY);
             r.DisplayPosition = record.GetInt32(COL_DISPLAY_POSITION);
+            r.AutoToDo = record.GetString(COL_AUTOTODO);
             return r;
         }
 
@@ -219,6 +221,32 @@ namespace miniConf {
                 cmd.ExecuteNonQuery();
             }
         }
+
+        #region auto todo
+        private string _autoToDo;
+        private string[] autoToDoArray;
+        public String AutoToDo { 
+            get {
+                return _autoToDo;
+            }
+            set {
+                _autoToDo = value;
+                if (String.IsNullOrEmpty(value)) {
+                    autoToDoArray = new string[]{};
+                } else {
+                    autoToDoArray = value.Split(new char[]{'\r','\n'}, StringSplitOptions.RemoveEmptyEntries);
+                }
+            }
+        }
+
+        public bool IsAutoToDo(string messageBody) {
+            if (String.IsNullOrEmpty(AutoToDo)) return false;
+            foreach(string str in autoToDoArray) {
+                if (messageBody.IndexOf(str, 0, StringComparison.InvariantCultureIgnoreCase) != -1) return true;
+            }
+            return false;
+        }
+#endregion
 
     }
 }

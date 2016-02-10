@@ -17,6 +17,7 @@ namespace miniConf {
         public static cls_globPara glob;
         public static ChatDatabase db;
         public static Form1 MainWnd;
+        public static TodoForm wvl;
         
         public static bool isAutorun;
 

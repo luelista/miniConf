@@ -11,6 +11,7 @@ using System.Windows.Forms;
 namespace miniConf {
     class MessageView : WebBrowser {
         public event HtmlElementEventHandler OnRealKeyDown;
+        public event EventHandler QuoteMessage;
 
         public string highlightString = "";
         public string selfNickname = "";
@@ -19,15 +20,24 @@ namespace miniConf {
 
 
         public DateTime lastTimeTop=DateTime.MinValue, lastTimeBottom=DateTime.MinValue;
+        private ContextMenuStrip contextMenuStrip1;
+        private System.ComponentModel.IContainer components;
+        private ToolStripMenuItem miCopyMessage;
+        private ToolStripMenuItem miQuoteMessage;
+        private ToolStripMenuItem miWvl;
+        private ToolStripMenuItem miCopySelection;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem miSelectAll;
 
         public MessageView() {
-
+            InitializeComponent();
         }
 
         protected override void OnDocumentCompleted(WebBrowserDocumentCompletedEventArgs e) {
             this.Document.Write("<html><head><style id='st'></style></head>" +
                  "<body><p id='tb'>Eile mit Weile ...</p><p class='notice date' id='firstdate'></p><div id='m'></div></body></html>");
             this.Document.Body.KeyDown += Body_KeyDown;
+            this.Document.Body.MouseUp += Body_MouseUp;
             
             this.loadStylesheet();
             this.loadSmileyTheme();
@@ -135,6 +145,7 @@ namespace miniConf {
         public void addMessageToView(string from, string text, DateTime time, string editDt, string jabberId, string id, HtmlElementInsertionOrientation where = HtmlElementInsertionOrientation.BeforeEnd) {
             updateLastTime(where, time);
             var div = this.Document.CreateElement("p");
+            div.MouseUp += Body_MouseUp;
             div.Id = "MSGID_" + id;
             text = prepareInnerHtml(text);
             var me = Regex.Match(text, "^/me\\s+");
@@ -255,6 +266,125 @@ namespace miniConf {
                 System.Diagnostics.Process.Start(url);
             }
         }
+
+        private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.miCopyMessage = new System.Windows.Forms.ToolStripMenuItem();
+            this.miQuoteMessage = new System.Windows.Forms.ToolStripMenuItem();
+            this.miWvl = new System.Windows.Forms.ToolStripMenuItem();
+            this.miSelectAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.miCopySelection = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.contextMenuStrip1.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.miCopyMessage,
+            this.miQuoteMessage,
+            this.miWvl,
+            this.toolStripSeparator1,
+            this.miCopySelection,
+            this.miSelectAll});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(170, 120);
+            // 
+            // miCopyMessage
+            // 
+            this.miCopyMessage.Name = "miCopyMessage";
+            this.miCopyMessage.Size = new System.Drawing.Size(169, 22);
+            this.miCopyMessage.Text = "Copy Message";
+            this.miCopyMessage.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
+            // 
+            // miQuoteMessage
+            // 
+            this.miQuoteMessage.Name = "miQuoteMessage";
+            this.miQuoteMessage.Size = new System.Drawing.Size(169, 22);
+            this.miQuoteMessage.Text = "Quote Message";
+            this.miQuoteMessage.Click += new System.EventHandler(this.miQuoteMessage_Click);
+            // 
+            // miWvl
+            // 
+            this.miWvl.Name = "miWvl";
+            this.miWvl.Size = new System.Drawing.Size(169, 22);
+            this.miWvl.Text = "Store in To Do List";
+            this.miWvl.Click += new System.EventHandler(this.miWvl_Click);
+            // 
+            // miSelectAll
+            // 
+            this.miSelectAll.Name = "miSelectAll";
+            this.miSelectAll.Size = new System.Drawing.Size(169, 22);
+            this.miSelectAll.Text = "Select All";
+            this.miSelectAll.Click += new System.EventHandler(this.toolStripMenuItem4_Click);
+            // 
+            // miCopySelection
+            // 
+            this.miCopySelection.Name = "miCopySelection";
+            this.miCopySelection.Size = new System.Drawing.Size(169, 22);
+            this.miCopySelection.Text = "Copy Selection";
+            this.miCopySelection.Click += new System.EventHandler(this.miCopySelection_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(166, 6);
+            this.contextMenuStrip1.ResumeLayout(false);
+            this.ResumeLayout(false);
+
+        }
+
+
+        #region Context MENU
+        HtmlElement contextElement;
+        void Body_MouseUp(object sender, HtmlElementEventArgs e) {
+            if (e.MouseButtonsPressed == System.Windows.Forms.MouseButtons.Right) {
+                /*var el = e.FromElement;
+                while (el != null && el.Parent != null && el.TagName.ToUpper() != "P")
+                    el = el.Parent;*/
+                contextElement = (HtmlElement) sender;
+
+                bool isMsg = false;
+                bool isMsgWithId = false;
+                if (contextElement.TagName.ToUpper() == "P") {
+                    isMsg=true;
+                    isMsgWithId = !string.IsNullOrEmpty(contextElement.Id) && contextElement.Id.StartsWith("MSGID_") && contextElement.Id.Length > 6;
+                }
+                miCopyMessage.Enabled = isMsg;
+                miQuoteMessage.Enabled = isMsg;
+                miWvl.Enabled = isMsgWithId;
+
+                contextMenuStrip1.Show(System.Windows.Forms.Cursor.Position);
+                e.BubbleEvent = false;
+            }
+        }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e) {
+            Clipboard.Clear();
+            Clipboard.SetText( contextElement.InnerText);
+
+        }
+        private void toolStripMenuItem4_Click(object sender, EventArgs e) {
+            this.Document.ExecCommand("SelectAll", true, null);
+        }
+
+        private void miCopySelection_Click(object sender, EventArgs e) {
+            this.Document.ExecCommand("Copy", true, null);
+
+        }
+
+        private void miWvl_Click(object sender, EventArgs e) {
+            string xmppid = contextElement.Id.Substring(6);
+            Program.db.ExecSQL("UPDATE messages SET wvl = '1' WHERE xmppid = ?", xmppid);
+            Program.wvl.ShowMe();
+        }
+        #endregion
+
+        private void miQuoteMessage_Click(object sender, EventArgs e) {
+            if (QuoteMessage != null) QuoteMessage(contextElement, EventArgs.Empty);
+        }
+
 
 
     }

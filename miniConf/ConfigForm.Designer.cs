@@ -52,6 +52,7 @@
             this.btnConnect = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.labProgramVersion = new System.Windows.Forms.Label();
@@ -66,7 +67,7 @@
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnOK.BackColor = System.Drawing.SystemColors.Control;
-            this.btnOK.Location = new System.Drawing.Point(252, 458);
+            this.btnOK.Location = new System.Drawing.Point(252, 463);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(96, 22);
             this.btnOK.TabIndex = 4;
@@ -220,7 +221,7 @@
             this.chkFiletransferAutoAccept.BackColor = System.Drawing.Color.Transparent;
             this.chkFiletransferAutoAccept.Checked = true;
             this.chkFiletransferAutoAccept.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkFiletransferAutoAccept.Location = new System.Drawing.Point(12, 53);
+            this.chkFiletransferAutoAccept.Location = new System.Drawing.Point(12, 61);
             this.chkFiletransferAutoAccept.Name = "chkFiletransferAutoAccept";
             this.chkFiletransferAutoAccept.Size = new System.Drawing.Size(219, 17);
             this.chkFiletransferAutoAccept.TabIndex = 2;
@@ -376,15 +377,28 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.checkBox1);
             this.groupBox3.Controls.Add(this.cmbFileUploadService);
             this.groupBox3.Controls.Add(this.chkFiletransferAutoAccept);
             this.groupBox3.Controls.Add(this.label6);
             this.groupBox3.Location = new System.Drawing.Point(18, 361);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(431, 82);
+            this.groupBox3.Size = new System.Drawing.Size(431, 89);
             this.groupBox3.TabIndex = 3;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Media sharing";
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Checked = true;
+            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox1.Location = new System.Drawing.Point(12, 44);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(193, 17);
+            this.checkBox1.TabIndex = 3;
+            this.checkBox1.Text = "Use server-provided upload service";
+            this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // label4
             // 
@@ -400,7 +414,7 @@
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button1.BackColor = System.Drawing.SystemColors.Control;
             this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button1.Location = new System.Drawing.Point(353, 458);
+            this.button1.Location = new System.Drawing.Point(353, 463);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(96, 22);
             this.button1.TabIndex = 46;
@@ -409,6 +423,7 @@
             // 
             // labProgramVersion
             // 
+            this.labProgramVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labProgramVersion.AutoSize = true;
             this.labProgramVersion.ForeColor = System.Drawing.Color.Gray;
             this.labProgramVersion.Location = new System.Drawing.Point(15, 463);
@@ -433,7 +448,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button1;
-            this.ClientSize = new System.Drawing.Size(460, 492);
+            this.ClientSize = new System.Drawing.Size(460, 497);
             this.Controls.Add(this.labProgramVersion);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.pictureBox1);
@@ -496,5 +511,6 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.CheckBox chkRememberPassword;
         private System.Windows.Forms.Label labProgramVersion;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }

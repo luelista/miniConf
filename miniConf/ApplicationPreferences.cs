@@ -86,6 +86,10 @@ namespace miniConf {
             set {     Program.glob.setPara("Form1__cmbSmileyTheme", value); }
         }
 
+        public static bool TodoListTopmost {
+            get { return Program.glob.para("TodoListTopmost", "TRUE") == "TRUE"; }
+            set { Program.glob.setPara("TodoListTopmost", value ? "TRUE" : "FALSE"); }
+        }
         
     }
 }

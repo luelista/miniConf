@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
@@ -25,9 +26,15 @@ namespace miniConf {
         }
 
 
+        public static Image SafeImageFromFile(string path) {
+            using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read)) {
+                return Image.FromStream(fs);
+            }
+        }
+
         public void startUpload() {
             try {
-                pictureBox1.Image = Image.FromFile(uploadFilename);
+                pictureBox1.Image = SafeImageFromFile(uploadFilename);
             } catch (Exception e) { Console.WriteLine("ERR image preview: " + e.ToString()); }
             backgroundWorker1.RunWorkerAsync();
         }

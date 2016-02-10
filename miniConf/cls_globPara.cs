@@ -11,6 +11,7 @@ namespace miniConf {
     using System.Collections.Generic;
     using System.Data;
     using System.Diagnostics;
+    using System.Drawing;
     using System.IO;
     using System.Windows.Forms;
     public class cls_globPara {
@@ -86,9 +87,21 @@ namespace miniConf {
                     frm.Height = Convert.ToInt32(formPos[3]);
                 }
 
-
+                if (!IsOnScreen(frm)) { frm.Top = 0; frm.Left = 0; }
             } catch (Exception ex) {
             }
+        }
+        public bool IsOnScreen(Form form) {
+            Screen[] screens = Screen.AllScreens;
+            foreach (Screen screen in screens) {
+                Point formTopLeft = new Point(form.Left, form.Top);
+
+                if (screen.WorkingArea.Contains(formTopLeft)) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public void saveFormPos(Form frm, string suffix = "") {

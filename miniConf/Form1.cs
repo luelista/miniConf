@@ -386,7 +386,8 @@ namespace miniConf {
                     }
                 } else if (msg.HasTag("body")) {
                     string messageBody = msg.GetTag("body");
-                    logs.InsertMessage(msg.From.Bare, msg.GetAttribute("id"), msg.From.Resource, messageBody, dt);
+                    logs.InsertMessage(msg.From.Bare, msg.GetAttribute("id"), msg.From.Resource, messageBody, dt,
+                        "", room.IsAutoToDo(messageBody) ? "1" : "");
                     //logs.SetLastmessageDatetime(msg.From.Bare, dt);
                     room.LastMessageDt = dt; logs.StoreRoom(room);
                     if (currentRoom == room) {
@@ -460,7 +461,11 @@ namespace miniConf {
             }
             msg.Chatstate = agsXMPP.protocol.extensions.chatstates.Chatstate.active;
             currentRoom.chatstate = agsXMPP.protocol.extensions.chatstates.Chatstate.active;
-
+            if (pbSendImage.Visible) {
+                var oob = new agsXMPP.Xml.Dom.Element("x", null, "jabber:x:oob");
+                msg.AddChild(oob);
+                oob.AddTag("url", (string)pbSendImage.Tag);
+            }
             jabber.conn.Send(msg);
         }
 
@@ -475,6 +480,8 @@ namespace miniConf {
 
         #region GUI
 
+
+        #region AppInit
         private void Form1_Load(object sender, EventArgs e) {
             onIni(true);
         }
@@ -516,7 +523,25 @@ namespace miniConf {
                 showPreferences();
             }
 
+            Program.wvl = new TodoForm();
+            IntPtr dummy = Program.wvl.Handle;
+
             DebugTests.PrintDnsServers();
+        }
+#endregion
+
+        #region Form Events
+        public void ShowMe() {
+            this.Show(); this.Activate();
+            if (WindowState == FormWindowState.Minimized) {
+                WindowState = FormWindowState.Normal;
+            }
+            // get our current "TopMost" value (ours will always be false though)
+            bool top = TopMost;
+            // make our form jump to the top of everything
+            TopMost = true;
+            // set it back to whatever it was
+            TopMost = top;
         }
 
         private void updateWinTitle() {
@@ -524,6 +549,43 @@ namespace miniConf {
             this.Text = (ApplicationPreferences.Sternchen ? "*" : "") + Application.ProductName + " " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3) +
                 (currentRoom != null ? " | " + currentRoom.RoomName : "") + " | " + (jabber.conn != null ? (jabber.conn.XmppConnectionState == XmppConnectionState.SessionStarted ? jabber.conn.MyJID.ToString() : jabber.conn.XmppConnectionState.ToString()) : "NoConnection");
         }
+
+        protected override void WndProc(ref Message m) {
+            if (m.Msg == WindowHelper.WM_SHOWME) {
+                ShowMe();
+            }
+            if (m.Msg == WindowHelper.WM_ACTIVATEAPP) {
+                Console.WriteLine("WM_ACTIVATEAPP " + m.LParam.ToString() + " " + m.WParam.ToString());
+                if ((int)m.WParam == 1 && WindowHelper.IsActive(this)) onFormActivated();
+            }
+            base.WndProc(ref m);
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e) {
+            glob.saveFormPos(this);
+            glob.saveTuttiFrutti(this);
+            if (e.CloseReason == CloseReason.UserClosing) {
+                e.Cancel = true;
+                this.Hide();
+                if (currentRoom != null) currentRoom.sendChatstate(agsXMPP.protocol.extensions.chatstates.Chatstate.inactive);
+            } else {
+                if (ApplicationPreferences.RememberPassword == false) {
+                    ApplicationPreferences.AccountPassword = "";
+                }
+            }
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e) {
+            WinSparkle.win_sparkle_cleanup();
+        }
+
+        private void Form1_Shown(object sender, EventArgs e) {
+            if (Program.isAutorun) {
+                this.Hide();
+                Program.isAutorun = false;
+            }
+        }
+        #endregion
 
         #region Preferences
 
@@ -608,55 +670,6 @@ namespace miniConf {
 
 
         #endregion
-
-
-        #region Form Events
-        protected override void WndProc(ref Message m) {
-            if (m.Msg == WindowHelper.WM_SHOWME) {
-                ShowMe();
-            }
-            if (m.Msg == WindowHelper.WM_ACTIVATEAPP) {
-                Console.WriteLine("WM_ACTIVATEAPP " + m.LParam.ToString() + " " + m.WParam.ToString());
-                if ((int)m.WParam == 1 && WindowHelper.IsActive(this)) onFormActivated();
-            }
-            base.WndProc(ref m);
-        }
-
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e) {
-            glob.saveFormPos(this);
-            glob.saveTuttiFrutti(this);
-            if (e.CloseReason == CloseReason.UserClosing) {
-                e.Cancel = true;
-                this.Hide();
-                if (currentRoom != null) currentRoom.sendChatstate(agsXMPP.protocol.extensions.chatstates.Chatstate.inactive);
-            } else {
-                if (ApplicationPreferences.RememberPassword == false) {
-                    ApplicationPreferences.AccountPassword = "";
-                }
-            }
-        }
-
-        private void Form1_FormClosed(object sender, FormClosedEventArgs e) {
-            WinSparkle.win_sparkle_cleanup();
-        }
-
-        #endregion
-
-
-        public void ShowMe() {
-            this.Show(); this.Activate();
-            if (WindowState == FormWindowState.Minimized) {
-                WindowState = FormWindowState.Normal;
-            }
-            // get our current "TopMost" value (ours will always be false though)
-            bool top = TopMost;
-            // make our form jump to the top of everything
-            TopMost = true;
-            // set it back to whatever it was
-            TopMost = top;
-        }
-
-
         #region Chatroom list
 
         private void updateRoomList() {
@@ -810,6 +823,18 @@ namespace miniConf {
             showLastMessages(1000);
         }
 
+        private void autoToDoToolStripMenuItem_Click(object sender, EventArgs e) {
+            Roomdata room = (Roomdata)lbChatrooms.SelectedItem;
+            using (var f = new AutoToDoConfig()) {
+                f.textBox1.Text = room.AutoToDo;
+                if (f.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+                    room.AutoToDo = f.textBox1.Text;
+                    logs.StoreRoom(room);
+                }
+            }
+        }
+
+
         private void closeToolStripMenuItem_Click(object sender, EventArgs e) {
             Roomdata room = (Roomdata)lbChatrooms.SelectedItem;
             room.DoJoin = Roomdata.JoinMode.Off;
@@ -823,6 +848,7 @@ namespace miniConf {
 
         #endregion
 
+        #region chatroom details
 
         private void onChatroomSelect(string gotoRoom = null) {
             tmrChatstatePaused.Stop();
@@ -861,52 +887,7 @@ namespace miniConf {
             webBrowser1.scrollDown();
         }
 
-        private void updateContactList() {
-            lvContacts.BeginUpdate(); lvContacts.Items.Clear();
-            foreach (JabberContact contact in jabber.contacts.Values) {
-                if (contactsImageList.Images.ContainsKey(contact.jid) == false) {
-                    var image = jabber.avatar.GetAvatarIfAvailabe(contact.jid);
-                    if (image != null)
-                        contactsImageList.Images.Add(contact.jid, Image.FromFile(image));
-                    else
-                        contactsImageList.Images.Add(contact.jid, JabberContact.getColoredImage(contact.getColor(), 32));
-                }
-                var lvi = lvContacts.Items.Add(contact.jid, contact.jid);
-                if (contact.available) lvi.ForeColor = Color.Green;
-                lvi.ToolTipText = "Online clients: " + String.Join(", ", contact.resources.ToArray());
-            }
-            lvContacts.EndUpdate();
-        }
 
-        private void updateChatstates() {
-            if (currentRoom == null) return;
-            string typing = currentRoom.getTypingNotice();
-            labChatstates.Visible = typing != null;
-            labChatstates.Text = "             " + typing;
-        }
-
-        private void updateMemberList() {
-            bool winetricks = ApplicationPreferences.WineTricks;
-            lvOnlineStatus.BeginUpdate();
-            lvOnlineStatus.Items.Clear();
-            if (currentRoom != null) {
-                var onlines = logs.GetMembers(currentRoom.RoomName);
-                foreach (System.Data.Common.DbDataRecord k in onlines) {
-                    if (showOfflineUsersToolStripMenuItem.Checked == false && k.GetString(2) == "off") continue;
-                    string nick = k.GetString(0);
-                    if (winetricks && k.GetString(2) == "off") nick = "#" + nick;
-                    var item = lvOnlineStatus.Items.Add(nick, k.GetString(2));
-                    string statusStr = (k.IsDBNull(5)) ? "" : k.GetString(5);
-                    string jid = (k.IsDBNull(6)) ? "" : k.GetString(6);
-                    item.ToolTipText = k.GetString(2) + " " + currentRoom.getChatstate(nick) + " - last seen: " + DateTime.FromBinary(k.GetInt64(1)).ToString() + " - affiliation: " + k.GetString(3) + " - role: " + k.GetString(4) + " - jid: " + jid + " - status: " + statusStr;
-                    item.SubItems.Add(statusStr);
-                    item.ForeColor = currentRoom.getChatstateColor(nick);
-                    item.Tag = jid;
-                    item.Group = lvOnlineStatus.Groups[k.GetString(2) == "off" ? 1 : 0];
-                }
-            }
-            lvOnlineStatus.EndUpdate();
-        }
         private void clearMessageView() {
             webBrowser1.clear();
             webBrowser1.Document.GetElementById("tb").InnerHtml = "history: <a href='special:show_more_history'> 10 more</a> | <a href='special:show_more_more_history'> 100 more</a>";
@@ -925,12 +906,33 @@ namespace miniConf {
             histAmount += count;
         }
 
+        private void webBrowser1_OnSpecialUrl(string url) {
+            switch (url) {
+                case "special:show_more_history":
+                    showLastMessages(10);
+                    webBrowser1.Document.Body.ScrollTop = 0;
+                    break;
+                case "special:show_more_more_history":
+                    showLastMessages(100);
+                    //webBrowser1.Document.Body.ScrollTop = 0;
+                    break;
+                case "special:load_all":
+                    if (MessageBox.Show("Loading the server-side history can take several minutes depending on your internet connection. Do you want to start downloading?", "History", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.OK) {
+                        jabber.muc.joinRoom(currentRoom, true);
+                    }
+                    break;
+            }
+        }
+        #endregion
+
+
         #region Sendmessage
         private void txtSendmessage_KeyUp(object sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.Enter && !e.Control && !e.Shift && !e.Alt) {
                 if (currentRoom == null || String.IsNullOrEmpty(txtSendmessage.Text.Trim())) return;
                 sendMessage(txtSendmessage.Text.TrimEnd());
                 txtSendmessage.Text = "";
+                pbSendImage.Hide();
             }
         }
         private void txtSendmessage_KeyDown(object sender, KeyEventArgs e) {
@@ -961,38 +963,6 @@ namespace miniConf {
             //    e.SuppressKeyPress = true;
         }
 
-        private bool clipboardImageToFile(string uploadfn) {
-            try {
-                Image img = Clipboard.GetImage();
-                var dobj = Clipboard.GetDataObject();
-                string[] tryFormats = { "PNG", "JFIF", "DeviceIndependentBitmap" };
-                int tryIdx = 0;
-                while (img == null && tryIdx < tryFormats.Length) {
-                    string fmt = tryFormats[tryIdx];
-                    tryIdx++;
-                    Console.WriteLine("img is null; checking format " + fmt + " ...");
-                    if (img == null && dobj.GetDataPresent(fmt)) {
-                        Console.WriteLine("getData ...");
-                        MemoryStream obj = dobj.GetData(fmt) as MemoryStream;
-                        if (obj == null) {
-                            Console.WriteLine("NULL!"); 
-                            continue;
-                        }
-                        using (var fs = new FileStream(uploadfn, FileMode.Create)) {
-                            obj.WriteTo(fs);
-                        }
-                        Console.WriteLine("OK!");
-                        return true;
-                    }
-                }
-                if (img == null) return false;
-                img.Save(uploadfn);
-                return true;
-            } catch (Exception ex) {
-                Console.WriteLine(ex.ToString());
-                return false;
-            }
-        }
 
         private void txtSendmessage_TextChanged(object sender, EventArgs e) {
             if (currentRoom == null) return;
@@ -1015,6 +985,39 @@ namespace miniConf {
         #endregion
 
         #region Media Upload
+
+        private bool clipboardImageToFile(string uploadfn) {
+            try {
+                Image img = Clipboard.GetImage();
+                var dobj = Clipboard.GetDataObject();
+                string[] tryFormats = { "PNG", "JFIF", "DeviceIndependentBitmap" };
+                int tryIdx = 0;
+                while (img == null && tryIdx < tryFormats.Length) {
+                    string fmt = tryFormats[tryIdx];
+                    tryIdx++;
+                    Console.WriteLine("img is null; checking format " + fmt + " ...");
+                    if (img == null && dobj.GetDataPresent(fmt)) {
+                        Console.WriteLine("getData ...");
+                        MemoryStream obj = dobj.GetData(fmt) as MemoryStream;
+                        if (obj == null) {
+                            Console.WriteLine("NULL!");
+                            continue;
+                        }
+                        using (var fs = new FileStream(uploadfn, FileMode.Create)) {
+                            obj.WriteTo(fs);
+                        }
+                        Console.WriteLine("OK!");
+                        return true;
+                    }
+                }
+                if (img == null) return false;
+                img.Save(uploadfn);
+                return true;
+            } catch (Exception ex) {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
+        }
         private void txtSendmessage_DragEnter(object sender, DragEventArgs e) {
             if (e.Data.GetDataPresent("FileDrop")) {
                 string[] files = (string[])e.Data.GetData("FileDrop");
@@ -1052,14 +1055,25 @@ namespace miniConf {
                     string hash = res.Groups[1].Value;
 
                     string ext = Path.GetExtension(filename).ToLower();
-                    txtSendmessage.AppendText(FileUploader.ApplicationUrl + "/" + hash + ext);
+                    string imageUrl = FileUploader.ApplicationUrl + "/" + hash + ext;
+                    txtSendmessage.AppendText(imageUrl);
 
+                    try {
+                        pbSendImage.Image = MediaUploadForm.SafeImageFromFile(filename);
+                        pbSendImage.Tag = imageUrl;
+                        pbSendImage.Show();
+                    } catch (Exception ex) { }
                 } else {
                     MessageBox.Show("Could not send image. \n\n(upload failed with error: " + f.resultStatus.ToString()+")", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
             f.Close();
         }
+
+        private void btnDeleteSendImage_Click(object sender, EventArgs e) {
+            pbSendImage.Hide(); pbSendImage.Image = null; pbSendImage.Tag = null;
+        }
+
         #endregion
 
         #region Message Editing
@@ -1089,43 +1103,8 @@ namespace miniConf {
 
 
 
-        private void chkToggleSidebar_CheckedChanged(object sender, EventArgs e) {
-            naviBar1.Visible = !chkToggleSidebar.Checked;
-            chkToggleSidebar.Text = chkToggleSidebar.Checked ? ">" : "<";
-            //chkToggleSidebar.Left = chkToggleSidebar.Checked ? 5 : 107;
-            //button4.Left = chkToggleSidebar.Checked ? 30 : 5;
-            //labChatstates.Left = button4.Bounds.Right + 3;
-            //txtSubject.Left = button4.Bounds.Right + 6;
-            //labChatstates.Width = pnlToolbar.Width - labChatstates.Left - 80;
-            //txtSubject.Width = pnlToolbar.Width - txtSubject.Left - 85;
-            //chkToggleSidebar.Text = splitContainer1.Panel2Collapsed ? "<" : ">";
-        }
 
 
-
-        private void beendenToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (MessageBox.Show("Are you sure you want to exit miniConf?", "miniConf", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == System.Windows.Forms.DialogResult.Yes) {
-                Application.Exit();
-            }
-        }
-
-        private void webBrowser1_OnSpecialUrl(string url) {
-            switch (url) {
-                case "special:show_more_history":
-                    showLastMessages(10);
-                    webBrowser1.Document.Body.ScrollTop = 0;
-                    break;
-                case "special:show_more_more_history":
-                    showLastMessages(100);
-                    //webBrowser1.Document.Body.ScrollTop = 0;
-                    break;
-                case "special:load_all":
-                    if (MessageBox.Show("Loading the server-side history can take several minutes depending on your internet connection. Do you want to start downloading?", "History", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.OK) {
-                        jabber.muc.joinRoom(currentRoom, true);
-                    }
-                    break;
-            }
-        }
 
         #region Key Events
         private void webBrowser1_OnRealKeyDown(object sender, HtmlElementEventArgs e) {
@@ -1197,30 +1176,39 @@ namespace miniConf {
         }
         #endregion
 
-        private void openMiniConfToolStripMenuItem_Click(object sender, EventArgs e) {
-            ShowMe();
-        }
-
-        private void notifyIcon1_MouseClick(object sender, MouseEventArgs e) {
-            openMiniConfToolStripMenuItem.Visible = true;
-            sendFileToolStripMenuItem.Visible = false;
-            extrasToolStripMenuItem.Visible = false;
-            findToolStripMenuItem.Visible = false;
-            if (e.Button == System.Windows.Forms.MouseButtons.Left) {
-                openMiniConfToolStripMenuItem_Click(null, null);
-            }
-        }
-
-        private void button4_Click(object sender, EventArgs e) {
-            openMiniConfToolStripMenuItem.Visible = false;
-            sendFileToolStripMenuItem.Visible = true;
-            extrasToolStripMenuItem.Visible = true;
-            findToolStripMenuItem.Visible = true;
-            contextMenuStrip1.Show((Control)sender, 0, ((Control)sender).Height);
-        }
-
 
         #region Participants / Online Status
+
+        private void updateChatstates() {
+            if (currentRoom == null) return;
+            string typing = currentRoom.getTypingNotice();
+            labChatstates.Visible = typing != null;
+            labChatstates.Text = "             " + typing;
+        }
+
+        private void updateMemberList() {
+            bool winetricks = ApplicationPreferences.WineTricks;
+            lvOnlineStatus.BeginUpdate();
+            lvOnlineStatus.Items.Clear();
+            if (currentRoom != null) {
+                var onlines = logs.GetMembers(currentRoom.RoomName);
+                foreach (System.Data.Common.DbDataRecord k in onlines) {
+                    if (showOfflineUsersToolStripMenuItem.Checked == false && k.GetString(2) == "off") continue;
+                    string nick = k.GetString(0);
+                    if (winetricks && k.GetString(2) == "off") nick = "#" + nick;
+                    var item = lvOnlineStatus.Items.Add(nick, k.GetString(2));
+                    string statusStr = (k.IsDBNull(5)) ? "" : k.GetString(5);
+                    string jid = (k.IsDBNull(6)) ? "" : k.GetString(6);
+                    item.ToolTipText = k.GetString(2) + " " + currentRoom.getChatstate(nick) + " - last seen: " + DateTime.FromBinary(k.GetInt64(1)).ToString() + " - affiliation: " + k.GetString(3) + " - role: " + k.GetString(4) + " - jid: " + jid + " - status: " + statusStr;
+                    item.SubItems.Add(statusStr);
+                    item.ForeColor = currentRoom.getChatstateColor(nick);
+                    item.Tag = jid;
+                    item.Group = lvOnlineStatus.Groups[k.GetString(2) == "off" ? 1 : 0];
+                }
+            }
+            lvOnlineStatus.EndUpdate();
+        }
+
         private void prefixSendmessageBox(string prefix) {
             txtSendmessage.Text = prefix + txtSendmessage.Text;
             txtSendmessage.Focus();
@@ -1277,6 +1265,23 @@ namespace miniConf {
 
         #region "Contact list"
 
+        private void updateContactList() {
+            lvContacts.BeginUpdate(); lvContacts.Items.Clear();
+            foreach (JabberContact contact in jabber.contacts.Values) {
+                if (contactsImageList.Images.ContainsKey(contact.jid) == false) {
+                    var image = jabber.avatar.GetAvatarIfAvailabe(contact.jid);
+                    if (image != null)
+                        contactsImageList.Images.Add(contact.jid, Image.FromFile(image));
+                    else
+                        contactsImageList.Images.Add(contact.jid, JabberContact.getColoredImage(contact.getColor(), 32));
+                }
+                var lvi = lvContacts.Items.Add(contact.jid, contact.jid);
+                if (contact.available) lvi.ForeColor = Color.Green;
+                lvi.ToolTipText = "Online clients: " + String.Join(", ", contact.resources.ToArray());
+            }
+            lvContacts.EndUpdate();
+        }
+
         private void lvContacts_MouseDoubleClick(object sender, MouseEventArgs e) {
             if (lvContacts.SelectedItems.Count == 1) {
                 dmManager.GetWindow(lvContacts.SelectedItems[0].Text);
@@ -1326,15 +1331,6 @@ namespace miniConf {
 
 
 
-        private void helpToolStripMenuItem_Click(object sender, EventArgs e) {
-            System.Diagnostics.Process.Start("http://home.luelista.net/programme/miniconf/hilfe/");
-        }
-
-        private void btnCancelReconnect_Click(object sender, EventArgs e) {
-            tmrReconnect.Stop(); pnlErrMes.Hide();
-            preferencesToolStripMenuItem_Click(null, null);
-        }
-
 
         #region Notifications
         private void notifyIcon1_BalloonTipClicked(object sender, EventArgs e) {
@@ -1369,9 +1365,6 @@ namespace miniConf {
         #endregion
 
 
-        #endregion
-
-
         #region FilterBar
         private void filterBarCloseBtn_Click(object sender, EventArgs e) {
             filterBarPanel.Hide();
@@ -1399,6 +1392,41 @@ namespace miniConf {
             }
         }
         private void filterTextbox_TextChanged(object sender, EventArgs e) {
+
+        }
+
+        #endregion
+
+        #region Navigation Band Resizer
+        private void resizeSidebar() {
+            /*if (naviGroup2.Expanded) naviGroup1.ExpandedHeight = 180;
+            else naviGroup1.ExpandedHeight = naviBand1.Height - 25;
+
+            if (naviGroup1.Expanded) naviGroup1.Height = naviGroup1.ExpandedHeight;
+
+            naviGroup2.ExpandedHeight = Math.Max(100, naviBand1.Height - naviGroup1.Height);
+
+            if (naviGroup2.Expanded) naviGroup2.Height = naviGroup2.ExpandedHeight;
+            */
+        }
+
+        private void naviGroup2_MouseDown(object sender, MouseEventArgs e) {
+
+        }
+
+        private void Form1_Resize(object sender, EventArgs e) {
+            resizeSidebar();
+        }
+
+        private void naviGroup1_HeaderMouseClick(object sender, MouseEventArgs e) {
+            resizeSidebar();
+        }
+
+        private void naviBar1_SizeChanged(object sender, EventArgs e) {
+            if (naviBar1.Collapsed) naviBar1.Hide();
+        }
+
+        private void naviBand3_Click(object sender, EventArgs e) {
 
         }
 
@@ -1438,50 +1466,37 @@ namespace miniConf {
         private void reloadStylesToolStripMenuItem_Click(object sender, EventArgs e) {
             webBrowser1.loadStylesheet();
         }
+
+        private void adhocCommandsToolStripMenuItem_Click(object sender, EventArgs e) {
+            AdhocCommandForm frm = new AdhocCommandForm();
+            frm.Show();
+            frm.loadCommandList();
+        }
         #endregion
 
-        #region Navigation Band Resizer
-        private void resizeSidebar() {
-            /*if (naviGroup2.Expanded) naviGroup1.ExpandedHeight = 180;
-            else naviGroup1.ExpandedHeight = naviBand1.Height - 25;
-
-            if (naviGroup1.Expanded) naviGroup1.Height = naviGroup1.ExpandedHeight;
-
-            naviGroup2.ExpandedHeight = Math.Max(100, naviBand1.Height - naviGroup1.Height);
-
-            if (naviGroup2.Expanded) naviGroup2.Height = naviGroup2.ExpandedHeight;
-            */
+        #region MainMenu
+        private void openMiniConfToolStripMenuItem_Click(object sender, EventArgs e) {
+            ShowMe();
         }
 
-        private void naviGroup2_MouseDown(object sender, MouseEventArgs e) {
-
-        }
-
-        private void Form1_Resize(object sender, EventArgs e) {
-            resizeSidebar();
-        }
-
-        private void naviGroup1_HeaderMouseClick(object sender, MouseEventArgs e) {
-            resizeSidebar();
-        }
-
-        private void naviBar1_SizeChanged(object sender, EventArgs e) {
-            if (naviBar1.Collapsed) naviBar1.Hide();
-        }
-
-        private void naviBand3_Click(object sender, EventArgs e) {
-
-        }
-
-        #endregion
-
-
-        private void Form1_Shown(object sender, EventArgs e) {
-            if (Program.isAutorun) {
-                this.Hide();
-                Program.isAutorun = false;
+        private void notifyIcon1_MouseClick(object sender, MouseEventArgs e) {
+            openMiniConfToolStripMenuItem.Visible = true;
+            sendFileToolStripMenuItem.Visible = false;
+            extrasToolStripMenuItem.Visible = false;
+            findToolStripMenuItem.Visible = false;
+            if (e.Button == System.Windows.Forms.MouseButtons.Left) {
+                openMiniConfToolStripMenuItem_Click(null, null);
             }
         }
+
+        private void button4_Click(object sender, EventArgs e) {
+            openMiniConfToolStripMenuItem.Visible = false;
+            sendFileToolStripMenuItem.Visible = true;
+            extrasToolStripMenuItem.Visible = true;
+            findToolStripMenuItem.Visible = true;
+            contextMenuStrip1.Show((Control)sender, 0, ((Control)sender).Height);
+        }
+
 
         private void preferencesToolStripMenuItem_Click(object sender, EventArgs e) {
             showPreferences();
@@ -1497,18 +1512,49 @@ namespace miniConf {
             jabberConnect();
         }
 
-        private void adhocCommandsToolStripMenuItem_Click(object sender, EventArgs e) {
-            AdhocCommandForm frm = new AdhocCommandForm();
-            frm.Show();
-            frm.loadCommandList();
+        private void beendenToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (MessageBox.Show("Are you sure you want to exit miniConf?", "miniConf", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == System.Windows.Forms.DialogResult.Yes) {
+                Application.Exit();
+            }
+        }
+        private void helpToolStripMenuItem_Click(object sender, EventArgs e) {
+            System.Diagnostics.Process.Start("http://home.luelista.net/programme/miniconf/hilfe/");
+        }
+
+        private void btnCancelReconnect_Click(object sender, EventArgs e) {
+            tmrReconnect.Stop(); pnlErrMes.Hide();
+            preferencesToolStripMenuItem_Click(null, null);
+        }
+
+        private void chkToggleSidebar_CheckedChanged(object sender, EventArgs e) {
+            naviBar1.Visible = !chkToggleSidebar.Checked;
+            chkToggleSidebar.Text = chkToggleSidebar.Checked ? ">" : "<";
+            //chkToggleSidebar.Left = chkToggleSidebar.Checked ? 5 : 107;
+            //button4.Left = chkToggleSidebar.Checked ? 30 : 5;
+            //labChatstates.Left = button4.Bounds.Right + 3;
+            //txtSubject.Left = button4.Bounds.Right + 6;
+            //labChatstates.Width = pnlToolbar.Width - labChatstates.Left - 80;
+            //txtSubject.Width = pnlToolbar.Width - txtSubject.Left - 85;
+            //chkToggleSidebar.Text = splitContainer1.Panel2Collapsed ? "<" : ">";
         }
 
 
 
+        #endregion
+
+        private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
+
+        }
 
 
+        #endregion
 
+        private void webBrowser1_QuoteMessage(object sender, EventArgs e) {
+            HtmlElement el = (HtmlElement)sender;
+            txtSendmessage.AppendText(el.InnerText + "\n");
+        }
 
+        
 
     }
 }

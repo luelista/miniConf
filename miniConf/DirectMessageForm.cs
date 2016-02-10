@@ -213,6 +213,11 @@ namespace miniConf {
             messageView1.addNoticeToView("<img src=\"" + fileName + "\" style='width:240px'><br>Sending image ...");
         }
 
+        private void messageView1_QuoteMessage(object sender, EventArgs e) {
+            HtmlElement el = (HtmlElement)sender;
+            textBox1.AppendText(el.InnerText + "\n");
+        }
+
 
     }
 }
