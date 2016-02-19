@@ -506,7 +506,7 @@ namespace miniConf {
 
             glob.readFormPos(this);
             glob.readTuttiFrutti(this);
-            this.Show();
+            this.Show(); this.Activate(); this.BringToFront(); Application.DoEvents();
 
             popupWindow = new UnreadMessageForm();
             popupWindow.OnItemClick += popupWindow_OnItemClick;
@@ -604,6 +604,10 @@ namespace miniConf {
             Program.glob.setPara("messageView__theme", ApplicationPreferences.ChatTheme);
             webBrowser1.loadStylesheet();
             webBrowser1.loadSmileyTheme();
+
+            if (ApplicationPreferences.AlwaysAskForNickname)
+                ApplicationPreferences.Nickname = 
+                    UgbDatabaseConnection.InputDlg.InputBoxForced("Choose your Nickname", ApplicationPreferences.Nickname, this);
 
             if (jabber.conn == null || jabber.conn.XmppConnectionState == XmppConnectionState.Disconnected) {
                 if (ApplicationPreferences.AccountJID != "" && ApplicationPreferences.AccountPassword != "") {
@@ -1458,7 +1462,7 @@ namespace miniConf {
 
         private void editStylesToolStripMenuItem_Click(object sender, EventArgs e) {
             if (!File.Exists(Program.dataDir + "style.txt")) {
-                File.Copy(Program.appDir + "style.txt", Program.dataDir + "style.txt");
+                File.Copy(Program.appDir + "style-tpl.txt", Program.dataDir + "style.txt");
             }
             System.Diagnostics.Process.Start(Program.dataDir + "style.txt");
         }
@@ -1546,13 +1550,13 @@ namespace miniConf {
 
         }
 
+        private void webBrowser1_QuoteMessage(object sender, EventArgs e) {
+            string str = (string)sender;
+            txtSendmessage.AppendText(str + "\n");
+        }
+
 
         #endregion
-
-        private void webBrowser1_QuoteMessage(object sender, EventArgs e) {
-            HtmlElement el = (HtmlElement)sender;
-            txtSendmessage.AppendText(el.InnerText + "\n");
-        }
 
         
 

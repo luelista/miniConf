@@ -9,6 +9,7 @@ p#tb {text-align:center;color:#777;}
 /* clickable links in messages */
 a,a:visited {color:blue;text-decoration:none;} 
 a:hover{text-decoration:underline} 
+q { color: #282; }
 
 /* image previews */
 img.imprev { width: 140px; height: 120px; border: 1px solid #000; }

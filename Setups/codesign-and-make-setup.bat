@@ -1,4 +1,5 @@
 @echo off
+ping 127.0.0.1 -n 1 >NUL
 setlocal EnableDelayedExpansion
 for /F "tokens=1,2 delims=#" %%a in ('"prompt #$H#$E# & echo on & for %%b in (1) do rem"') do (
   set "DEL=%%a"
@@ -44,7 +45,7 @@ CALL codesign-dragdrop.bat %INSTALLER%
 
 echo.
 echo Step 4 - Uploading as minefield...
-"C:\Program Files (x86)\Git\bin\scp.exe" %INSTALLER% maxweller@oak.teamwiki.net:/var/www/hosts/downloads.luelista.net/miniconf/miniconf-minefield-setup.exe
+"C:\Program Files (x86)\Git\bin\scp.exe" %INSTALLER% maxweller@cherry.teamwiki.net:/data/mw_downloads/miniconf/miniconf-minefield-setup.exe
 
 
 

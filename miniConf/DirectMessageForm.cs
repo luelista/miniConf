@@ -214,8 +214,8 @@ namespace miniConf {
         }
 
         private void messageView1_QuoteMessage(object sender, EventArgs e) {
-            HtmlElement el = (HtmlElement)sender;
-            textBox1.AppendText(el.InnerText + "\n");
+            string str = (string)sender;
+            textBox1.AppendText(str + "\n");
         }
 
 

@@ -179,6 +179,8 @@ namespace miniConf {
             text = text.Replace("&", "&amp;");
             text = text.Replace("<", "&lt;");
             if (!String.IsNullOrEmpty(highlightString)) text = Regex.Replace(text, highlightString, "<em>$0</em>");
+            text = Regex.Replace(text, "^>(.*)$",
+                         (match) => ("<q>&gt;" + match.Groups[1].Value + "</q>"), RegexOptions.Multiline);
             text = text.Replace("\n", "\n<br>");
             var imageLink = Regex.Match(text, "https?://[\\w.-]+/[\\w_.,/+?&%$!=)(\\[\\]{}-]*\\.(png|jpg|gif|webp)");
             text = Regex.Replace(text, "(?i)\\b((?:[a-z][\\w-]+:(?:/{1,3})|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))",
@@ -355,9 +357,27 @@ namespace miniConf {
                 miQuoteMessage.Enabled = isMsg;
                 miWvl.Enabled = isMsgWithId;
 
+
+                string selection = getSelectedText();
+                bool hasSelection = !String.IsNullOrEmpty(selection);
+                miCopySelection.Enabled = hasSelection;
+                miQuoteMessage.Text = hasSelection ? "Quote Selected Message" : "Quote Message";
+
                 contextMenuStrip1.Show(System.Windows.Forms.Cursor.Position);
                 e.BubbleEvent = false;
             }
+        }
+
+        public string getSelectedText() {
+            IHTMLDocument2 htmlDocument = this.Document.DomDocument as IHTMLDocument2;
+            IHTMLSelectionObject selection = htmlDocument.selection;
+            if (selection != null) {
+                var range = selection.createRange() as IHTMLTxtRange;
+                if (range != null) {
+                    return range.text;
+                }
+            }
+            return null;
         }
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e) {
@@ -382,7 +402,17 @@ namespace miniConf {
         #endregion
 
         private void miQuoteMessage_Click(object sender, EventArgs e) {
-            if (QuoteMessage != null) QuoteMessage(contextElement, EventArgs.Empty);
+            IHTMLDocument2 htmlDocument = this.Document.DomDocument as IHTMLDocument2;
+            IHTMLSelectionObject selection = htmlDocument.selection;
+            string str = "> " + contextElement.InnerText.Replace("\n", "\n> ");
+            if (selection != null) {
+                var range = selection.createRange() as IHTMLTxtRange;
+                if (range != null && !String.IsNullOrEmpty(range.text)) {
+                    str = "> " + range.text.Replace("\n", "\n> ");
+                }
+            }
+
+            if (QuoteMessage != null) QuoteMessage(str, EventArgs.Empty);
         }
 
 

@@ -40,6 +40,7 @@
             this.chkFiletransferAutoAccept = new System.Windows.Forms.CheckBox();
             this.chkSternchen = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkAlwaysAskNickname = new System.Windows.Forms.CheckBox();
             this.chkRememberPassword = new System.Windows.Forms.CheckBox();
             this.qq_txtPrefServerPort = new System.Windows.Forms.ComboBox();
             this.qq_txtPrefServer = new System.Windows.Forms.TextBox();
@@ -241,6 +242,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.chkAlwaysAskNickname);
             this.groupBox1.Controls.Add(this.chkRememberPassword);
             this.groupBox1.Controls.Add(this.qq_txtPrefServerPort);
             this.groupBox1.Controls.Add(this.qq_txtPrefServer);
@@ -259,6 +261,17 @@
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Jabber account";
+            // 
+            // chkAlwaysAskNickname
+            // 
+            this.chkAlwaysAskNickname.AutoSize = true;
+            this.chkAlwaysAskNickname.Location = new System.Drawing.Point(311, 130);
+            this.chkAlwaysAskNickname.Name = "chkAlwaysAskNickname";
+            this.chkAlwaysAskNickname.Size = new System.Drawing.Size(82, 17);
+            this.chkAlwaysAskNickname.TabIndex = 12;
+            this.chkAlwaysAskNickname.Text = "Ask on start";
+            this.chkAlwaysAskNickname.UseVisualStyleBackColor = true;
+            this.chkAlwaysAskNickname.CheckedChanged += new System.EventHandler(this.chkAlwaysAskNickname_CheckedChanged);
             // 
             // chkRememberPassword
             // 
@@ -512,5 +525,6 @@
         private System.Windows.Forms.CheckBox chkRememberPassword;
         private System.Windows.Forms.Label labProgramVersion;
         private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox chkAlwaysAskNickname;
     }
 }

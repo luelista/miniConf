@@ -84,6 +84,7 @@
             this.notifyOnMentionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableNotificationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripSeparator();
+            this.autoToDoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showFullHistoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -122,7 +123,6 @@
             this.labChatstates = new System.Windows.Forms.Label();
             this.chkToggleSidebar = new System.Windows.Forms.CheckBox();
             this.txtSubject = new System.Windows.Forms.TextBox();
-            this.autoToDoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.webBrowser1 = new miniConf.MessageView();
             this.panel3.SuspendLayout();
             this.pnlSendBox.SuspendLayout();
@@ -318,6 +318,7 @@
             // preferencesToolStripMenuItem
             // 
             this.preferencesToolStripMenuItem.Name = "preferencesToolStripMenuItem";
+            this.preferencesToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl-,";
             this.preferencesToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.preferencesToolStripMenuItem.Text = "Preferences";
             this.preferencesToolStripMenuItem.Click += new System.EventHandler(this.preferencesToolStripMenuItem_Click);
@@ -598,6 +599,13 @@
             // 
             this.toolStripMenuItem6.Name = "toolStripMenuItem6";
             this.toolStripMenuItem6.Size = new System.Drawing.Size(182, 6);
+            // 
+            // autoToDoToolStripMenuItem
+            // 
+            this.autoToDoToolStripMenuItem.Name = "autoToDoToolStripMenuItem";
+            this.autoToDoToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.autoToDoToolStripMenuItem.Text = "Auto-To-Do ...";
+            this.autoToDoToolStripMenuItem.Click += new System.EventHandler(this.autoToDoToolStripMenuItem_Click);
             // 
             // showFullHistoryToolStripMenuItem
             // 
@@ -1034,13 +1042,6 @@
             this.txtSubject.Name = "txtSubject";
             this.txtSubject.Size = new System.Drawing.Size(523, 21);
             this.txtSubject.TabIndex = 1;
-            // 
-            // autoToDoToolStripMenuItem
-            // 
-            this.autoToDoToolStripMenuItem.Name = "autoToDoToolStripMenuItem";
-            this.autoToDoToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
-            this.autoToDoToolStripMenuItem.Text = "Auto-To-Do ...";
-            this.autoToDoToolStripMenuItem.Click += new System.EventHandler(this.autoToDoToolStripMenuItem_Click);
             // 
             // webBrowser1
             // 

@@ -63,6 +63,7 @@ namespace miniConf {
             ApplicationPreferences.AccountServer = qq_txtPrefServer.Text;
 
             ApplicationPreferences.Nickname = txtNickname.Text;
+            ApplicationPreferences.AlwaysAskForNickname = chkAlwaysAskNickname.Checked;
 
             ApplicationPreferences.ChatTheme = comboMessageTheme.Text;
             ApplicationPreferences.SmileyTheme = cmbSmileyTheme.Text;
@@ -140,6 +141,10 @@ namespace miniConf {
                 e.Handled = true; e.SuppressKeyPress = true;
                 qq_txtPrefPassword.Focus(); qq_txtPrefPassword.SelectAll();
             }
+        }
+
+        private void chkAlwaysAskNickname_CheckedChanged(object sender, EventArgs e) {
+            txtNickname.Enabled = !chkAlwaysAskNickname.Checked;
         }
 
 

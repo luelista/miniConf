@@ -55,6 +55,10 @@ namespace miniConf {
             get { return Program.glob.para("account__RememberPassword", "TRUE") == "TRUE"; }
             set { Program.glob.setPara("account__RememberPassword", value ? "TRUE" : "FALSE"); }
         }
+        public static bool AlwaysAskForNickname {
+            get { return Program.glob.para("account__AlwaysAskForNickname", "FALSE") == "TRUE"; }
+            set { Program.glob.setPara("account__AlwaysAskForNickname", value ? "TRUE" : "FALSE"); }
+        }
         public static bool Sternchen {
             get { return Program.glob.para("Form1__chkSternchen", "FALSE") == "TRUE"; }
             set { Program.glob.setPara("Form1__chkSternchen", value ? "TRUE" : "FALSE"); }
