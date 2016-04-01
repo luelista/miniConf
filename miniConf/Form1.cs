@@ -1154,6 +1154,9 @@ namespace miniConf {
                 case Keys.Control | Keys.F9:
                     System.Diagnostics.Process.Start("explorer.exe", "/e,\"" + Program.dataDir + "\"");
                     return true;
+                case Keys.F10:
+                    Program.wvl.ShowMe();
+                    return true;
                 case Keys.Control | Keys.Shift | Keys.U:
                     WinSparkle.win_sparkle_set_appcast_url("http://downloads.luelista.net/miniconf/miniconf-minefield.xml");
                     WinSparkle.win_sparkle_check_update_with_ui();
@@ -1557,6 +1560,10 @@ namespace miniConf {
 
 
         #endregion
+
+        private void toDoListToolStripMenuItem_Click(object sender, EventArgs e) {
+            Program.wvl.ShowMe();
+        }
 
         
 

@@ -22,8 +22,9 @@ namespace miniConf {
             listView1.Items.Clear();
             listView1.Groups.Clear();
             var gDue = listView1.Groups.Add("b", "Due");
-            var gUnk = listView1.Groups.Add("a","New");
-            var gLater = listView1.Groups.Add("c","Later");
+            var gUnk = listView1.Groups.Add("a", "New");
+            var gLater = listView1.Groups.Add("c", "Later");
+            var gDone = listView1.Groups.Add("d", "Done");
             if (checkBox2.Checked) {
                 cmd = Program.db.BuildCommand("SELECT *,rowid FROM messages WHERE wvl <> '' order by wvl asc,datedt asc", new object[]{});
             } else {
@@ -40,9 +41,10 @@ namespace miniConf {
                     
                     object due;
                     if (wvl == "1") {
-                        due = null;
-                        wvl = "(none)";
-                        r.Group = gUnk;
+                        due = null; wvl = "(none)"; r.Group = gUnk;
+                    } else if (wvl == "X") {
+                        due = null; wvl = "(done)"; r.Group = gDone;
+                        r.Checked = true;
                     } else {
                         DateTime duedate;
                         DateTime.TryParseExact(wvl, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.None, out duedate);
@@ -157,7 +159,7 @@ namespace miniConf {
                         f.Controls.Add(tx);
                         f.Controls.Add(monthCalendar1); monthCalendar1.Top = 17;
                         f.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-                        f.Width = monthCalendar1.Width; f.Height = monthCalendar1.Height + 21;
+                        f.Width = monthCalendar1.Width; f.Height = monthCalendar1.Height + 23;
                         monthCalendar1.DateSelected += monthCalendar1_DateSelected;
                         f.Deactivate += monthCalendar1_Leave;
                         f.Owner = this;
@@ -179,7 +181,7 @@ namespace miniConf {
                     break;
                 case 3://message
                     if (e.Button == System.Windows.Forms.MouseButtons.Right) {
-                        MessageBox.Show(item.SubItem.Text);
+                        //MessageBox.Show(item.SubItem.Text);
                     }
                     break;
             }
@@ -200,6 +202,45 @@ namespace miniConf {
 
         private void monthCalendar1_Leave(object sender, EventArgs e) {
             ((Form)sender).Close();
+        }
+
+        private void richTextBox1_LinkClicked(object sender, LinkClickedEventArgs e) {
+            System.Diagnostics.Process.Start(e.LinkText);
+        }
+
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e) {
+            richTextBox1.Text = "";
+            foreach (ListViewItem item in listView1.SelectedItems) {
+                richTextBox1.Text += "[" + item.SubItems[1].Text + "] " + item.SubItems[2].Text + ":\n" + item.SubItems[3].Text + "\n";
+            }
+        }
+
+        private void listView1_ItemCheck(object sender, ItemCheckEventArgs e) {
+            var row = listView1.Items[e.Index];
+            if (row.Tag == null) return;
+            long id = (long)row.Tag;
+            if (e.NewValue == CheckState.Checked) {
+                Program.db.ExecSQL("UPDATE messages SET wvl = 'X' WHERE rowid = ?", id);
+                row.SubItems[4].Text = "(done)";
+                row.SubItems[4].Tag = null;
+            } else {
+                Program.db.ExecSQL("UPDATE messages SET wvl = '1' WHERE rowid = ?", id);
+                row.SubItems[4].Text = "(none)";
+                row.SubItems[4].Tag = null;
+            }
+        }
+
+        private void TodoForm_KeyUp(object sender, KeyEventArgs e) {
+            
+        }
+
+        private void TodoForm_KeyDown(object sender, KeyEventArgs e) {
+            if (e.KeyCode == Keys.F10) {
+                Program.MainWnd.ShowMe();
+            }
+            if (e.KeyCode == Keys.Escape) {
+                this.Hide();
+            }
         }
 
     }

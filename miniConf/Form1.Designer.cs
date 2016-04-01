@@ -34,6 +34,7 @@
             System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Not available", System.Windows.Forms.HorizontalAlignment.Left);
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.panel3 = new System.Windows.Forms.Panel();
+            this.webBrowser1 = new miniConf.MessageView();
             this.pnlSendBox = new System.Windows.Forms.Panel();
             this.txtSendmessage = new System.Windows.Forms.TextBox();
             this.pbSendImage = new System.Windows.Forms.PictureBox();
@@ -123,7 +124,7 @@
             this.labChatstates = new System.Windows.Forms.Label();
             this.chkToggleSidebar = new System.Windows.Forms.CheckBox();
             this.txtSubject = new System.Windows.Forms.TextBox();
-            this.webBrowser1 = new miniConf.MessageView();
+            this.toDoListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel3.SuspendLayout();
             this.pnlSendBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbSendImage)).BeginInit();
@@ -166,6 +167,22 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(464, 508);
             this.panel3.TabIndex = 7;
+            // 
+            // webBrowser1
+            // 
+            this.webBrowser1.AllowWebBrowserDrop = false;
+            this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webBrowser1.IsWebBrowserContextMenuEnabled = false;
+            this.webBrowser1.Location = new System.Drawing.Point(0, 0);
+            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser1.Name = "webBrowser1";
+            this.webBrowser1.ScriptErrorsSuppressed = true;
+            this.webBrowser1.Size = new System.Drawing.Size(464, 447);
+            this.webBrowser1.TabIndex = 0;
+            this.webBrowser1.Url = new System.Uri("about:blank", System.UriKind.Absolute);
+            this.webBrowser1.OnRealKeyDown += new System.Windows.Forms.HtmlElementEventHandler(this.webBrowser1_OnRealKeyDown);
+            this.webBrowser1.QuoteMessage += new System.EventHandler(this.webBrowser1_QuoteMessage);
+            this.webBrowser1.OnSpecialUrl += new miniConf.MessageView.SpecialUrlEvent(this.webBrowser1_OnSpecialUrl);
             // 
             // pnlSendBox
             // 
@@ -285,7 +302,7 @@
             this.toolStripMenuItem1,
             this.beendenToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(175, 286);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(175, 308);
             // 
             // openMiniConfToolStripMenuItem
             // 
@@ -351,7 +368,8 @@
             this.sqliteConsoleToolStripMenuItem,
             this.editStylesToolStripMenuItem,
             this.reloadStylesToolStripMenuItem,
-            this.adhocCommandsToolStripMenuItem});
+            this.adhocCommandsToolStripMenuItem,
+            this.toDoListToolStripMenuItem});
             this.extrasToolStripMenuItem.Name = "extrasToolStripMenuItem";
             this.extrasToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.extrasToolStripMenuItem.Text = "Tools";
@@ -1043,21 +1061,13 @@
             this.txtSubject.Size = new System.Drawing.Size(523, 21);
             this.txtSubject.TabIndex = 1;
             // 
-            // webBrowser1
+            // toDoListToolStripMenuItem
             // 
-            this.webBrowser1.AllowWebBrowserDrop = false;
-            this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBrowser1.IsWebBrowserContextMenuEnabled = false;
-            this.webBrowser1.Location = new System.Drawing.Point(0, 0);
-            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.ScriptErrorsSuppressed = true;
-            this.webBrowser1.Size = new System.Drawing.Size(464, 447);
-            this.webBrowser1.TabIndex = 0;
-            this.webBrowser1.Url = new System.Uri("about:blank", System.UriKind.Absolute);
-            this.webBrowser1.OnRealKeyDown += new System.Windows.Forms.HtmlElementEventHandler(this.webBrowser1_OnRealKeyDown);
-            this.webBrowser1.QuoteMessage += new System.EventHandler(this.webBrowser1_QuoteMessage);
-            this.webBrowser1.OnSpecialUrl += new miniConf.MessageView.SpecialUrlEvent(this.webBrowser1_OnSpecialUrl);
+            this.toDoListToolStripMenuItem.Name = "toDoListToolStripMenuItem";
+            this.toDoListToolStripMenuItem.ShortcutKeyDisplayString = "F10";
+            this.toDoListToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.toDoListToolStripMenuItem.Text = "To Do List";
+            this.toDoListToolStripMenuItem.Click += new System.EventHandler(this.toDoListToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -1203,6 +1213,7 @@
         private System.Windows.Forms.ContextMenuStrip ctxSendImage;
         private System.Windows.Forms.ToolStripMenuItem btnDeleteSendImage;
         private System.Windows.Forms.ToolStripMenuItem autoToDoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toDoListToolStripMenuItem;
     }
 }
 
