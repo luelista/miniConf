@@ -49,17 +49,23 @@ namespace miniConf
 
                 // Ignore Chatstate notifications if no conversation is open
                 if (!msg.HasTag("body") && !this.HasWindow(msg.From)) return;
-
+                
                 Jid relevantJid = msg.From;
+
                 // XEP-0280, Message Carbons
-                var carbonsSent = msg.SelectSingleElement("sent", JabberService.URN_CARBONS);
-                var carbonsReceived = msg.SelectSingleElement("received", JabberService.URN_CARBONS);
-                if (carbonsSent != null) {
-                    msg = (agsXMPP.protocol.client.Message)carbonsSent.SelectSingleElement("message", true);
-                    relevantJid = msg.To;
-                } else if (carbonsReceived != null) {
-                    msg = (agsXMPP.protocol.client.Message)carbonsReceived.SelectSingleElement("message", true);
-                    relevantJid = msg.From;
+
+                // Only allow carbons to be from your own bare JID
+                // http://openwall.com/lists/oss-security/2017/02/09/29
+                if (relevantJid.ToString() == msg.To.Bare) {
+                    var carbonsSent = msg.SelectSingleElement("sent", JabberService.URN_CARBONS);
+                    var carbonsReceived = msg.SelectSingleElement("received", JabberService.URN_CARBONS);
+                    if (carbonsSent != null) {
+                        msg = (agsXMPP.protocol.client.Message)carbonsSent.SelectSingleElement("message", true);
+                        relevantJid = msg.To;
+                    } else if (carbonsReceived != null) {
+                        msg = (agsXMPP.protocol.client.Message)carbonsReceived.SelectSingleElement("message", true);
+                        relevantJid = msg.From;
+                    }
                 }
 
                 string dt = JabberService.GetMessageDt(msg);
