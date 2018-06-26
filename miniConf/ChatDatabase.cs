@@ -10,7 +10,7 @@ using System.Windows.Forms;
 namespace miniConf {
     public class ChatDatabase : SqlDatabase {
 
-        public const long schemaVersion = 11;
+        public const long schemaVersion = 12;
 
         public ChatDatabase(string dbfile)
             : base(dbfile) {
@@ -73,6 +73,12 @@ namespace miniConf {
                     this.ExecSQL("ALTER TABLE messages ADD COLUMN wvl TEXT DEFAULT ''; ");
                     this.ExecSQL("ALTER TABLE room ADD COLUMN autotodo TEXT DEFAULT ''; ");
 
+                }
+
+                if (currentVersion < 12) {
+                    this.ExecSQL("ALTER TABLE room ADD COLUMN roomtype INT DEFAULT 2; ");
+                    this.ExecSQL("ALTER TABLE messages ADD COLUMN flags INT DEFAULT 0; ");
+
                     // update db version number
                     this.ExecSQL("PRAGMA user_version = " + ChatDatabase.schemaVersion.ToString());
                 }
@@ -95,23 +101,27 @@ namespace miniConf {
             }
         }
 
-        public int InsertMessage(string room, string id, string sender, string body, string date_dt, string edit_dt = "", string todo = "") {
+        public int InsertMessage(ChatMessage msg) {
             var cmd = dataBase.CreateCommand();
-            cmd.CommandText = "INSERT INTO messages VALUES (@room, @id, @sender, @body, @ts, NULL, @editts, NULL, @todo)";
-            cmd.Parameters.Add(new SQLiteParameter("@room", String.IsNullOrEmpty(room) ? "" : room));
-            cmd.Parameters.Add(new SQLiteParameter("@id", String.IsNullOrEmpty(id) ? "" : id));
-            cmd.Parameters.Add(new SQLiteParameter("@sender", String.IsNullOrEmpty(sender) ? "" : sender));
-            cmd.Parameters.Add(new SQLiteParameter("@body", String.IsNullOrEmpty(body) ? "" : body));
-            cmd.Parameters.Add(new SQLiteParameter("@ts", String.IsNullOrEmpty(date_dt) ? "" : date_dt));
-            cmd.Parameters.Add(new SQLiteParameter("@editts", String.IsNullOrEmpty(edit_dt) ? "" : edit_dt));
-            cmd.Parameters.Add(new SQLiteParameter("@todo", String.IsNullOrEmpty(todo) ? "" : todo));
+            //room TEXT, xmppid TEXT, sender TEXT, messagebody TEXT, datedt TEXT, jid TEXT, editdt TEXT, override TEXT, wvl TEXT, flags INT
+            cmd.CommandText = "INSERT INTO messages VALUES (@room, @id, @sender, @body, @ts, @senderjid, @editts, @override, @todo, @flags)";
+            cmd.Parameters.Add(new SQLiteParameter("@room", String.IsNullOrEmpty(msg.Room) ? "" : msg.Room));
+            cmd.Parameters.Add(new SQLiteParameter("@id", String.IsNullOrEmpty(msg.Id) ? "" : msg.Id));
+            cmd.Parameters.Add(new SQLiteParameter("@sender", String.IsNullOrEmpty(msg.SenderName) ? "" : msg.SenderName));
+            cmd.Parameters.Add(new SQLiteParameter("@body", String.IsNullOrEmpty(msg.Body) ? "" : msg.Body));
+            cmd.Parameters.Add(new SQLiteParameter("@ts", GetDtString(msg.Date)));
+            cmd.Parameters.Add(new SQLiteParameter("@senderjid", msg.SenderJid));
+            cmd.Parameters.Add(new SQLiteParameter("@editts", String.IsNullOrEmpty(msg.EditDt) ? "" : msg.EditDt));
+            cmd.Parameters.Add(new SQLiteParameter("@override", String.IsNullOrEmpty(msg.OverriddenById) ? "" : msg.OverriddenById));
+            cmd.Parameters.Add(new SQLiteParameter("@todo", String.IsNullOrEmpty(msg.Wvl) ? "" : msg.Wvl));
+            cmd.Parameters.Add(new SQLiteParameter("@flags", (int)msg.Flags));
             return cmd.ExecuteNonQuery();
         }
-        public bool EditMessage(string room, string xmppid, string newXmppid, string from, string newbody, string edit_dt) {
-            var oldMessage = GetMessageById(room, xmppid);
+        public bool EditMessage(string room, string xmppid, string newXmppid, string from, string newbody, DateTime edit_dt) {
+            ChatMessage oldMessage = GetMessageById(room, xmppid);
             if (oldMessage == null) return false;
 
-            if (from != oldMessage["sender"]) return false;
+            if (from != oldMessage.SenderName) return false;
 
             var cmd = dataBase.CreateCommand();
             cmd.CommandText = "UPDATE messages SET override=@newid WHERE room=@room AND xmppid= @id";
@@ -120,8 +130,10 @@ namespace miniConf {
             cmd.Parameters.Add(new SQLiteParameter("@newid", String.IsNullOrEmpty(newXmppid) ? "" : newXmppid));
             var ok1= cmd.ExecuteNonQuery();
 
-            InsertMessage(room, newXmppid, oldMessage["sender"], newbody, oldMessage["datedt"], edit_dt);
+            //InsertMessage(room, newXmppid, oldMessage["sender"], newbody, oldMessage["datedt"], edit_dt);
+            InsertMessage(new ChatMessage(room, newXmppid, oldMessage.SenderName, newbody, oldMessage.Date, null, GetDtString(edit_dt)));
             
+
             return true;
         }
 
@@ -136,7 +148,7 @@ namespace miniConf {
         }*/
         public int StoreRoom(Roomdata room) {
             var cmd = dataBase.CreateCommand();
-            cmd.CommandText = "INSERT OR REPLACE INTO room VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8)";
+            cmd.CommandText = "INSERT OR REPLACE INTO room VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)";
             cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_SUBJECT, String.IsNullOrEmpty(room.Subject) ? "" : room.Subject));
             cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_ROOM, room.jid.Bare));
             cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_NOTIFY, (int)room.Notify));
@@ -146,18 +158,19 @@ namespace miniConf {
             cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_LASTSEENDT, room.LastSeenDt));
             cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_DISPLAY_NAME, room.DisplayName));
             cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_AUTOTODO, room.AutoToDo));
+            cmd.Parameters.Add(new SQLiteParameter("@p" + Roomdata.COL_ROOMTYPE, room.Type));
             return cmd.ExecuteNonQuery();
         }
 
-        public NameValueCollection GetMessageById(string room, string xmppid) {
+        public ChatMessage GetMessageById(string room, string xmppid) {
             var cmd = dataBase.CreateCommand();
             cmd.CommandText = "SELECT * FROM messages WHERE room = @name AND xmppid = @xmppid;";
             cmd.Parameters.AddWithValue("@name", room); cmd.Parameters.AddWithValue("@xmppid", xmppid);
             var reader = cmd.ExecuteReader();
-            if (reader.HasRows)
-                return reader.GetValues();
-            else
-                return null;
+            foreach (DbDataRecord record in reader)  // loop is cancelled after first match by the return statement
+                return ChatMessage.FromDbDataRecord(record);
+            // else (no match):
+            return null;
         }
         public string GetLastmessageDatetime(string room) {
             var cmd = dataBase.CreateCommand();
@@ -240,6 +253,9 @@ namespace miniConf {
 
         public static String GetNowString() {
             return DateTime.Now.ToUniversalTime().ToString("yyyy-MM-ddTHH\\:mm\\:ss.FFFZ");
+        }
+        public static String GetDtString(DateTime dt) {
+            return dt.ToUniversalTime().ToString("yyyy-MM-ddTHH\\:mm\\:ss.FFFZ");
         }
     }
 }

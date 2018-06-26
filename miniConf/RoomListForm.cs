@@ -17,7 +17,10 @@ namespace miniConf {
         DiscoManager discoManager;
         //HashSet<string> rooms = new HashSet<string>();
 
-        public RoomListForm() {
+        public Jid DiscoverNode;
+
+        public RoomListForm(Jid discoverNode) {
+            DiscoverNode = discoverNode;
             InitializeComponent();
             CheckForIllegalCrossThreadCalls = false;
             /*foreach (string room in roomList) {
@@ -34,7 +37,7 @@ namespace miniConf {
             this.Show();
             try {
                 discoManager = new DiscoManager(Program.Jabber.conn);
-                discoManager.DiscoverItems(new Jid(Program.Jabber.conn.Server), new IqCB(OnDiscoServerResult), null);
+                discoManager.DiscoverItems(DiscoverNode, new IqCB(OnDiscoServerResult), null);
             } catch (Exception ex) {
                 MessageBox.Show(ex.ToString(), "Error loading chat room list", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.DialogResult = System.Windows.Forms.DialogResult.Cancel;

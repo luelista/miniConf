@@ -11,7 +11,7 @@ using System.Data.Common;
 namespace miniConf {
     public class Roomdata {
         public Jid jid;
-        public System.Collections.Generic.List<String> users = new List<string>();
+        public List<String> users = new List<string>();
         public int unreadMsgCount = 0;
         public int unreadNotifyCount = 0;
         public string unreadNotifyText = "";
@@ -33,11 +33,11 @@ namespace miniConf {
         public const int COL_NOTIFY = 6;
         public const int COL_DISPLAY_POSITION = 7;
         public const int COL_AUTOTODO = 8;
+        public const int COL_ROOMTYPE = 9;
 
-        public RoomType roomType = RoomType.Multi;
         public enum RoomType {
-            Single,
-            Multi
+            XmppDirect = 1,
+            XmppMuc = 2
         }
 
         public enum JoinMode {
@@ -58,6 +58,7 @@ namespace miniConf {
         public String LastSeenDt { get; set; }
         public NotifyMode Notify { get; set; }
         public int DisplayPosition { get; set; }
+        public RoomType Type { get; set; }
 
         public Roomdata(Jid myjid) {
             jid = myjid;
@@ -67,6 +68,7 @@ namespace miniConf {
             this.Notify = NotifyMode.OnMention;
             this.Subject = "";
             this.AutoToDo = "";
+            this.Type = RoomType.XmppMuc;
         }
         public static Roomdata FromDbDataRecord(DbDataRecord record) {
             Roomdata r = new Roomdata(record.GetString(COL_ROOM));
@@ -78,6 +80,7 @@ namespace miniConf {
             r.Notify = (NotifyMode)record.GetInt32(COL_NOTIFY);
             r.DisplayPosition = record.GetInt32(COL_DISPLAY_POSITION);
             r.AutoToDo = record.GetString(COL_AUTOTODO);
+            r.Type = (RoomType) record.GetInt32(COL_ROOMTYPE);
             return r;
         }
 
@@ -95,11 +98,44 @@ namespace miniConf {
         }
 
 
-        public void sendChatstate(agsXMPP.protocol.extensions.chatstates.Chatstate state) {
+        public string editingMessageId = null;
+        public string sendMessageText = "";
+        public string sendMessageImageUrl = "";
+        public Image sendMessageImagePreview = null;
+
+        public Message sendMessage(string text) {
+            var msg = new Message(this.RoomName, Program.Jabber.conn.MyJID,
+                GetMessageType(), text);
+            msg.Id = Guid.NewGuid().ToString();
+            if (editingMessageId != null) {
+                var replace = new agsXMPP.Xml.Dom.Element("replace", null, JabberService.URN_MESSAGE_CORRECT);
+                replace.SetAttribute("id", editingMessageId);
+                msg.AddChild(replace);
+            }
+            msg.Chatstate = agsXMPP.protocol.extensions.chatstates.Chatstate.active;
+            this.chatstate = agsXMPP.protocol.extensions.chatstates.Chatstate.active;
+            if (!string.IsNullOrEmpty(sendMessageImageUrl)) {
+                var oob = new agsXMPP.Xml.Dom.Element("x", null, "jabber:x:oob");
+                msg.AddChild(oob);
+                oob.AddTag("url", sendMessageImageUrl);
+                sendMessageImageUrl = null; sendMessageImagePreview = null;
+            }
+            Program.Jabber.conn.Send(msg);
+            
+            return msg;
+        }
+
+        public MessageType GetMessageType() {
+            return this.Type == Roomdata.RoomType.XmppMuc ?
+                MessageType.groupchat :
+                MessageType.chat;
+        }
+
+        public void sendChatstate(Chatstate state) {
             if (chatstate == state) return;
             chatstate = state;
-            var msg = new agsXMPP.protocol.client.Message(new Jid(RoomName), Program.Jabber.conn.MyJID);
-            msg.Type = MessageType.groupchat;
+            var msg = new Message(new Jid(RoomName), Program.Jabber.conn.MyJID);
+            msg.Type = GetMessageType();
             msg.Chatstate = state;
             Program.Jabber.conn.Send(msg);
         }
@@ -170,7 +206,7 @@ namespace miniConf {
 
         public List<ChatMessage> GetLogs(int startingfrom, int maxcount) {
             var cmd = Program.db.dataBase.CreateCommand();
-            cmd.CommandText = "SELECT sender,messagebody,datedt,xmppid,editdt FROM messages WHERE room = @name AND (override IS NULL OR override = '') ORDER BY datedt DESC LIMIT @from, @count;";
+            cmd.CommandText = "SELECT * FROM messages WHERE room = @name AND (override IS NULL OR override = '') ORDER BY datedt DESC LIMIT @from, @count;";
             cmd.Parameters.AddWithValue("@name", RoomName);
             cmd.Parameters.AddWithValue("@count", maxcount);
             cmd.Parameters.AddWithValue("@from", startingfrom);
@@ -178,7 +214,7 @@ namespace miniConf {
         }
         public List<ChatMessage> GetFilteredLogs(string filterStr, int startingfrom, int maxcount) {
             var cmd = Program.db.dataBase.CreateCommand();
-            cmd.CommandText = "SELECT sender,messagebody,datedt,xmppid,editdt FROM messages WHERE room = @name AND messagebody LIKE @filterStr ORDER BY datedt DESC LIMIT @from, @count;";
+            cmd.CommandText = "SELECT * FROM messages WHERE room = @name AND messagebody LIKE @filterStr ORDER BY datedt DESC LIMIT @from, @count;";
             cmd.Parameters.AddWithValue("@name", RoomName);
             cmd.Parameters.AddWithValue("@filterStr", "%" + filterStr + "%");
             cmd.Parameters.AddWithValue("@count", maxcount);
@@ -190,8 +226,8 @@ namespace miniConf {
             var list = new List<ChatMessage>();
             foreach (DbDataRecord record in reader) {
                 ChatMessage msg = ChatMessage.FromDbDataRecord(record);
-                if (roomType == RoomType.Multi)
-                    msg.SenderJid = Program.db.GetUserJid(RoomName, msg.Sender);
+                if (Type == RoomType.XmppMuc && String.IsNullOrEmpty(msg.SenderJid))
+                    msg.SenderJid = Program.db.GetUserJid(RoomName, msg.SenderName);
                 list.Add(msg);
             }
             return list;

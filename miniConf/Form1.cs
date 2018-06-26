@@ -14,6 +14,7 @@ using System.Media;
 using System.IO;
 using agsXMPP.Xml.Dom;
 using agsXMPP.protocol.iq.disco;
+using CodePoints;
 
 namespace miniConf {
     public partial class Form1 : Form {
@@ -32,7 +33,6 @@ namespace miniConf {
         Boolean loginError = true;
         string balloonRoom = null;
         UnreadMessageForm popupWindow;
-        DirectMessageManager dmManager = new DirectMessageManager();
         //List<string> onlineContacts = new List<string>();
         XmppDebugForm debugForm;
 
@@ -132,6 +132,7 @@ namespace miniConf {
             jabber.conn.Open(username[0], ApplicationPreferences.AccountPassword, "miniConf-" + Environment.MachineName, 0);
             //txtConnInfo.Text = "";
             webBrowser1.selfNickname = ApplicationPreferences.Nickname;
+            webBrowser1.selfJid = jabber.conn.MyJID;
         }
 
         void conn_OnSaslEnd(object sender) {
@@ -156,13 +157,19 @@ namespace miniConf {
         }
 
         void jingle_OnFileReceived(Jid fromJid, string filename, string status) {
-            var frm = dmManager.GetWindow(fromJid);
+            Roomdata room = PrepareRoomForMessage(fromJid, true, true);
+            string dt = ChatDatabase.GetNowString();
+
             if (status == "failed") {
-                frm.onNotice("ERROR: " + filename);
+                var msg = new ChatMessage(room.RoomName, null, "*File Transfer*", "*** File Transfer Error: " + filename, DateTime.Now, fromJid, null);
+                msg.Flags = ChatMessage.MessageFlags.SystemNotice;
+                HandleMessageAndNotify(room, msg, null);
 
             } else if (status == "loading") {
-                frm.onNotice("Receiving file, please wait ...<br>(" + fromJid.ToString() + ", " + filename + ", " + status + ")");
-
+                var msg = new ChatMessage(room.RoomName, null, "*File Transfer*", "Receiving file, please wait ...\r\n(" + fromJid.ToString() + ", " + filename + ", " + status + ")", DateTime.Now, fromJid, null);
+                msg.Flags = ChatMessage.MessageFlags.SystemNotice;
+                HandleMessageAndNotify(room, msg, null);
+                
             } else if (status == "done" && filename.EndsWith(".webp")) {
                 var dec = new Imazen.WebP.SimpleDecoder();
                 byte[] bytes = System.IO.File.ReadAllBytes(filename);
@@ -176,9 +183,14 @@ namespace miniConf {
                     buffer,
                     Base64FormattingOptions.InsertLineBreaks);*/
 
-                frm.onNotice("<a href=\"special:openjpg:" + jpgpath + "\"><img src=\"" + jpgpath + "\" style='width: 240px'></a><br>" + filename + " (<a href=\"special:open_recv_files_dir\">Open download folder</a>)");
+                var msg = new ChatMessage(room.RoomName, null, "*File Transfer*", "<a href=\"special:openjpg:" + jpgpath + "\"><img src=\"" + jpgpath + "\" style='width: 240px'></a><br>" + MessageView.EscapeHtmlTags(filename) + " (<a href=\"special:open_recv_files_dir\">Open download folder</a>)", DateTime.Now, fromJid, null);
+                msg.Flags = ChatMessage.MessageFlags.SystemNotice | ChatMessage.MessageFlags.UnsafeAllowHtml;
+                HandleMessageAndNotify(room, msg, null);
+
             } else {
-                frm.onNotice("Jingle file-transfer: " + fromJid.ToString() + ", " + filename + ", " + status);
+                var msg = new ChatMessage(room.RoomName, null, "*File Transfer*", "Jingle file-transfer: " + fromJid.ToString() + ", " + filename + ", " + status, DateTime.Now, fromJid, null);
+                msg.Flags = ChatMessage.MessageFlags.SystemNotice;
+                HandleMessageAndNotify(room, msg, null);
 
             }
         }
@@ -251,13 +263,7 @@ namespace miniConf {
 
 
         void conn_OnMessage(object sender, agsXMPP.protocol.client.Message msg) {
-            //Console.WriteLine(msg);
-            if (msg.Type == agsXMPP.protocol.client.MessageType.groupchat
-                    || (msg.Type == agsXMPP.protocol.client.MessageType.error && rooms.ContainsKey(msg.From.Bare))) {
-                this.Invoke(new XmppMessageDelegate(OnMucMessage), msg);
-            } else {
-                this.Invoke(new XmppMessageDelegate(dmManager.OnPrivateMessage), msg);
-            }
+            this.Invoke(new XmppMessageDelegate(OnXmppMessage), msg);
         }
 
         void conn_OnPresence(object sender, agsXMPP.protocol.client.Presence pres) {
@@ -276,10 +282,17 @@ namespace miniConf {
             jabber.conn.SendMyPresence();
 
             foreach (var room in rooms.Values) {
-                room.online = false;
-                if (room.DoJoin != Roomdata.JoinMode.AutoJoin) continue;
-                room.jid.Resource = ApplicationPreferences.Nickname;
-                jabber.muc.joinRoom(room);
+                switch(room.Type) {
+                    case Roomdata.RoomType.XmppDirect:
+                        room.online = true;
+                        break;
+                    case Roomdata.RoomType.XmppMuc:
+                        room.online = false;
+                        if (room.DoJoin != Roomdata.JoinMode.AutoJoin) continue;
+                        room.jid.Resource = ApplicationPreferences.Nickname;
+                        jabber.muc.joinRoom(room);
+                        break;
+                }
             }
             this.Invoke(new ThreadStart(updateRoomList));
             this.Invoke(new ThreadStart(hideLoginPanel));
@@ -347,19 +360,94 @@ namespace miniConf {
             }
         }
 
+        private void UnpackCarbonMessage(ref agsXMPP.protocol.client.Message msg, ref Jid relevantJid) {
+            // XEP-0280, Message Carbons
 
-        private void OnMucMessage(agsXMPP.protocol.client.Message msg) {
-            try {
-                Roomdata room = null;
-                if (!rooms.TryGetValue(msg.From.Bare, out room)) { //not in room
+            // Only allow carbons to be from your own bare JID
+            // http://openwall.com/lists/oss-security/2017/02/09/29
+            if (msg.To != null && msg.From == msg.To.Bare) {
+                var carbonsSent = msg.SelectSingleElement("sent", JabberService.URN_CARBONS);
+                var carbonsReceived = msg.SelectSingleElement("received", JabberService.URN_CARBONS);
+                if (carbonsSent != null) {
+                    msg = (agsXMPP.protocol.client.Message)carbonsSent.SelectSingleElement("message", true);
+                    relevantJid = msg.To;
+                }
+                else if (carbonsReceived != null) {
+                    msg = (agsXMPP.protocol.client.Message)carbonsReceived.SelectSingleElement("message", true);
+                    relevantJid = msg.From;
+                }
+            }
+        }
+
+        Roomdata createDirectMessageRoom(Jid with_jid) {
+            Roomdata room = null;
+            if (!rooms.TryGetValue(with_jid.Bare, out room)) {
+                room = new Roomdata(with_jid.Bare);
+                room.Type = Roomdata.RoomType.XmppDirect;
+                room.DisplayName = room.jid.User;
+                room.Notify = Roomdata.NotifyMode.Always;
+                rooms.Add(room.RoomName, room);
+            }
+            room.online = true;
+            rejoinChatroom(room);
+            return room;
+        }
+
+        public Roomdata PrepareRoomForMessage(Jid relevantJid, bool isDirectMessage, bool hasMessageBody) {
+            Roomdata room = null;
+
+            if (!rooms.TryGetValue(relevantJid.Bare, out room)) { //not in room
+                if (isDirectMessage) {
+                    // Ignore Chatstate notifications if room is not created yet
+                    if (!hasMessageBody) return null;
+
+                    room = createDirectMessageRoom(relevantJid.Bare);
+                }
+                else {
                     //TODO send error stanza
-                    return;
+                    return null;
+                }
+            }
+
+            if (isDirectMessage && hasMessageBody) {
+                room.online = true;
+                rejoinChatroom(room);
+            }
+            return room;
+        }
+
+        private void OnXmppMessage(agsXMPP.protocol.client.Message msg) {
+            try {
+                bool isDirectMessage = false;
+
+                Jid relevantJid = msg.From;
+                string senderName;
+
+                if (msg.Type == agsXMPP.protocol.client.MessageType.groupchat
+                        || (msg.Type == agsXMPP.protocol.client.MessageType.error && rooms.ContainsKey(msg.From.Bare))) {
+                    // group chat message
+                    senderName = msg.From.Resource;
+                } else {
+                    // direct message
+                    isDirectMessage = true;
+
+                    if (Program.Jabber.muc.handleInvitation(msg))
+                        return;
+
+                    UnpackCarbonMessage(ref msg, ref relevantJid);
+                    senderName = relevantJid.ToString();
                 }
 
-                string dt = JabberService.GetMessageDt(msg);
+                Roomdata room = PrepareRoomForMessage(relevantJid, isDirectMessage, msg.HasTag("body"));
+                if(room==null) {
+                    Console.WriteLine("Ignoring message from: " + msg.From);
+                    Console.WriteLine(msg.ToString());
+                    return;
+                }
+                DateTime dt = JabberService.GetMessageDt(msg);
 
                 if (msg.Type == agsXMPP.protocol.client.MessageType.error) {
-                    webBrowser1.addNoticeToView("<b><font color=red>ERROR FROM ROOM " + msg.From + ": <br>" + msg.Error.ToString().Replace("<", "&lt;"));
+                    webBrowser1.addNoticeToView("<b><font color=red>ERROR FROM ROOM " + relevantJid + ": <br>" + msg.Error.ToString().Replace("<", "&lt;"));
 
                     return;
                 }
@@ -367,70 +455,90 @@ namespace miniConf {
                 if (room.handleChatstate(msg))
                     if (currentRoom == room) { updateChatstates(); updateMemberList(); }
 
-                if (msg.HasTag("replace") && msg.HasTag("body")) {
-                    Element replace = msg.SelectSingleElement("replace");
-                    string replaceId = replace.GetAttribute("id");
-                    if (logs.EditMessage(room.RoomName, replaceId, msg.GetAttribute("id"), msg.From.Resource, msg.GetTag("body"), dt)) {
-                        room.LastMessageDt = dt; logs.StoreRoom(room);
-                        if (webBrowser1.updateMessage(replaceId, msg.GetAttribute("id"), msg.GetTag("body"), DateTime.Parse(dt)))
-                            return;
-                    }
-                }
                 if (msg.HasTag("subject")) {
                     string subject = msg.GetTag("subject");
-                    //logs.SetSubject(msg.From.Bare, subject);
-                    room.Subject = subject; logs.StoreRoom(room);
-                    if (currentRoom == room) {
-                        webBrowser1.addNoticeToView("The subject was set by " + msg.From.Resource + ": " + subject);
-                        txtSubject.Text = subject;
-                    }
-                } else if (msg.HasTag("body")) {
-                    string messageBody = msg.GetTag("body");
-                    logs.InsertMessage(msg.From.Bare, msg.GetAttribute("id"), msg.From.Resource, messageBody, dt,
-                        "", room.IsAutoToDo(messageBody) ? "1" : "");
-                    //logs.SetLastmessageDatetime(msg.From.Bare, dt);
-                    room.LastMessageDt = dt; logs.StoreRoom(room);
-                    if (currentRoom == room) {
-                        string fullJid = logs.GetUserJid(msg.From.Bare, msg.From.Resource);
-                        webBrowser1.addMessageToView(msg.From.Resource, messageBody, DateTime.Parse(dt), null, fullJid, msg.Id);
-                    }
-                    if (currentRoom != room) { room.unreadMsgCount++; lbChatrooms.Refresh(); }
-                    bool mention = IsMention(messageBody);
-                    bool notify = !msg.HasTag("delay");
-                    if (room != null && room.Notify == Roomdata.NotifyMode.Never) notify = false;
-                    if (room != null && room.Notify == Roomdata.NotifyMode.OnMention && !mention) notify = false;
-                    if (notify) {
-                        if (enableSoundToolStripMenuItem.Checked) {
-                            string sound = mention ? "popup" : "correct";
-                            SoundPlayer dingdong = new SoundPlayer(Program.appDir + "\\Sounds\\" + sound + ".wav");
-                            dingdong.Play();
-                        }
-                        if (!WindowHelper.IsActive(this) || currentRoom != room) {
-                            room.unreadNotifyCount++; room.unreadNotifyText = msg.From.Resource + ":" + messageBody;
-                            if (enablePopupToolStripMenuItem.Checked) {
-                                WindowHelper.ShowWindow(popupWindow.Handle, WindowHelper.SW_SHOWNOACTIVATE); //popupWindow.Show();
-                                popupWindow.updateRooms(rooms);
-                            }
-                            if (enableNotificationsToolStripMenuItem.Checked && !String.IsNullOrEmpty(messageBody)) {
-                                if (ApplicationPreferences.WineTricks) {
-                                    Console.WriteLine("Displaying notification via notify-send ...");
-                                    ProcessStartInfo psi = new ProcessStartInfo();
-                                    psi.FileName = "/usr/bin/notify-send";
-                                    psi.Arguments = "\"Nachricht von " + msg.From.ToString() + "\" \"" + messageBody + "\"";
-                                    Process.Start(psi);
-                                } else {
-                                    Console.WriteLine("Showing balloon tip: " + msg.From.Resource + " in " + msg.From.User);
-                                    balloonRoom = msg.From.Bare;
-                                    notifyIcon1.ShowBalloonTip(30000, msg.From.Resource + " in " + msg.From.User + ":", messageBody, ToolTipIcon.Info);
-                                }
-                            }
+                    HandleSubjectChangeMessage(senderName, room, subject);
+                }
+                else if (msg.HasTag("body")) {
+                    string replaceId = null;
+                    if (msg.HasTag("replace")) replaceId = msg.SelectSingleElement("replace").GetAttribute("id");
 
-                        }
-                        if (!WindowHelper.IsActive(this)) tmrBlinky.Start();
-                    }
+                    string messageId = msg.GetAttribute("id");
+                    if (String.IsNullOrEmpty(messageId))
+                        messageId = Guid.NewGuid().ToString();
+
+                    string fullJid = isDirectMessage ? relevantJid.ToString() : logs.GetUserJid(relevantJid.Bare, senderName);
+                    var cmsg = new ChatMessage(relevantJid.Bare, msg.GetAttribute("id"), senderName, msg.GetTag("body"), dt, fullJid, null);
+                    if (room.IsAutoToDo(msg.Body)) cmsg.Wvl = "1";
+                    if (msg.HasTag("delay")) cmsg.Flags |= ChatMessage.MessageFlags.Delayed;
+
+                    HandleMessageAndNotify(room, cmsg, replaceId);
                 }
             } catch (Exception ex) {
-                MessageBox.Show(ex.ToString());
+                Console.WriteLine(msg.ToString(System.Xml.Formatting.Indented, 4));
+                MessageBox.Show("While processing an incoming message, the following error has occured:\r\n\r\n"+ex.ToString()+"\r\n\r\nThe problematic message is as follows:\r\n\r\n"+ msg.ToString(System.Xml.Formatting.Indented, 4));
+            }
+        }
+
+        private void HandleMessageAndNotify(Roomdata room, ChatMessage msg, string replaceId) {
+            if (replaceId != null) {
+                if (logs.EditMessage(room.RoomName, replaceId, msg.Id, msg.SenderName, msg.Body, msg.Date)) {
+                    room.LastMessageDt = msg.GetDateString(); logs.StoreRoom(room);
+                    if (webBrowser1.updateMessage(replaceId, msg.Id, msg.Body, msg.Date))
+                        return;
+                }
+            }
+
+            logs.InsertMessage(msg);
+            //logs.SetLastmessageDatetime(msg.From.Bare, dt);
+            room.LastMessageDt = msg.GetDateString(); logs.StoreRoom(room);
+            if (currentRoom == room) {
+                webBrowser1.addMessageToView(msg);
+            }
+            if (currentRoom != room) { room.unreadMsgCount++; lbChatrooms.Refresh(); }
+            bool mention = IsMention(msg.Body);
+            bool notify = !msg.HasFlag(ChatMessage.MessageFlags.Delayed); // only notify if not delayed
+            if (msg.SenderJid == jabber.conn.MyJID) notify = false; // do not notify on my own messages
+            if (room != null && room.Notify == Roomdata.NotifyMode.Never) notify = false;
+            if (room != null && room.Notify == Roomdata.NotifyMode.OnMention && !mention) notify = false;
+            if (notify) {
+                if (enableSoundToolStripMenuItem.Checked) {
+                    string sound = mention ? "popup" : "correct";
+                    SoundPlayer dingdong = new SoundPlayer(Program.appDir + "\\Sounds\\" + sound + ".wav");
+                    dingdong.Play();
+                }
+                if (!WindowHelper.IsActive(this) || currentRoom != room) {
+                    room.unreadNotifyCount++; room.unreadNotifyText = msg.SenderName + ":" + msg.Body;
+                    if (enablePopupToolStripMenuItem.Checked) {
+                        WindowHelper.ShowWindow(popupWindow.Handle, WindowHelper.SW_SHOWNOACTIVATE); //popupWindow.Show();
+                        popupWindow.updateRooms(rooms);
+                    }
+                    if (enableNotificationsToolStripMenuItem.Checked && !String.IsNullOrEmpty(msg.Body)) {
+                        if (ApplicationPreferences.WineTricks) {
+                            Console.WriteLine("Displaying notification via notify-send ...");
+                            ProcessStartInfo psi = new ProcessStartInfo();
+                            psi.FileName = "/usr/bin/notify-send";
+                            psi.Arguments = "\"Nachricht von " + msg.SenderName + " in " + msg.Room + "\" \"" + msg.Body + "\"";
+                            Process.Start(psi);
+                        }
+                        else {
+                            Console.WriteLine("Showing balloon tip: " + msg.SenderName + " in " + msg.Room);
+                            balloonRoom = msg.Room;
+                            notifyIcon1.ShowBalloonTip(30000, msg.SenderName + " in " + msg.Room + ":", msg.Body, ToolTipIcon.Info);
+                        }
+                    }
+
+                }
+                if (!WindowHelper.IsActive(this)) tmrBlinky.Start();
+            }
+        }
+
+        private void HandleSubjectChangeMessage(string senderName, Roomdata room, string subject) {
+            //logs.SetSubject(relevantJid.Bare, subject);
+            room.Subject = subject; logs.StoreRoom(room);
+            if (currentRoom == room) {
+                webBrowser1.addNoticeToView("The subject was set by " + senderName + ": " + subject);
+                txtSubject.Text = subject;
             }
         }
 
@@ -448,25 +556,6 @@ namespace miniConf {
         private bool IsMention(string text) {
             text = text.ToLower(); string nick = ApplicationPreferences.Nickname.ToLower();
             return text.Contains("@" + nick) || text.Contains(nick + ":");
-        }
-
-        private void sendMessage(string text) {
-            var msg = new agsXMPP.protocol.client.Message(currentRoom.RoomName, jabber.conn.MyJID, agsXMPP.protocol.client.MessageType.groupchat, text);
-            msg.Id = Guid.NewGuid().ToString();
-            if (editingMessageId != null) {
-                var replace = new Element("replace", null, JabberService.URN_MESSAGE_CORRECT);
-                replace.SetAttribute("id", editingMessageId);
-                msg.AddChild(replace);
-                stopEditingMessage();
-            }
-            msg.Chatstate = agsXMPP.protocol.extensions.chatstates.Chatstate.active;
-            currentRoom.chatstate = agsXMPP.protocol.extensions.chatstates.Chatstate.active;
-            if (pbSendImage.Visible) {
-                var oob = new agsXMPP.Xml.Dom.Element("x", null, "jabber:x:oob");
-                msg.AddChild(oob);
-                oob.AddTag("url", (string)pbSendImage.Tag);
-            }
-            jabber.conn.Send(msg);
         }
 
 
@@ -493,6 +582,7 @@ namespace miniConf {
             WinSparkle.win_sparkle_set_appcast_url("http://downloads.luelista.net/miniconf/miniconf.xml");
             //WinSparkle.win_sparkle_set_app_details("Company","App", "Version"); // THIS CALL NOT IMPLEMENTED YET
             WinSparkle.win_sparkle_init();
+
 
             logs = new ChatDatabase(Program.dataDir + "chatlogs.db");
             Program.db = logs;
@@ -677,15 +767,23 @@ namespace miniConf {
         #region Chatroom list
 
         private void updateRoomList() {
+            Roomdata selectedRoom = (Roomdata)lbChatrooms.SelectedItem;
             lbChatrooms.Items.Clear();
             foreach (Roomdata r in rooms.Values) {
                 if (r.DoJoin == Roomdata.JoinMode.AutoJoin || showAllRoomsToolStripMenuItem.Checked)
                     lbChatrooms.Items.Add(r);
             }
             try {
-                onChatroomSelect(glob.para("currentRoom"));
-                if (currentRoom == null) onChatroomSelect();
-            } catch (Exception ex) { }
+                lbChatrooms.SelectedItem = selectedRoom;
+            }
+            catch (Exception ex) { }
+            if (lbChatrooms.SelectedItem == null || lbChatrooms.SelectedItem != selectedRoom) {
+                try {
+                    onChatroomSelect(glob.para("currentRoom"));
+                    if (currentRoom == null) onChatroomSelect();
+                }
+                catch (Exception ex) { }
+            }
             lblConferencesEmpty.Visible = lbChatrooms.Items.Count == 0;
         }
 
@@ -708,9 +806,14 @@ namespace miniConf {
                 e.Graphics.DrawString((room.unreadMsgCount > 99 ? "..." : room.unreadMsgCount.ToString()), new Font(lbChatrooms.Font, FontStyle.Bold),
                     whiteBrush, e.Bounds.Left + (room.unreadMsgCount > 9 ? 3 : 7), e.Bounds.Top + 3);
             } else {
-                string image = room.roomType == Roomdata.RoomType.Multi ? "group" : "user";
-                if (!room.online) image = "error";
-                if (room.DoJoin == Roomdata.JoinMode.Off) image = "history";
+                string image = "error";
+                if (room.Type == Roomdata.RoomType.XmppMuc) {
+                    image = "group";
+                    if (!room.online) image = "error";
+                    if (room.DoJoin == Roomdata.JoinMode.Off) image = "history";
+                }else if (room.Type == Roomdata.RoomType.XmppDirect) {
+                    image = "user";
+                }
                 e.Graphics.DrawImageUnscaled(conversationImageList.Images[image], 4, e.Bounds.Top + 2);
             }
         }
@@ -743,9 +846,11 @@ namespace miniConf {
         }
 
         private void rejoinChatroom(Roomdata myRoom) {
+            if (myRoom.Type == Roomdata.RoomType.XmppMuc) {
+                myRoom.jid.Resource = ApplicationPreferences.Nickname;
+                jabber.muc.joinRoom(myRoom);
+            }
             myRoom.DoJoin = Roomdata.JoinMode.AutoJoin;
-            myRoom.jid.Resource = ApplicationPreferences.Nickname;
-            jabber.muc.joinRoom(myRoom);
             Program.db.StoreRoom(myRoom);
             updateRoomList();
         }
@@ -769,7 +874,10 @@ namespace miniConf {
         }
 
         private void joinConversationToolStripMenuItem_Click(object sender, EventArgs e) {
-            RoomListForm frm = new RoomListForm();
+            ShowJoinRoomDialog(new Jid(Program.Jabber.conn.Server));
+        }
+        public void ShowJoinRoomDialog(Jid DiscoverOnServer) {
+            RoomListForm frm = new RoomListForm(DiscoverOnServer);
             if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 string bareJid = (string)frm.listView1.SelectedItems[0].Tag;
                 if (bareJid.StartsWith("@")) {
@@ -856,8 +964,11 @@ namespace miniConf {
 
         private void onChatroomSelect(string gotoRoom = null) {
             tmrChatstatePaused.Stop();
-            if (currentRoom != null && currentRoom.online)
-                currentRoom.sendChatstate(agsXMPP.protocol.extensions.chatstates.Chatstate.inactive);
+            if (currentRoom != null) {
+                if (currentRoom.online) currentRoom.sendChatstate(agsXMPP.protocol.extensions.chatstates.Chatstate.inactive);
+                currentRoom.sendMessageText = txtSendmessage.Text;
+            }
+            setEditingMessageUI(false);
 
             try {
                 if (gotoRoom != null) lbChatrooms.SelectedItem = rooms[gotoRoom];
@@ -885,6 +996,12 @@ namespace miniConf {
                 updateChatstates();
                 if (currentRoom.online)
                     currentRoom.sendChatstate(txtSendmessage.Text == "" ? agsXMPP.protocol.extensions.chatstates.Chatstate.active : agsXMPP.protocol.extensions.chatstates.Chatstate.paused);
+                txtSendmessage.Text = currentRoom.sendMessageText;
+                if (currentRoom.editingMessageId != null) {
+                    setEditingMessageUI(true);
+                    webBrowser1.setMessageEditing(currentRoom.editingMessageId, true);
+                }
+                updateSendImagePreview();
                 txtSendmessage.Enabled = currentRoom.online;
                 txtSendmessage.Focus();
             }
@@ -901,7 +1018,11 @@ namespace miniConf {
             if (currentRoom == null) return;
             var length = logs.GetLogLength(currentRoom.RoomName);
             if (histAmount + count > length) {
-                webBrowser1.Document.GetElementById("tb").InnerHtml = "End of local history | <a href='special:load_all'>Try loading server history</a>";
+                if (currentRoom.Type == Roomdata.RoomType.XmppDirect) {
+                    webBrowser1.Document.GetElementById("tb").InnerHtml = "End of local history";
+                } else {
+                    webBrowser1.Document.GetElementById("tb").InnerHtml = "End of local history | <a href='special:load_all'>Try loading server history</a>";
+                }
             }
             var msgs = currentRoom.GetLogs(histAmount, count);
             foreach (ChatMessage msg in msgs) {
@@ -933,11 +1054,21 @@ namespace miniConf {
         #region Sendmessage
         private void txtSendmessage_KeyUp(object sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.Enter && !e.Control && !e.Shift && !e.Alt) {
-                if (currentRoom == null || String.IsNullOrEmpty(txtSendmessage.Text.Trim())) return;
-                sendMessage(txtSendmessage.Text.TrimEnd());
-                txtSendmessage.Text = "";
-                pbSendImage.Hide();
+                onSendMessage();
             }
+        }
+        void onSendMessage() {
+            if (currentRoom == null || String.IsNullOrEmpty(txtSendmessage.Text.Trim())) return;
+            var xmppmsg = currentRoom.sendMessage(txtSendmessage.Text.TrimEnd());
+            if (currentRoom.Type == Roomdata.RoomType.XmppDirect) {
+                var cmsg = new ChatMessage(currentRoom.RoomName, xmppmsg.Id, xmppmsg.From, xmppmsg.Body, DateTime.Now, xmppmsg.From, null);
+                HandleMessageAndNotify(currentRoom, cmsg, currentRoom.editingMessageId);
+            }
+            if (currentRoom.editingMessageId != null) {
+                stopEditingMessage();
+            }
+            txtSendmessage.Text = "";
+            updateSendImagePreview();
         }
         private void txtSendmessage_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.Enter && !e.Control && !e.Shift && !e.Alt) {
@@ -1029,44 +1160,59 @@ namespace miniConf {
                     txtSendmessage.AppendText(imageUrl);
 
                     try {
-                        pbSendImage.Image = MediaUploadForm.SafeImageFromFile(filename);
-                        pbSendImage.Tag = imageUrl;
-                        pbSendImage.Show();
-                    } catch (Exception ex) { }
-                } else {
-                    MessageBox.Show("Could not send image. \n\n(upload failed with error: " + f.resultStatus.ToString()+")", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        currentRoom.sendMessageImagePreview  = MediaUploadForm.SafeImageFromFile(filename);
+                        currentRoom.sendMessageImageUrl  = imageUrl;
+                        updateSendImagePreview();
+                    }
+                    catch (Exception ex) { }
+                } else if (f.resultStatus == FileUploader.UploadFileStatus.FileTooLarge) {
+                    MessageBox.Show("This file is too large to be sent.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                } else { 
+                    MessageBox.Show("Could not send image. \n\nError Code: " + f.resultStatus.ToString()+"", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
             f.Close();
         }
 
         private void btnDeleteSendImage_Click(object sender, EventArgs e) {
-            pbSendImage.Hide(); pbSendImage.Image = null; pbSendImage.Tag = null;
+            currentRoom.sendMessageImageUrl = null; currentRoom.sendMessageImagePreview = null;
+            updateSendImagePreview();
         }
-
+        void updateSendImagePreview() {
+            if (string.IsNullOrEmpty(currentRoom.sendMessageImageUrl)) {
+                pbSendImage.Hide(); pbSendImage.Image = null;
+            } else {
+                try {
+                    pbSendImage.Image = currentRoom.sendMessageImagePreview;
+                    pbSendImage.Show();
+                }
+                catch (Exception ex) { }
+            }
+        }
         #endregion
 
         #region Message Editing
 
-        public string editingMessageId = null;
-
         public void editMessage(string id) {
             if (string.IsNullOrEmpty(id)) return;
-            if (editingMessageId != null) stopEditingMessage();
+            if (currentRoom.editingMessageId != null) stopEditingMessage();
             var message = logs.GetMessageById(currentRoom.RoomName, id);
             if (message == null) return;
-            editingMessageId = id;
+            currentRoom.editingMessageId = id;
             webBrowser1.setMessageEditing(id, true);
-            txtSendmessage.Text = message["messagebody"];
-            txtSendmessage.BackColor = Color.FromArgb(0xFA, 0xFA, 0xA0);
-
+            txtSendmessage.Text = message.Body;
+            setEditingMessageUI(true);
         }
 
         public void stopEditingMessage() {
-            txtSendmessage.BackColor = Color.White;
+            setEditingMessageUI(false);
             txtSendmessage.Text = "";
-            webBrowser1.setMessageEditing(editingMessageId, false);
-            editingMessageId = null;
+            webBrowser1.setMessageEditing(currentRoom.editingMessageId, false);
+            currentRoom.editingMessageId = null;
+        }
+
+        public void setEditingMessageUI(bool editing) {
+            txtSendmessage.BackColor = editing ? Color.FromArgb(0xFA, 0xFA, 0xA0) : Color.White;
         }
 
         #endregion
@@ -1099,7 +1245,7 @@ namespace miniConf {
                     return true;
                 case Keys.Escape:
                     if (filterBarPanel.Visible) filterBarCloseBtn_Click(null, null);
-                    else if (editingMessageId != null) stopEditingMessage();
+                    else if (currentRoom.editingMessageId != null) stopEditingMessage();
                     else this.Close();
                     return true;
                 case Keys.F1:
@@ -1214,8 +1360,8 @@ namespace miniConf {
         private void openDirectChatToolStripMenuItem_Click(object sender, EventArgs e) {
             string jid = (string)lvOnlineStatus.SelectedItems[0].Tag;
             if (!String.IsNullOrEmpty(jid)) {
-                var frm = dmManager.GetWindow(new Jid(jid));
-                frm.Activate(); frm.textBox1.Focus();
+                var room = createDirectMessageRoom(new Jid(jid));
+                onChatroomSelect(room.RoomName);
             }
         }
 
@@ -1257,7 +1403,8 @@ namespace miniConf {
 
         private void lvContacts_MouseDoubleClick(object sender, MouseEventArgs e) {
             if (lvContacts.SelectedItems.Count == 1) {
-                dmManager.GetWindow(lvContacts.SelectedItems[0].Text);
+                var room = createDirectMessageRoom(new Jid(lvContacts.SelectedItems[0].Text));
+                onChatroomSelect(room.RoomName);
             }
         }
 
@@ -1531,7 +1678,8 @@ namespace miniConf {
             Program.wvl.ShowMe();
         }
 
-        
-
+        private void discoveryBrowserToolStripMenuItem_Click(object sender, EventArgs e) {
+            new DiscoForm().Show();
+        }
     }
 }

@@ -55,17 +55,15 @@ namespace miniConf {
             });
         }
 
-        public static string GetMessageDt(Message message) {
-            string dt;
+        public static DateTime GetMessageDt(Message message) {
             agsXMPP.Xml.Dom.Element el;
             if (message.HasTag("delay")) {
-                dt = message.SelectSingleElement("delay").GetAttribute("stamp");
+                return DateTime.Parse(message.SelectSingleElement("delay").GetAttribute("stamp"));
             } else if (null != (el = message.SelectSingleElement("x", "jabber:x:tstamp"))) {
-                dt = el.GetAttribute("tstamp");
+                return DateTime.Parse(el.GetAttribute("tstamp"));
             } else {
-                dt = ChatDatabase.GetNowString();
+                return DateTime.Now;
             }
-            return dt;
         }
 
         /// <summary>

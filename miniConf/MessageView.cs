@@ -1,4 +1,4 @@
-using MSHTML;
+using mshtml;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -15,6 +15,7 @@ namespace miniConf {
 
         public string highlightString = "";
         public string selfNickname = "";
+        public agsXMPP.Jid selfJid = "";
         public bool imagePreview = false;
         public Dictionary<string,string> smileys = new Dictionary<string,string>();
 
@@ -137,35 +138,33 @@ namespace miniConf {
         }
 
         public void addMessageToView(ChatMessage message, HtmlElementInsertionOrientation where = HtmlElementInsertionOrientation.BeforeEnd) {
-            addMessageToView(message.Sender, message.Body, message.Date, message.Editdt, 
-                message.SenderJid, message.Id, where);
-
-        }
-
-        public void addMessageToView(string from, string text, DateTime time, string editDt, string jabberId, string id, HtmlElementInsertionOrientation where = HtmlElementInsertionOrientation.BeforeEnd) {
-            updateLastTime(where, time);
+            updateLastTime(where, message.Date);
             var div = this.Document.CreateElement("p");
             div.MouseUp += Body_MouseUp;
-            div.Id = "MSGID_" + id;
-            text = prepareInnerHtml(text);
+            div.Id = "MSGID_" + message.Id;
+            string text = message.Body;
+            if (!message.HasFlag(ChatMessage.MessageFlags.UnsafeAllowHtml)) text = prepareInnerHtml(message.Body);
             var me = Regex.Match(text, "^/me\\s+");
-            var timeEl = "<i title=" + time.ToShortDateString() + " " + time.ToLongTimeString() + "><u>[</u>" + (highlightString != "" ? time.ToShortDateString() : "") + " " + time.ToLongTimeString() + "<u>] </u></i>";
-            if (!String.IsNullOrEmpty(editDt)) timeEl += "<i class='edited' title='" + editDt + "'>(Edited)</i>";
-            var color = JabberContact.getColorForNickname(from);
+            var timeEl = "<i title=" + message.Date.ToShortDateString() + " " + message.Date.ToLongTimeString() + "><u>[</u>" + (highlightString != "" ? message.Date.ToShortDateString() : "") + " " + message.Date.ToLongTimeString() + "<u>] </u></i>";
+            if (!String.IsNullOrEmpty(message.EditDt)) timeEl += "<i class='edited' title='" + message.EditDt + "'>(Edited)</i>";
+            var color = JabberContact.getColorForNickname(message.SenderName);
             string cssColor = ColorTranslator.ToHtml(color);
-            string classNames = "from_" + from + " ";
-            if (from == "self" || (!String.IsNullOrEmpty(jabberId) && jabberId.StartsWith( this.selfNickname))) classNames += "self ";
-            if (me.Success) {
-                div.InnerHtml = timeEl + "<span> *** <strong>" + from + "</strong> " + text.Substring(me.Length) + "</span>";
+            string classNames = "from_" + message.SenderName + " ";
+            if (message.SenderName == "self" || (!String.IsNullOrEmpty(message.SenderJid) && message.SenderJid.StartsWith( this.selfJid.Bare))) classNames += "self ";
+            if (message.HasFlag(ChatMessage.MessageFlags.SystemNotice)) {
+                div.InnerHtml = timeEl + "<span> *** " + text + "</span>";
+                classNames += "notice ";
+            } else if (me.Success) {
+                div.InnerHtml = timeEl + "<span> *** <strong>" + message.SenderName + "</strong> " + text.Substring(me.Length) + "</span>";
             } else {
                 classNames += "msg ";
                 string avatar = "<tt class='avatar' style='background-color: " + cssColor + "; '></tt>";
-                string avatarFilename = Program.Jabber.avatar.GetAvatarIfAvailabe(jabberId);
+                string avatarFilename = Program.Jabber.avatar.GetAvatarIfAvailabe(message.SenderJid);
                 if (!string.IsNullOrEmpty(avatarFilename))
                     avatar = "<tt class='avatar'><img src='" + avatarFilename + "'></tt>";
                     
                 div.InnerHtml = avatar + "<span class='wrap'>" + timeEl + 
-                    "<strong style='color: "+cssColor+"'>" + from + ":</strong><span class='body'> " 
+                    "<strong style='color: "+cssColor+"'>" + message.SenderName + ":</strong><span class='body'> " 
                     + text + "</span></span>";
 
             }
@@ -175,16 +174,22 @@ namespace miniConf {
             if (where == HtmlElementInsertionOrientation.BeforeEnd)
                 scrollDown();
         }
-        protected string prepareInnerHtml(string text) {
+        public static string EscapeHtmlTags(string text) {
             text = text.Replace("&", "&amp;");
             text = text.Replace("<", "&lt;");
+            return text;
+        }
+        protected string prepareInnerHtml(string text) {
+            text = EscapeHtmlTags(text);
             if (!String.IsNullOrEmpty(highlightString)) text = Regex.Replace(text, highlightString, "<em>$0</em>");
             text = Regex.Replace(text, "^>(.*)$",
                          (match) => ("<q>&gt;" + match.Groups[1].Value + "</q>"), RegexOptions.Multiline);
             text = text.Replace("\n", "\n<br>");
             var imageLink = Regex.Match(text, "https?://[\\w.-]+/[\\w_.,/+?&%$!=)(\\[\\]{}-]*\\.(png|jpg|gif|webp)");
             text = Regex.Replace(text, "(?i)\\b((?:[a-z][\\w-]+:(?:/{1,3})|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))",
-                         (match) => ("<a href=\"" + match.Value.Replace("\"", "&quot;") + "\">" + match.Value + "</a>"));
+                         (match) => ("<a href=\"" 
+                                + (match.Value.StartsWith("www.")?"http://":"") + match.Value.Replace("\"", "&quot;") + "\">" 
+                                + match.Value + "</a>"));
             if (imagePreview && imageLink.Success) {
                 string link = imageLink.Value; 
                 //HACK HACK HACK

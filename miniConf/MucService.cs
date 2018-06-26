@@ -14,7 +14,7 @@ namespace miniConf {
         /// <param name="room">room data object</param>
         /// <param name="loadAllHistory">request all history from server (10000 stanzas max)</param>
         public void joinRoom(Roomdata room, bool loadAllHistory = false) {
-            //
+            if (room.Type != Roomdata.RoomType.XmppMuc) return;
             
             Program.db.SetOnlineStatus(room.RoomName, "off");
 
@@ -63,11 +63,17 @@ namespace miniConf {
             Program.Jabber.conn.Send(MUCpresence);
         }
 
-        public void handleInvitation(Message msg, Invite inv) {
-            InvitationForm frm = new InvitationForm();
-            frm.setChatroomInvite(inv.From, msg.From);
-            frm.Show();
-            frm.Activate();
+        public bool handleInvitation(Message msg) {
+            agsXMPP.protocol.x.muc.User x = (agsXMPP.protocol.x.muc.User)msg.SelectSingleElement(typeof(agsXMPP.protocol.x.muc.User));
+            if (x != null && x.Invite != null) {
+                InvitationForm frm = new InvitationForm();
+                frm.setChatroomInvite(x.Invite.From, msg.From);
+                frm.Show();
+                frm.Activate();
+                return true;
+            } else {
+                return false;
+            }
         }
 
     }

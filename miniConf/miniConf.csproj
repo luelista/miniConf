@@ -96,13 +96,12 @@
       <DependentUpon>DatabaseDebugForm.cs</DependentUpon>
     </Compile>
     <Compile Include="DebugTests.cs" />
-    <Compile Include="DirectMessageForm.cs">
+    <Compile Include="DiscoForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DirectMessageForm.Designer.cs">
-      <DependentUpon>DirectMessageForm.cs</DependentUpon>
+    <Compile Include="DiscoForm.Designer.cs">
+      <DependentUpon>DiscoForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="DirectMessageManager.cs" />
     <Compile Include="FileUploader.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -110,6 +109,8 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="GetOpt.cs" />
+    <Compile Include="ImageHelper.cs" />
     <Compile Include="InputDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -162,7 +163,9 @@
     <Compile Include="UnreadMessageForm.Designer.cs">
       <DependentUpon>UnreadMessageForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="WindowHelper.cs" />
+    <Compile Include="WindowHelper.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WinSparkle.cs" />
     <Compile Include="XmppDebugForm.cs">
       <SubType>Form</SubType>
@@ -182,8 +185,8 @@
     <EmbeddedResource Include="DatabaseDebugForm.resx">
       <DependentUpon>DatabaseDebugForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DirectMessageForm.resx">
-      <DependentUpon>DirectMessageForm.cs</DependentUpon>
+    <EmbeddedResource Include="DiscoForm.resx">
+      <DependentUpon>DiscoForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
@@ -288,7 +291,7 @@
       <VersionMajor>4</VersionMajor>
       <VersionMinor>0</VersionMinor>
       <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
+      <WrapperTool>primary</WrapperTool>
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
