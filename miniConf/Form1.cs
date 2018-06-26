@@ -948,11 +948,9 @@ namespace miniConf {
                 e.SuppressKeyPress = true;
             }
             if (e.KeyCode == Keys.V && e.Control) {
-                var dobj = Clipboard.GetDataObject();
-                Console.WriteLine(string.Join("\n", dobj.GetFormats()));
                 if (Clipboard.ContainsImage()) {
-                    string uploadfn = Program.dataDir + "Temporary Data\\upload.jpg";
-                    if (clipboardImageToFile(uploadfn)) {
+                    string uploadfn = ImageHelper.clipboardImageToFile();
+                    if (uploadfn != null) {
                         doMediaUpload(uploadfn);
                     } else {
                         MessageBox.Show("Unable to get image from clipboard.");
@@ -979,7 +977,7 @@ namespace miniConf {
             if (currentRoom.chatstate != newState) {
                 currentRoom.sendChatstate(newState);
             }
-            if (txtSendmessage.Text == "" && editingMessageId != null) stopEditingMessage();
+            if (txtSendmessage.Text == "" && currentRoom.editingMessageId != null) stopEditingMessage();
         }
 
         private void tmrChatstatePaused_Tick(object sender, EventArgs e) {
@@ -990,38 +988,6 @@ namespace miniConf {
 
         #region Media Upload
 
-        private bool clipboardImageToFile(string uploadfn) {
-            try {
-                Image img = Clipboard.GetImage();
-                var dobj = Clipboard.GetDataObject();
-                string[] tryFormats = { "PNG", "JFIF", "DeviceIndependentBitmap" };
-                int tryIdx = 0;
-                while (img == null && tryIdx < tryFormats.Length) {
-                    string fmt = tryFormats[tryIdx];
-                    tryIdx++;
-                    Console.WriteLine("img is null; checking format " + fmt + " ...");
-                    if (img == null && dobj.GetDataPresent(fmt)) {
-                        Console.WriteLine("getData ...");
-                        MemoryStream obj = dobj.GetData(fmt) as MemoryStream;
-                        if (obj == null) {
-                            Console.WriteLine("NULL!");
-                            continue;
-                        }
-                        using (var fs = new FileStream(uploadfn, FileMode.Create)) {
-                            obj.WriteTo(fs);
-                        }
-                        Console.WriteLine("OK!");
-                        return true;
-                    }
-                }
-                if (img == null) return false;
-                img.Save(uploadfn);
-                return true;
-            } catch (Exception ex) {
-                Console.WriteLine(ex.ToString());
-                return false;
-            }
-        }
         private void txtSendmessage_DragEnter(object sender, DragEventArgs e) {
             if (e.Data.GetDataPresent("FileDrop")) {
                 string[] files = (string[])e.Data.GetData("FileDrop");

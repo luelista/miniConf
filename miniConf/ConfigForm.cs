@@ -36,6 +36,7 @@ namespace miniConf {
             chkSternchen.Checked = ApplicationPreferences.Sternchen;
 
             cmbFileUploadService.Text = ApplicationPreferences.FileUploadServiceUrl;
+            txtMaxFileSize.Value = ((decimal)ApplicationPreferences.FileUploadMaxSize) / 1048576.0M;
             chkFiletransferAutoAccept.Checked = ApplicationPreferences.FiletransferAutoAccept;
 
             qq_txtPrefUsername.AutoCompleteCustomSource.AddRange(Program.db.GetMru("jid", 10));
@@ -73,6 +74,7 @@ namespace miniConf {
             ApplicationPreferences.Sternchen = chkSternchen.Checked;
 
             ApplicationPreferences.FileUploadServiceUrl = cmbFileUploadService.Text;
+            ApplicationPreferences.FileUploadMaxSize = (int) txtMaxFileSize.Value * 1048576;
             ApplicationPreferences.FiletransferAutoAccept = chkFiletransferAutoAccept.Checked;
 
             this.DialogResult = System.Windows.Forms.DialogResult.OK;

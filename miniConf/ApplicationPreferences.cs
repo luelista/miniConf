@@ -17,7 +17,11 @@ namespace miniConf {
 
         public static string FileUploadServiceUrl {
             get { return Program.glob.para("Form1__cmbFileUploadService", "https://chat2.teamwiki.de"); }
-            set {     Program.glob.setPara("Form1__cmbFileUploadService", value); }
+            set { Program.glob.setPara("Form1__cmbFileUploadService", value); }
+        }
+        public static int FileUploadMaxSize {
+            get { try { return int.Parse(Program.glob.para("FileUploadMaxSize", "1048576")); } catch { return 1048576; } }
+            set { Program.glob.setPara("FileUploadMaxSize", value.ToString()); }
         }
 
         public static bool FiletransferAutoAccept {

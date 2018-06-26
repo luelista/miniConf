@@ -58,17 +58,21 @@
             this.button1 = new System.Windows.Forms.Button();
             this.labProgramVersion = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.txtMaxFileSize = new System.Windows.Forms.NumericUpDown();
+            this.label10 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtMaxFileSize)).BeginInit();
             this.SuspendLayout();
             // 
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnOK.BackColor = System.Drawing.SystemColors.Control;
-            this.btnOK.Location = new System.Drawing.Point(252, 463);
+            this.btnOK.Location = new System.Drawing.Point(252, 480);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(96, 22);
             this.btnOK.TabIndex = 4;
@@ -222,7 +226,7 @@
             this.chkFiletransferAutoAccept.BackColor = System.Drawing.Color.Transparent;
             this.chkFiletransferAutoAccept.Checked = true;
             this.chkFiletransferAutoAccept.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkFiletransferAutoAccept.Location = new System.Drawing.Point(12, 61);
+            this.chkFiletransferAutoAccept.Location = new System.Drawing.Point(12, 85);
             this.chkFiletransferAutoAccept.Name = "chkFiletransferAutoAccept";
             this.chkFiletransferAutoAccept.Size = new System.Drawing.Size(219, 17);
             this.chkFiletransferAutoAccept.TabIndex = 2;
@@ -390,13 +394,16 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.label10);
+            this.groupBox3.Controls.Add(this.txtMaxFileSize);
+            this.groupBox3.Controls.Add(this.label9);
             this.groupBox3.Controls.Add(this.checkBox1);
             this.groupBox3.Controls.Add(this.cmbFileUploadService);
             this.groupBox3.Controls.Add(this.chkFiletransferAutoAccept);
             this.groupBox3.Controls.Add(this.label6);
-            this.groupBox3.Location = new System.Drawing.Point(18, 361);
+            this.groupBox3.Location = new System.Drawing.Point(18, 360);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(431, 89);
+            this.groupBox3.Size = new System.Drawing.Size(431, 113);
             this.groupBox3.TabIndex = 3;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Media sharing";
@@ -406,7 +413,7 @@
             this.checkBox1.AutoSize = true;
             this.checkBox1.Checked = true;
             this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1.Location = new System.Drawing.Point(12, 44);
+            this.checkBox1.Location = new System.Drawing.Point(12, 68);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(193, 17);
             this.checkBox1.TabIndex = 3;
@@ -427,7 +434,7 @@
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button1.BackColor = System.Drawing.SystemColors.Control;
             this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button1.Location = new System.Drawing.Point(353, 463);
+            this.button1.Location = new System.Drawing.Point(353, 480);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(96, 22);
             this.button1.TabIndex = 46;
@@ -439,7 +446,7 @@
             this.labProgramVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labProgramVersion.AutoSize = true;
             this.labProgramVersion.ForeColor = System.Drawing.Color.Gray;
-            this.labProgramVersion.Location = new System.Drawing.Point(15, 463);
+            this.labProgramVersion.Location = new System.Drawing.Point(15, 480);
             this.labProgramVersion.Name = "labProgramVersion";
             this.labProgramVersion.Size = new System.Drawing.Size(35, 13);
             this.labProgramVersion.TabIndex = 47;
@@ -455,13 +462,54 @@
             this.pictureBox1.TabIndex = 45;
             this.pictureBox1.TabStop = false;
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(7, 47);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(91, 13);
+            this.label9.TabIndex = 4;
+            this.label9.Text = "Maximum file size:";
+            // 
+            // txtMaxFileSize
+            // 
+            this.txtMaxFileSize.DecimalPlaces = 2;
+            this.txtMaxFileSize.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            65536});
+            this.txtMaxFileSize.Location = new System.Drawing.Point(111, 45);
+            this.txtMaxFileSize.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.txtMaxFileSize.Name = "txtMaxFileSize";
+            this.txtMaxFileSize.Size = new System.Drawing.Size(68, 20);
+            this.txtMaxFileSize.TabIndex = 5;
+            this.txtMaxFileSize.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(185, 47);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(23, 13);
+            this.label10.TabIndex = 6;
+            this.label10.Text = "MB";
+            // 
             // ConfigForm
             // 
             this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button1;
-            this.ClientSize = new System.Drawing.Size(460, 497);
+            this.ClientSize = new System.Drawing.Size(460, 514);
             this.Controls.Add(this.labProgramVersion);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.pictureBox1);
@@ -485,6 +533,7 @@
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtMaxFileSize)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -526,5 +575,8 @@
         private System.Windows.Forms.Label labProgramVersion;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.CheckBox chkAlwaysAskNickname;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.NumericUpDown txtMaxFileSize;
+        private System.Windows.Forms.Label label9;
     }
 }

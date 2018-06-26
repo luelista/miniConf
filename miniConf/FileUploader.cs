@@ -68,19 +68,35 @@ namespace miniConf {
             }
 
             string response_text;
-
-            using (WebResponse response = wr.GetResponse()) {
-                using (Stream responseStream = response.GetResponseStream()) {
-                    using (MemoryStream stream = new MemoryStream()) {
-                        {
-                            CopyStream(responseStream, stream, Int32.MaxValue);
-                            //responseStream.CopyTo(stream);
-                            response_text = System.Text.Encoding.UTF8.GetString(stream.ToArray());
+            try {
+                using (WebResponse response = wr.GetResponse()) {
+                    using (Stream responseStream = response.GetResponseStream()) {
+                        using (MemoryStream stream = new MemoryStream()) {
+                            {
+                                CopyStream(responseStream, stream, Int32.MaxValue);
+                                //responseStream.CopyTo(stream);
+                                response_text = System.Text.Encoding.UTF8.GetString(stream.ToArray());
+                            }
                         }
                     }
                 }
+            }catch (WebException ex) {
+                if (ex.Status == WebExceptionStatus.ProtocolError) {
+                    HttpWebResponse resp = (HttpWebResponse)ex.Response;
+                    using (Stream responseStream = ex.Response.GetResponseStream()) {
+                        using (MemoryStream stream = new MemoryStream()) {
+                            {
+                                CopyStream(responseStream, stream, Int32.MaxValue);
+                                //responseStream.CopyTo(stream);
+                                response_text = System.Text.Encoding.UTF8.GetString(stream.ToArray());
+                                return new KeyValuePair<UploadFileStatus, string>(parse_uploadfile_status(resp.StatusCode), response_text);
+                            }
+                        }
+                    }
+                } else {
+                    return new KeyValuePair<UploadFileStatus, string>(UploadFileStatus.NoResponse, ex.Message);
+                }
             }
-
             if (!string.IsNullOrEmpty(response_text)) {
                 //JObject json = JsonConvert.DeserializeObject<JObject>(response_text);
 
@@ -199,23 +215,31 @@ namespace miniConf {
             /// </summary>
             RateLimitExceeded,
             NoResponse,
+            ServerError,
+            FileTooLarge,
             Unknown
         }
 
-        private static UploadFileStatus parse_uploadfile_status(string status) {
-            switch (status) {
-                case "200":
+        private static UploadFileStatus parse_uploadfile_status(HttpStatusCode status) {
+            switch ((int)status) {
+                case 200:
                     return UploadFileStatus.Success;
-                case "409":
+                case 409:
                     return UploadFileStatus.AlreadyUploaded;
-                case "400":
+                case 400:
                     return UploadFileStatus.InvalidURL;
-                case "420":
+                case 420:
                     return UploadFileStatus.RateLimitExceeded;
-                case "415":
+                case 415:
                     return UploadFileStatus.UnacceptableFileExtension;
-                case "404":
-                    return UploadFileStatus.URLNotFound;
+                case 413:
+                    return UploadFileStatus.FileTooLarge;
+                case 500:
+                case 502:
+                case 503:
+                    return UploadFileStatus.FileTooLarge;
+                case 404:
+                    return UploadFileStatus.ServerError;
                 default:
                     return UploadFileStatus.Unknown;
             }
