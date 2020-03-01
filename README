@@ -15,13 +15,13 @@ developing in node-js.
 
 [1] http://xmpp.org/extensions/xep-0045.html
 [2] https://prosody.im
-[3] https://github.com/luelista/teamwiki-chat/new_version/
+[3] https://github.com/luelista/prosody-miniconf
 
 ------------------------------------------------------------------------
 
 License
 
-Copyright (c) 2014 luelista
+Copyright (c) 2014 Mira Weller
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -40,5 +40,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Author
 
-luelista, computer science student at TU Darmstadt
-Contact details at http://luelista.io
+Mira Weller, computer science student at TU Darmstadt
+Contact details at http://miraweller.eu
